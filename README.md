@@ -1,2 +1,4 @@
 # HRR-Intel
-Repositório para o código da visão computacional e tomada de decisões
+Repositório para os códigos da visão computacional, sensores e tomada de decisões
+
+MPU9250.py --> Código de coleta de angulos usando o sensor MPU9250
