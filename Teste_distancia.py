@@ -1,15 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
 
-
-#!/usr/bin/env python
-# coding: utf-8
-
-
-
-# -*- coding: utf-8 -*-
 """
 Created on Sept 2020
     Funçoes
@@ -19,8 +11,6 @@ Created on Sept 2020
 """
 
 
-# In[5]:
-
 
 ######################## Libraries #############################
 
@@ -28,7 +18,6 @@ import VL53L0X
 import time                                
 
 
-# In[ ]:
 
 
 """Função principal"""
