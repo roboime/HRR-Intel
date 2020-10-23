@@ -105,7 +105,6 @@ try:                    #utilizado pra possibilitar o programa ser interrompido
 except KeyboardInterrupt:
     print(" CTRL+C detectado. O loop foi interrompido.")
 
-#print("Continuando execução do código")
 Atual = Estado.estado(3)        #parar os motores por questao de segurança
 ser.write(Atual.getName())
 print(Atual)
