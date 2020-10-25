@@ -12,3 +12,8 @@ detector.py --> Detector de cores
 
 trackbardetector.py --> Trackbars utilizadas para coletar os vetores HSV para o detector.py
 
+ob_detector.py --> Arquivo que retira o y e o x_médio do obstáculo
+
+line_detector.py --> Arquivo que obtem a reta central
+
+turn.py --> Arquivo com a função que retorna a direção de rotação do robô
