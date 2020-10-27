@@ -15,7 +15,8 @@ Created on Oct 2020
 ######################## Libraries #############################
 
 import VL53L0X              
-import time                                
+import time   
+import numpy as np
 
 
 ##"""Função"""
@@ -34,7 +35,8 @@ def cronometro(t): #t é o tempo em segundos
 #Assim iremos criar uma função cujos argumentos são a distancia avistada e o angulo yaw já medido
 #Retornaremos 3 para ele parar
 
-def Walk_Detour(d, yaw, vel): #A velocidade vel será medida e utilisaremos a velocidade média
+def Walk_Detour(D, yaw, vel): #A velocidade vel será medida e utilisaremos a velocidade média
+    d=D[0]*np.cos((np.pi /180 )*(12.5-yaw[0]))/np.cos(np.pi/180 *yaw[0])
     t=(d)/vel
     
     while 1:
