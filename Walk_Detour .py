@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[ ]:
+
 
 
 """
@@ -43,7 +43,6 @@ def Walk_Detour(d, yaw, vel): #A velocidade vel será medida e utilisaremos a ve
     return 3
 
 
-# In[ ]:
 
 
 
