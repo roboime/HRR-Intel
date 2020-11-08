@@ -21,3 +21,5 @@ turn.py --> Arquivo com a função que retorna a direção de rotação do robô
 Giro.py -> Arquivo com função que faz o robo girar até se alinhar com a linha principal
 
 Walk_Detour.py -> Função que calcula o tempo que o robô deve andar na direção em que desvia do obstáculo
+
+IMU_yaw.py --> Arquivo com a função que retorna o yaw
