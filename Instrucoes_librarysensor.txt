@@ -1,48 +1,25 @@
-Ativar I2C no Raspberry Pi
-Habilite a conexão I2C do Raspberry Pi usando raspi-config.
-$ sudo raspi-config
-"Opções de Interface" ⇒ "P5 I2C" ⇒ "Sim"
+https://learn.adafruit.com/adafruit-vl53l0x-micro-lidar-distance-sensor-breakout/python-circuitpython
 
-Confirmação de comunicação com VL53L0X e confirmação do canal I2C
+You'll need to install the Adafruit CircuitPython VL53L0X library on your CircuitPython board.
 
-$sudo apt-get update
-$sudo apt-get upgrade
-$ sudo apt-get dist-upgrade
-$sudo apt-get install python-dev and python3-dev
+First make sure you are running the latest version of Adafruit CircuitPython for your board.
 
-$sudo apt-get -y install python-smbus i2c-tools
-$sudo i2cdetect -y 1
+Next you'll need to install the necessary libraries to use the hardware--carefully follow the steps to find and install these libraries from Adafruit's CircuitPython library bundle.  Our introduction guide has a great page on how to install the library bundle for both express and non-express boards.
 
-Baixar, descompactar e copiar a API VL53L0X API p/ rasp
-<https://www.st.com/content/st_com/en/products/embedded-software/proximity-sensors-software/stsw-img005.html>
+Remember for non-express boards like the, you'll need to manually install the necessary libraries from the bundle:
 
-Compile a API VL53L0X no Raspberry Pi
+adafruit_vl53l0x.mpy
+adafruit_bus_device
+You can also download the adafruit_vl53l0x.mpy from its releases page on Github.
 
-O makefile para compilar a API VL53L0X no Raspberry Pi está disponível em
- "https://github.com/cassou/VL53L0X_rasp",
- portanto, baixe-o em seu diretório inicial com o seguinte comando.
-$ cd ~
-$ git clone https://github.com/cassou/VL53L0X_rasp
-Em seguida, vá para o diretório baixado e especifique a API
-( VL53L0X_1.0.2 ) salva no Raspberry Pi anteriormente para compilar.
-$ cd VL53L0X_rasp
-$ API_DIR = ~ / VL53L0X_1.0.2 make
-Como é um grande negócio, vamos compilar e executar o programa de amostra da 
-linguagem C salvo em VL53L0X_rasp.
-$ API_DIR = path / to / the / api / dir faça exemplos
-$ ./bin/vl53l0x_ContinuousRanging_Example
+Before continuing make sure your board's lib folder or root filesystem has the adafruit_vl53l0x.mpy, and adafruit_bus_device files and folders copied over.
+
+Next connect to the board's serial REPL so you are at the CircuitPython >>> prompt.
 
 
-Usando VL53L0X com Python
-Instale os módulos necessários para VL53L0X_rasp_python
-$ sudo apt-get install build-essential python-dev
+You'll need to install the Adafruit_Blinka library that provides the CircuitPython support in Python. This may also require enabling I2C on your platform and verifying you are running Python 3. Since each platform is a little different, and Linux changes often, please visit the CircuitPython on Linux guide to get your computer ready!
 
-Instale VL53L0X_rasp_python
-$ cd ~
-$ git clone https://github.com/johnbryanmoore/VL53L0X_rasp_python.git
-$ cd VL53L0X_rasp_python
-$ make
+Once that's done, from your command line run the following command:
 
-Vamos executar o programa de amostra aqui também
-          $ cd python
-$ python VL53L0X_example.py
+sudo pip3 install adafruit-circuitpython-vl53l0x
+If your default Python is version 3 you may need to run 'pip' instead. Just make sure you aren't trying to use CircuitPython on Python 2.x, it isn't supported!
