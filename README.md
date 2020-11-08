@@ -22,4 +22,4 @@ Giro.py -> Arquivo com função que faz o robo girar até se alinhar com a linha
 
 Walk_Detour.py -> Função que calcula o tempo que o robô deve andar na direção em que desvia do obstáculo
 
-IMU_yaw.py --> Arquivo com a função que retorna o yaw
+get_yaw.py --> Arquivo com a função que retorna o yaw
