@@ -1,133 +1,139 @@
 # -*- coding: utf-8 -*-
 """
-Arquivo contendo as classes e funçoes utilizadas no arquivo main_INTEL_humanoid_2020.py
+Função principal do projeto Humanoide RoboIME 2020
 
-@autor: Mateus Souza
+Tomada de decisão para transição entre os estados
+Feita para ser utilizada em Raspberry Pi
+Primeira versao
+
+    OBSERVAÇÕES:
+    
+Ainda não importa os arquivos que terão as funções Decisao_desvio(), corrigirDirecao(),
+direcao_desvio() nem Desvio().
+
+O angulo de visão do sensor VL53L0X é de 25°
+
+Decisao_desvio()  --> funçao que determina para qual lado o robo tem que girar para desviar (SEPPE)
+direcao_desvio    --> funçao que mantem o robo girando até atingir a direçao correta pra realizar o desvio (CLARISSE)
+Desvio()          --> funçao que mantem o robo andando até ultrapassar o obstaculo desviado  (DOMINGOS)
+corrigirDirecao() --> funçao que mantem o robo girando até voltar para a direçao padrao da pista (DOMINGOS)
+
+
+@autores: Mateus Souza, Mateus Seppe, Matheus Domingos e Clarisse Rufino
 """
 
 ######################## BIBLIOTECAS #############################
-from math import degrees
 import time
+import serial
+import math
+import RTIMU
+import get_yaw as Direcao
+import RPi.GPIO as GPIO
+import classes_funcoes_INTEL_humanoide as Estado
 import VL53L0X
-import IMU_yaw as Direcao
-import numpy as np
-import line_detector      #arquivos relacionados a visao computacional
-import ob_detector
-import cv2
 ######################## CONSTANTES #############################
+channel = 18                    #porta utilizada
+porta = "/dev/ttyS0"
+baudrate = 9600                 #deve igualar a da myrio
+GPIO.setmode(GPIO.BCM)          #configuraçoes das rasp
+GPIO.setup(channel, GPIO.OUT)
+
+tof = VL53L0X.VL53L0X()         # Criando o objeto associado ao sensor VL53L0X
+tof.start_ranging(VL53L0X.VL53L0X_BETTER_ACCURACY_MODE)  #configurando alcance e precisao do sensor
+
+SETTINGS_FILE = "/home/pi/IMU/RTEllipsoidFit/RTIMULib.ini"     #
+                                                                #iniciando o sensor giroscopio
+s = RTIMU.Settings(SETTINGS_FILE)                               #
+imu = RTIMU.RTIMU(s)                                            #
+
+imu.IMUInit()               #
+imu.setSlerpPower(0.02)     #   confirgurações giroscopio
+imu.setGyroEnable(True)     #
+imu.setAccelEnable(True)    #
+imu.setCompassEnable(True)  #
+
+poll_interval = imu.IMUGetPollInterval()
+
 
 intervalo = 0.1       #intervalo, em segundos, aceitavel entre as verificações de obstaculo e direção
 yaw_0 = 0         #direçao da pista de corrida (direçao padrao)
 Yaw = ([0])         #direçao instantanea de movimento do robo na pista, armazenada em formato lista
 limDyaw = 10    #limite aceitavel, em graus, para diferença entre a direçao instantanea e a direçao correta
-Dist = ([1000])       #menor distancia instantanea obtida pelo sensor, armazenada em formato lista
-Vmed = 5                #velocidade media do robo, usada como argumento da funçao Desvio()
-Dmin = 20               #Distancia, em cm, a partir da qual o obstáculo é considerado "detectado" pra iniciar desvio
+Dist = ([100])       #menor distancia instantanea obtida pelo sensor, armazenada em formato lista
+Tmed = 5                #tempo medio, em segundos, pro robo andar 2cm, usado como argumento da funçao Desvio()
+Dmin = 46               #Distancia, em cm, a partir da qual o obstáculo é considerado "detectado" pra iniciar desvio
 
-tof = VL53L0X.VL53L0X()         # Criando o objeto associado ao sensor VL53L0X
-tof.start_ranging(VL53L0X.VL53L0X_BETTER_ACCURACY_MODE)  #configurando alcance e precisao do sensor
+ANDAR=0                 #
+GIRAR_ESQUERDA=1        #legenda dos estados
+GIRAR_DIREITA=2         #
+PARAR=3                 #
 
-######################## CLASSES #############################
+ser = serial.Serial(porta,baudrate)       #configura a porta serial para fazer comunicação com a myrio
 
-class estado:
-    """ classe para armazenar o estado instantaneo do robo humanoide """
-    
-    def __init__ (self, initName):
+
+######################## Função main ############################
+Atual = Estado.estado(3) #iniciando no estado PARAR
+ser.write(Atual.getName()) #envia o estado atual pra porta serial, pra ser lido depois pela myrio
+
+print("Programa rodando... pode ser interrompido usando CTRL+C")
+try:                    #utilizado pra possibilitar o programa ser interrompido
+    while True:
+        print("Estado padrao")
+        Atual = Estado.estado(0)        #Começar a andar
+        ser.write(Atual.getName())    
+             
+        Dist[0] = tof.get_distance()/10 #distancia obtida pelo sensor em centimetros
+        Yaw[0] = Direcao.get_yaw(intervalo)
         
-        self.name = initName #armazena o nome do estado, associando ele a um numero
-                             #0: estado ANDAR #1: estado GIRAR PARA ESQUERDA
-                             #2: estado GIRAR PARA DIREITA #3: estado PARAR                
-        #definindo o atributo state:  armazena se há necessidade ou não de corrigir o estado (0 ou 1)
-        if (initName == 1):
-            self.state = 0 #se o estado for ANDAR, nao há necessidade de correçao
-        else:
-            self.state = 1
+        if (Dist[0] <= Dmin):
+            print ("obstaculo detectado")
+            Atual = Estado.estado(3)    #parar para começar a desviar do obstaculo
+            ser.write(Atual.getName())
             
-    def getState(self):         #retorna se há necessidade de correçao
-        return (self.state)
-    
-    def getName(self):          #retorna o numero associado ao estado
-        print("estado atual:")
-        print(self.state)
-        return(self.name)
-    
-    def __str__(self):          #string associada ao objeto do tipo "estado", será mostrada ao printar um objeto desse tipo
-        if (self.name == 0):
-            need = "  NAO ha necessidade de correcao"
-            nome = "ANDAR\n"
-        elif (self.name == 1):
-            need ="  Ha necessidade de correcao"
-            nome = "GIRAR PARA ESQUERDA\n"
-        elif (self.name == 2):
-            need ="  Ha necessidade de correcao"
-            nome = "GIRAR PARA DIREITA\n"
-        elif (self.name == 3):
-            need ="  Ha necessidade de correcao"
-            nome = "PARAR\n"
-        else:
-            need = "  Corrija o estado manualmente"
-            nome = "Inexistente\n"            
-        return "  Numero associado ao estado atual: " + str(self.name) +  ".\n  Estado: " + nome + need
-    
-######################## FUNÇOES #############################  
-    
-"""A função giro fará o robo parar de girar quando se alinhar a direção zero, então o que queremos
- é que o yaw volte ao yaw inicial yaw_0"""
-def giro(ang):#Deixe como argumento aqui o próprio Yaw
-    while True:
-        print("ainda nao corrigiu direcao")
-        if abs(Direcao.get_yaw()) <1:
-            break
-    return 3
-
-
-"""Funçao auxiliar cronometro"""
-def cronometro(t): #t é o tempo em segundos 
-    start = time.time()
-    for x in range(t):
-        time.sleep(1)
-        if time.time() - start > t:
-            break
-    return True
-
-
-"""Apos avistar um alvo a uma distancia d, o robo deu uma virada até parar de vizualiza-lo
-Por meio de geometria, pode-se ver que a distancia que ele deve andar é d*cos(12,5-yaw)/cos(yaw)
-Assim iremos criar uma função cujos argumentos são a distancia avistada e o angulo yaw já medido
-Retornaremos 3 para ele parar de andar, ou seja, após ele ultrapassar o obstáculo"""
-def Walk_Detour(Dist, Yaw): #A velocidade Vmed será medida e utilisaremos a velocidade média
-   d=Dist[0]*np.cos((np.pi /180 )*(12.5-Yaw[0]))/np.cos(np.pi/180 *Yaw[0])
-   t=(d)/Vmed
-
-   while True:
-       print("ainda nao ultrapassou")
-        if cronometro(t):
-            break
-   return 3
-
-"""Funçao que mantem o robo girando até obter a direçao de desvio do obstaculo"""
-def direcao_desvio(Yaw, Dist):
-    #distancia_0 = 0
-    Dist[0] = tof.get_distance()/10      #começa atualizando a distancia
-    while True:
-        print("ainda nao desviou")
-        distancia_atual = Dist[0]               
-        if distancia_atual > Dmin:
-            Dist[0] = distancia_atual
-            Yaw[0] = Direcao.get_yaw()
-            print("direçao de desvio obtida")
-            return 3
-        time.sleep(0.1)                     #intervalo de segurança
-        Dist[0] = tof.get_distance()/10  #atualiza o valor da distancia
-        Yaw[0] = Direcao.get_yaw()           #atualiza a direcao
+            time.sleep(3) #apenas pra teste
+            
+            Atual = Estado.estado(Estado.Decisao_desvio()) #obtem o lado para o qual deve girar e retorna 1 ou 2 (esquerda ou direita)
+            ser.write(Atual.getName())
+            
+            time.sleep(1) #apenas pra teste
+            
+            Atual = Estado.estado(Estado.direcao_desvio(Yaw,Dist))    #retorna 3 depois que obter a direcao de desvio apos girar suficiente
+            ser.write(Atual.getName())
+            
+            time.sleep(1) #apenas pra teste
+            
+            Atual = Estado.estado(0)                #volta a andar pra ultrapassar o obstaculo
+            ser.write(Atual.getName())
+            
+            time.sleep(1) #apenas pra teste
+            
+            Atual = Estado.estado(Estado.Walk_Detour(Dist,Yaw))     #funçao retorna "3" dps que o robo terminar de ultrapassar, alem de alterar os valores
+            ser.write(Atual.getName())                  # de Yaw e Dist obtidos no fim do processo
+            print("obstaculo ultrapassado")
+            
+        if ((Yaw[0]) < (-limDyaw)):  
+            print("direçao incorreta - virado para DIREITA")
+            Atual = Estado.estado(2)    #se a diferença for negativa, tem que girar para direita
+            ser.write(Atual.getName())
+            
+            Atual = Estado.estado(Estado.giro()) #funçao retorna "3" dps que o robo corrigir a direçao
+            ser.write(Atual.getName())
+            print("direçao corrigida")
         
-"""Funçao auxiliar, ocupa lugar da funçao que determina o lado para o qual deve desviar"""
-def Decisao_desvio():
-    print("deve girar para ESQUERDA")
-    return 1
+        if ((Yaw[0]) > limDyaw):
+            print("direçao incorreta - vire para ESQUERDA")
+            Atual = Estado.estado(1)    #se a diferença for positiva, tem que girar para esquerda
+            ser.write(Atual.getName())
+            
+            Atual = Estado.estado(Estado.giro()) #funçao retorna "3" dps que o robo corrigir a direçao
+            ser.write(Atual.getName())
+            print("direçao corrigida")
+            
+        
+except KeyboardInterrupt:
+    print(" CTRL+C detectado. O loop foi interrompido.")
+
+Atual = Estado.estado(3)        #parar os motores por questao de segurança
+ser.write(Atual.getName())
+print(Atual)
     
-    
-#"""funçao de teste"""
-#def teste_v():
-#    print(Dmin)             # testando o uso de variaveis declaradas fora da funçao
-#    print ("deveria printar 46")    #funcionou
