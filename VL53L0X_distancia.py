@@ -14,9 +14,8 @@ Created on Sept 2020
 
 ######################## Libraries #############################
 
-import board
-import busio
-import adafruit_vl53l0x                        
+import time
+import VL53L0X                       
 
 
 
@@ -24,9 +23,12 @@ import adafruit_vl53l0x
 ##"""Função"""
 #Função que pede a distancia:
 def Get_Distance(): 
-    i2c = busio.I2C(board.SCL, board.SDA)
-    sensor = adafruit_vl53l0x.VL53L0X(i2c)
-    return sensor.range
+    # Criar um objeto VL53L0X
+    tof = VL53L0X.VL53L0X()
+ 
+    # Colocar o modo de medida
+    tof.start_ranging(VL53L0X.VL53L0X_BETTER_ACCURACY_MODE)
+    distance = tof.get_distance()
     
-    return dist
+    return distance
     
