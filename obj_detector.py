@@ -3,7 +3,7 @@ def obj_detector(img): #Argumento imagem #Retorno o ponto médio da linha mais b
     
     #HLS filtro
     lower=np.array([0,0,0])
-    upper=np.array([60,255,255])
+    upper=np.array([30,255,255])
     
     #A placa nos envia a imagem rotacionada, vamos então aqui rotacionar a imagem usando o centro como origem:
     (alt, lar) = image.shape[:2] #captura altura e largura
@@ -17,12 +17,12 @@ def obj_detector(img): #Argumento imagem #Retorno o ponto médio da linha mais b
     hls = cv2.cvtColor(image1, cv2.COLOR_BGR2HLS) #Converter o COLORSPACE
     orangemask=cv2.inRange(hls, lower,upper) #Criação da mascara para objetos laranja
     
-    edges=cv2.Canny(orangemask,150,240,apertureSize=3) #Usamos o canny para pegar os contornos
+    edges=cv2.Canny(orangemask,100,240,apertureSize=3) #Usamos o canny para pegar os contornos
 
     #cv2.imwrite('edges'+str(n+1)+".jpeg",edges)
     #cv2.imwrite('mask'+str(n+1)+".jpeg",orangemask)
     
-    minLineLength=150 #Parametro da HoughLines
+    minLineLength=130 #Parametro da HoughLines
     
     #Utlizar HoughLinesP para retornar x1 y1 x2 y2
     lines = cv2.HoughLinesP(edges,rho=1,theta=np.pi/180, threshold=100,lines=np.array([]), minLineLength=minLineLength,maxLineGap=20)
