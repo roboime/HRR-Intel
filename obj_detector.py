@@ -47,7 +47,7 @@ def obj_detector(img): #Argumento imagem #Retorno o ponto médio da linha mais b
             ymax2=lines[i][0][3]
             k2=i
     medy=(ymax1+ymax2)/2 #Ponto médio em y
-    medx=(lines[i][0][0]+lines[i][0][2])/2 #Ponto médio em x
+    medx=(lines[k1][0][0]+lines[k2][0][2])/2 #Ponto médio em x
         
 
 
