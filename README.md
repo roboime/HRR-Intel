@@ -25,3 +25,6 @@ Walk_Detour.py -> Função que calcula o tempo que o robô deve andar na direç�
 get_yaw.py --> Arquivo com a função que retorna o yaw
 
 serial_teste.py --> Arquivo pra testar comunicação serial entre rasp 4 e myrio
+
+HoughLinesP.py --> Arquivo para traçar linhas e imagem simultaneamente.. bônus: edge e mask
+ 
