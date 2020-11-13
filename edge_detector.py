@@ -5,6 +5,11 @@ import cv2
 def flinha():
     image = cv2.imread('p5_1.jpg')
     # inserir o caminho da imagem manualmente
+    M = cv2.getRotationMatrix2D(centro, 180, 1.0)
+    (alt, lar) = img.shape[:2] #captura altura e largura
+    centro = (lar // 2, alt // 2) #acha o centro
+    
+    image = cv2.warpAffine(image, M, (lar, alt)
     hls = cv2.cvtColor(image, cv2.COLOR_BGR2HLS)
     lower = np.array([0, 0, 0])
     upper = np.array([255, 70, 255])
