@@ -19,7 +19,7 @@ import numpy as np
 intervalo = 0.5       #intervalo, em segundos, aceitavel entre as verificações de obstaculo e direção
 yaw_0 = 0         #direçao da pista de corrida (direçao padrao)
 Yaw = ([0])         #direçao instantanea de movimento do robo na pista, armazenada em formato lista
-limDyaw = 10    #limite aceitavel, em graus, para diferença entre a direçao instantanea e a direçao correta
+limDyaw = 10   #limite aceitavel, em graus, para diferença entre a direçao instantanea e a direçao correta
 Dist = ([1000])       #menor distancia instantanea obtida pelo sensor, armazenada em formato lista
 Vmed = 5                #velocidade media do robo, usada como argumento da funçao Desvio()
 Dmin = 20               #Distancia, em cm, a partir da qual o obstáculo é considerado "detectado" pra iniciar desvio
@@ -79,7 +79,7 @@ def giro(ang):                      #o argumenta é o delta de angulo aceitavel
     
     while True:
         print("ainda nao corrigiu direcao")
-        if abs(Direcao.get_yaw(intervalo)) < ang:
+        if abs((Direcao.get_yaw(intervalo)-yaw_0) < ang):
             print("Direçao detectada: {}".format(Direcao.get_yaw(intervalo)))
             print("corrigido o yaw")
             break
