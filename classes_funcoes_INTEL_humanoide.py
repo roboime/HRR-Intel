@@ -36,38 +36,40 @@ class estado:
         
         self.name = initName #armazena o nome do estado, associando ele a um numero
                              #0: estado ANDAR #1: estado GIRAR PARA ESQUERDA
-                             #2: estado GIRAR PARA DIREITA #3: estado PARAR                
+                             #2: estado GIRAR PARA DIREITA #3: estado PARAR   
+                             
         #definindo o atributo state:  armazena se há necessidade ou não de corrigir o estado (0 ou 1)
-        if (initName == 1):
-            self.state = 0 #se o estado for ANDAR, nao há necessidade de correçao
-        else:
-            self.state = 1
+#        if (initName == 1):
+#            self.state = 0 #se o estado for ANDAR, nao há necessidade de correçao
+#        else:
+#            self.state = 1
             
     def getState(self):         #retorna se há necessidade de correçao
         return (self.state)
     
-    def getName(self):          #retorna o numero associado ao estado
-        print("estado atual:")
-        print(self.name)
-        return(self.name)
+    def getName(self):          #retorna o numero associado ao estado em formato string, pois facilita a leitura 
+        print("estado atual:")  #pela comunicação serial
+        print(str(self.name))
+        return(str(self.name))
     
     def __str__(self):          #string associada ao objeto do tipo "estado", será mostrada ao printar um objeto desse tipo
         if (self.name == 0):
             need = "  NAO ha necessidade de correcao"
             nome = "ANDAR\n"
         elif (self.name == 1):
-            need ="  Ha necessidade de correcao"
+            need ="  Deve estar girando para esquerda"
             nome = "GIRAR PARA ESQUERDA\n"
         elif (self.name == 2):
-            need ="  Ha necessidade de correcao"
+            need ="  Deve estar girando para direita"
             nome = "GIRAR PARA DIREITA\n"
         elif (self.name == 3):
-            need ="  Ha necessidade de correcao"
+            need ="  Deve estar parado"
             nome = "PARAR\n"
         else:
             need = "  Corrija o estado manualmente"
             nome = "Inexistente\n"            
-        return "  Numero associado ao estado atual: " + str(self.name) +  ".\n  Estado: " + nome + need
+        return "Numero associado ao estado atual: " + str(self.name) +  ".\n  Estado: " + nome + need + "\n"
+    
     
 ######################## FUNÇOES #############################  
     
@@ -77,19 +79,21 @@ def giro(ang):                      #o argumenta é o delta de angulo aceitavel
     
     while True:
         print("ainda nao corrigiu direcao")
-        if abs(Direcao.get_yaw()) < ang:
+        if abs(Direcao.get_yaw(intervalo)) < ang:
+            print("Direçao detectada: {}".format(Direcao.get_yaw(intervalo)))
+            print("corrigido o yaw")
             break
-    return 3
+    return "3"
 
 
 """Funçao auxiliar cronometro"""
-def cronometro(t): #t é o tempo em segundos 
-    start = time.time()
-    for x in range(t):
-        time.sleep(1)
-        if time.time() - start > t:
-            break
-    return True
+#def cronometro(t): #t é o tempo em segundos 
+#    start = time.time()
+#    for x in range(t):
+#        time.sleep(1)
+#        if time.time() - start > t:
+#            break
+#    return True
 
 
 """Apos avistar um alvo a uma distancia d, o robo deu uma virada até parar de vizualiza-lo
@@ -107,7 +111,7 @@ def Walk_Detour(Dist, Yaw): #A velocidade Vmed será medida e utilisaremos a vel
        t_1 = time.time()
        if ((t_1 - t_0) >= t):
             break
-   return 3
+   return "3"
 
 """Funçao que mantem o robo girando até obter a direçao de desvio do obstaculo"""
 def direcao_desvio(Yaw, Dist):
@@ -115,20 +119,21 @@ def direcao_desvio(Yaw, Dist):
     Dist[0] = tof.get_distance()/10      #começa atualizando a distancia
     while True:
         print("ainda nao desviou")
-        distancia_atual = Dist[0]               
+        distancia_atual = Dist[0]
         if distancia_atual > Dmin:
             Dist[0] = distancia_atual
-            Yaw[0] = Direcao.get_yaw()
+            Yaw[0] = Direcao.get_yaw(intervalo)
             print("direçao de desvio obtida")
-            return 3
+            return "3"
         time.sleep(0.1)                     #intervalo de segurança
         Dist[0] = tof.get_distance()/10  #atualiza o valor da distancia
         Yaw[0] = Direcao.get_yaw()           #atualiza a direcao
         
+        
 """Funçao auxiliar, ocupa lugar da funçao que determina o lado para o qual deve desviar"""
 def Decisao_desvio():
     print("deve girar para ESQUERDA")
-    return 1
+    return "1"
     
     
 #"""funçao de teste"""
