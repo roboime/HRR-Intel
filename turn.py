@@ -17,7 +17,7 @@ def rotate():
     #image = camera.capture('/home/pi/image.jpg')
     # camera.stop_preview()
     x, y = obj_detector.xy()
-    poly_left, poly_right, j = edge_detector.flinha()
+    poly_left, poly_right, j = edge_detector.edge()
 
     # inserir o caminho da imagem manualmente
     # j = 1: linha central. j = 2: borda direita. j = 3: borda esquerda. j = 0: nenhuma borda
