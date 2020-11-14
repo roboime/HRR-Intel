@@ -6,7 +6,7 @@ Arquivo contendo as classes e funçoes utilizadas no arquivo main_INTEL_humanoid
 """
 
 ######################## BIBLIOTECAS #############################
-from math import degrees
+#from math import degrees
 import time
 import VL53L0X
 import get_yaw as Direcao
