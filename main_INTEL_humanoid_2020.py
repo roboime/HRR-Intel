@@ -59,7 +59,7 @@ intervalo = 0.1       #intervalo, em segundos, aceitavel entre as verificações
 dt = 1              #intervalo para facilitar teste da main enquanto nao temos o robo
 yaw_0 = 0         #direçao da pista de corrida (direçao padrao)
 Yaw = ([0])         #direçao instantanea de movimento do robo na pista, armazenada em formato lista
-limDyaw = 18    #limite aceitavel, em graus, para diferença entre a direçao instantanea e a direçao correta
+limDyaw = 10    #limite aceitavel, em graus, para diferença entre a direçao instantanea e a direçao correta
 Dist = ([100])       #menor distancia instantanea obtida pelo sensor, armazenada em formato lista
 Tmed = 5                #tempo medio, em segundos, pro robo andar 2cm, usado como argumento da funçao Desvio()
 Dmin = 46               #Distancia, em cm, a partir da qual o obstáculo é considerado "detectado" pra iniciar desvio
@@ -84,7 +84,7 @@ try:                    #utilizado pra possibilitar o programa ser interrompido
         ser.write(Atual.getName())    
              
         Dist[0] = tof.get_distance()/10 #distancia obtida pelo sensor em centimetros
-        Yaw[0] = Direcao.get_yaw(intervalo)
+        Yaw[0] = (Direcao.get_yaw(intervalo)-yaw_0)
         
         """if (Dist[0] <= Dmin):
             print ("obstaculo detectado")
