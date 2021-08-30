@@ -105,7 +105,7 @@ try:
             else:
                 Atual.trocar_para(GIRAR_ESQUERDA)
             serial_output.write(Atual.getName())
-            Atual.name = Estado.girando(angulo_limite/2) 
+            Atual.trocar_para(Estado.quando_parar_de_alinhar(angulo_limite/2)) 
             serial_output.write(Atual.getName())
             print("direçao corrigida")
             
