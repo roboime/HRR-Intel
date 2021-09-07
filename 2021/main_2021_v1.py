@@ -16,7 +16,10 @@ Baseado em main_INTEL_humanoid_2020
 
 import time
 import serial
+
 import numpy as np
+import math
+
 import RTIMU
 import get_yaw as Direcao
 import RPi.GPIO as GPIO
