@@ -16,43 +16,19 @@ Baseado em main_INTEL_humanoid_2020
 
 import time
 import serial
+
+import numpy as np
 import math
+
 import RTIMU
 import get_yaw as Direcao
 import RPi.GPIO as GPIO
-import classes_funcoes_INTEL_humanoide as Estado
+import classes
 import VL53L0X
 
-#Configuracoes dos sensores
-channel = 18                    #porta utilizada
-GPIO.setmode(GPIO.BCM)          #configuraçoes das rasp
-GPIO.setup(channel, GPIO.OUT)
 
-    #configurando a porta serial para se comunicar com a myrio, a porta dela nao eh a AMA0
-porta = "/dev/ttyAMA0"          
-baudrate_myrio = 230400                 
-serial_output = serial.Serial(porta,baudrate_myrio)       
-
-sensor_distancia = VL53L0X.VL53L0X()         
-    #configurando alcance e precisao do sensor
-sensor_distancia.start_ranging(VL53L0X.VL53L0X_BETTER_ACCURACY_MODE)  
-
-    #iniciando o sensor giroscopio
-SETTINGS_FILE = "/home/pi/giroscopio/RTEllipsoidFit/RTgiroscopioLib.ini"     
-settings = RTgiroscopio.Settings(SETTINGS_FILE)                               
-giroscopio = RTgiroscopio.RTgiroscopio(settings)                                            
-giroscopio.giroscopioInit()               
-giroscopio.setSlerpPower(0.02)     
-giroscopio.setGyroEnable(True)     
-giroscopio.setAccelEnable(True)    
-giroscopio.setCompassEnable(True)  
 
 #Variaveis auxiliares
-intervalo_verificacoes = 0.1             
-angulo_inicial = 0          
-angulo_atual = ([0])        
-angulo_limite = 10          
-distancia_atual = ([999])              
 percorrer_2cm = 5                
 distancialimite = 46  
 
@@ -61,7 +37,11 @@ GIRAR_ESQUERDA="1"
 GIRAR_DIREITA="2"         
 PARAR="3"                 
 
+# Configurações iniciais
+
+
 #Funcao main
+
 Atual = Estado.estado(PARAR) 
 serial_output.write(Atual.name)
 
