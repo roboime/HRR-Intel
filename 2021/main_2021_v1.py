@@ -19,18 +19,20 @@ import serial
 
 import numpy as np
 import math
-
 import RTIMU
 import get_yaw as Direcao
 import RPi.GPIO as GPIO
 import classes
 import VL53L0X
 
+import funcoes
 
 
-#Variaveis auxiliares
-percorrer_2cm = 5                
-distancialimite = 46  
+#Variaveis auxiliares, a velocidade esta em cm/seg
+velocidade = ???                
+distancialimite = 46
+angulo_limite = 10 
+largura_do_robo = ???
 
 ANDAR="0"                 
 GIRAR_ESQUERDA="1"        
@@ -39,63 +41,49 @@ PARAR="3"
 
 # Configurações iniciais
 
+estado = classes.Classe_estado()
+myrio = classes.Classe_porta_serial()
+estado.Trocar_estado(PARAR, myrio)
+
+s_distancia = classes.Classe_distancia()
+
+giroscopio = classes.Classe_giroscopio()
+
 
 #Funcao main
 
-Atual = Estado.estado(PARAR) 
-serial_output.write(Atual.name)
 
 print("Programa rodando... pode ser interrompido usando CTRL+C")
 try:                    
     while True:
         print("Estado padrao")
-        Atual.trocar_para(ANDAR)
-        serial_output.write(Atual.getName())    
+        estado.Trocar_estado(PARAR, myrio)  
         
-        #ocorre divisao por 10 para passar para cm
-        distancia_atual[0] = sensor_distancia.get_distance()/10 
-        angulo_atual[0] = Direcao.get_angulo_atual(intervalo_verificacoes) - angulo_inicial
-        
-        if (distancia_atual[0] <= distancialimite):
+        if (s_distancia.Get_distance() <= distancialimite):
             print ("obstaculo detectado")
-            Atual.trocar_para(PARAR)    
-            serial_output.write(Atual.getName())
-            Atual.trocar_para(Estado.Decisao_desvio()) 
-            serial_output.write(Atual.name)                    
+            estado.Trocar_estado(PARAR, myrio)
+            estado.Trocar_estado(estado.Decisao_desvio(), myrio)             
             
-            if (Atual.name == GIRAR_ESQUERDA or Atual.name == GIRAR_DIREITA):            
-                Atual.trocar_para(Estado.quando_parar_de_girar(angulo_atual,distancia_atual))    
-                serial_output.write(Atual.name)
-                
-                Atual.trocar_para(ANDAR)
-                serial_output.write(Atual.name)
-                
-                Atual.trocar_para(Estado.quando_parar_de_andar(distancia_atual,angulo_atual))
-                serial_output.write(Atual.name)                  
-                
-            print("obstaculo ultrapassado")
+            if (estado.atual == GIRAR_ESQUERDA or estado.atual == GIRAR_DIREITA):            
+                estado.Trocar_estado(funcoes.quando_parar_de_girar(giroscopio,s_distancia), myrio)    
+                estado.Trocar_estado(ANDAR, myrio)
+                estado.Trocar_estado(funcoes.quando_parar_de_andar(giroscopio,s_distancia, velocidade, largura_do_robo), myrio)
+                print("obstaculo ultrapassado")
             
-            
-
-        angulo_atual[0] = Direcao.get_angulo_atual(intervalo_verificacoes) - angulo_inicial
-        if (np.abs((angulo_atual[0])) > angulo_limite):  
+        if (np.abs((giroscopio.Obter_angulo_yaw())) > angulo_limite):  
             print("desalinhado com a pista")
-            if angulo_atual[0] > 0:
-                Atual.trocar_para(GIRAR_DIREITA)
+            if giroscopio.Obter_angulo_yaw() > 0:
+                estado.Trocar_estado(GIRAR_DIREITA, myrio)
             else:
-                Atual.trocar_para(GIRAR_ESQUERDA)
-            serial_output.write(Atual.getName())
-            Atual.trocar_para(Estado.quando_parar_de_alinhar(angulo_limite/2)) 
-            serial_output.write(Atual.getName())
+                estado.Trocar_estado(GIRAR_ESQUERDA, myrio)
+
+            estado.Trocar_estado(funcoes.quando_parar_de_alinhar(angulo_limite/2, giroscopio)) 
             print("direçao corrigida")
             
         
 except KeyboardInterrupt:
-    Atual.trocar_para(PARAR)    
-    serial_output.write(Atual.getName())
+    estado.Trocar_estado(PARAR, myrio)
     print(" CTRL+C detectado. O loop foi interrompido.")
 
-Atual.trocar_para(PARAR)
-serial_output.write(Atual.getName())
-print(Atual)
+estado.Trocar_estado(PARAR, myrio)
     

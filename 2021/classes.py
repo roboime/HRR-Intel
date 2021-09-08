@@ -1,3 +1,4 @@
+from main_2021_v1 import Atual
 import serial
 import RPi.GPIO as GPIO
 import RTIMU
@@ -6,7 +7,7 @@ import pickle
 import time
 import math
 
-
+## ideia: setar o angulo inicial como sendo a primeira leitura do sensor em vez de ser 0
 class Classe_giroscopio():
     def __init__(self):
         ########################################## configurações do sensor giroscópio ##########################################
@@ -52,13 +53,17 @@ class Classe_distancia():
         self.sensor_distancia.start_ranging(VL53L0X.VL53L0X_BETTER_ACCURACY_MODE)     #configurando alcance e precisao do sensor
         
         self.Save_config(self)
+        self.anterior = 100
+        self.atual = 100
 
     def Save_config(self, obj):
         with open('VL53L0X_config.pkl', 'wb') as outp:  
             pickle.dump(obj, outp, pickle.HIGHEST_PROTOCOL)                             # guarda o objeto criado no arquivo .pkl
-
+    #ocorre divisao por 10 para passar para cm
     def Get_distance(self):
-        return self.sensor_distancia.get_distance()/10                               # retorna a distância até o obstáculo em cm
+        self.anterior = self.atual
+        self.atual = self.sensor_distancia.get_distance()/10
+        return self.atual                             # retorna a distância até o obstáculo em cm
 
 
 
@@ -86,25 +91,26 @@ class Classe_porta_serial():
 
 class Classe_estado:
     def __init__(self):
-        self.atual = 0
+        self.atual = "0"
 
     def Obter_estado_atual(self):
         return self.atual
 
-    def Trocar_estado(self, state):
+    def Trocar_estado(self, state, myrio):
         self.atual = state
+        myrio.Escrever_estado(state)
     
     def __str__(self):          #string associada ao objeto de "Classe_estado". Será mostrada ao printar um objeto desse tipo
-        name = {   0 : "PARAR",
-                        1 : "ANDAR",                      #Dicionário que associa o índice do estado ao nome
-                        2 : "GIRAR PARA ESQUERDA",
-                        3 : "GIRAR PARA DIREITA"
+        name = {    '0' : "PARAR",
+                    '1' : "ANDAR",                      #Dicionário que associa o índice do estado ao nome
+                    '2' : "GIRAR PARA ESQUERDA",
+                    '3' : "GIRAR PARA DIREITA"
                     }
         need = {
-            0 : "Deve estar parado",
-            1 : "NAO ha necessidade de correcao",         #Dicionário que associa o índice do estado à necessidade de correção
-            2 : "Deve estar girando para esquerda",
-            3 : "Deve estar girando para direita"
+            '0' : "Deve estar parado",
+            '1' : "NAO ha necessidade de correcao",         #Dicionário que associa o índice do estado à necessidade de correção
+            '2' : "Deve estar girando para esquerda",
+            '3' : "Deve estar girando para direita"
         }
         atual = self.Obter_estado_atual()
         return "Estado atual: " + name[atual] + ".\nÍndice: " + str(atual) + ".\nCorreção: " + need[atual] + "\n"
