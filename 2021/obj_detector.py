@@ -25,7 +25,7 @@ def ponto_medio_borda_inferior():
 
     minLineLength = 90  # Parametro da HoughLines
 
-    # Utlizar HoughLinesP para retornar x1 y1 x2 y2
+    # Utlizar HoughLinesP para retornar (x1,y1) (x2,y2)
     segmentos = cv2.HoughLinesP(lista_bordas, rho=1, theta=np.pi/180, threshold=100,
                             lines=np.array([]), minLineLength=minLineLength, maxLineGap=200)
 
@@ -37,7 +37,7 @@ def ponto_medio_borda_inferior():
 
     numero_segmentos, _, _ = segmentos.shape
 
-    #legenda de indices
+    #legenda de indices importantes em segmentos
     x1 = 0
     y1 = 1
     x2 = 2
@@ -48,7 +48,6 @@ def ponto_medio_borda_inferior():
         ymed_bloco_todo+=segmentos[i][0][1] + segmentos[i][0][3]
     ymed_bloco_todo/=2*numero_segmentos
 
-    # A padronização dos eixos no OpenCV é o eixo y para baixo, portanto ymax=-1 da sempre valores maiores que os medidos
     y_max = -1
     x_min = largura
     x_max = 0

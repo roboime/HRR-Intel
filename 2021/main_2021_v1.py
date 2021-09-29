@@ -15,87 +15,66 @@ Baseado em main_INTEL_humanoid_2020
 #Bibliotecas 
 
 import time
-import serial
-
 import numpy as np
 import math
-
-import RTIMU
-import get_yaw as Direcao
-import RPi.GPIO as GPIO
 import classes
-import VL53L0X
+import funcoes
 
 
+#Variaveis auxiliares, a velocidade esta em cm/seg
+#velocidade = ???                
+distancialimite = 46
+angulo_limite = 10 
+#largura_do_robo = ???
 
-#Variaveis auxiliares
-percorrer_2cm = 5                
-distancialimite = 46  
+ANDAR = "0"                 
+GIRAR_ESQUERDA = "1"        
+GIRAR_DIREITA = "2"         
+PARAR = "3"                 
 
-ANDAR="0"                 
-GIRAR_ESQUERDA="1"        
-GIRAR_DIREITA="2"         
-PARAR="3"                 
+# Configuracoes iniciais
 
-# Configurações iniciais
+estado = classes.Classe_estado()
+myrio = classes.Classe_porta_serial()
+s_distancia = classes.Classe_distancia()
+s_giroscopio = classes.Classe_giroscopio()
 
 
 #Funcao main
 
-Atual = Estado.estado(PARAR) 
-serial_output.write(Atual.name)
-
-print("Programa rodando... pode ser interrompido usando CTRL+C")
-try:                    
-    while True:
-        print("Estado padrao")
-        Atual.trocar_para(ANDAR)
-        serial_output.write(Atual.getName())    
-        
-        #ocorre divisao por 10 para passar para cm
-        distancia_atual[0] = sensor_distancia.get_distance()/10 
-        angulo_atual[0] = Direcao.get_angulo_atual(intervalo_verificacoes) - angulo_inicial
-        
-        if (distancia_atual[0] <= distancialimite):
-            print ("obstaculo detectado")
-            Atual.trocar_para(PARAR)    
-            serial_output.write(Atual.getName())
-            Atual.trocar_para(Estado.Decisao_desvio()) 
-            serial_output.write(Atual.name)                    
+def main():
+    print("Programa rodando... pode ser interrompido usando CTRL+C")
+    try:                    
+        while True:
+            print("Estado padrao")
+            estado.Trocar_estado(PARAR, myrio)  
             
-            if (Atual.name == GIRAR_ESQUERDA or Atual.name == GIRAR_DIREITA):            
-                Atual.trocar_para(Estado.quando_parar_de_girar(angulo_atual,distancia_atual))    
-                serial_output.write(Atual.name)
+            if (s_distancia.Get_distance() <= distancialimite):
+                print ("obstaculo detectado")
+                estado.Trocar_estado(PARAR, myrio)
+                estado.Trocar_estado(funcoes.decisao_desvio(), myrio)             
                 
-                Atual.trocar_para(ANDAR)
-                serial_output.write(Atual.name)
+                if (estado.atual == GIRAR_ESQUERDA or estado.atual == GIRAR_DIREITA):            
+                    estado.Trocar_estado(funcoes.quando_parar_de_girar(s_giroscopio,s_distancia), myrio)    
+                    estado.Trocar_estado(ANDAR, myrio)
+                    estado.Trocar_estado(funcoes.quando_parar_de_andar(s_giroscopio,s_distancia, velocidade, largura_do_robo), myrio)
+                    print("obstaculo ultrapassado")
                 
-                Atual.trocar_para(Estado.quando_parar_de_andar(distancia_atual,angulo_atual))
-                serial_output.write(Atual.name)                  
-                
-            print("obstaculo ultrapassado")
-            
-            
+            if (np.abs((s_giroscopio.Obter_angulo_yaw())) > angulo_limite):  
+                print("desalinhado com a pista")
+                if s_giroscopio.Obter_angulo_yaw() > 0:
+                    estado.Trocar_estado(GIRAR_DIREITA, myrio)
+                else:
+                    estado.Trocar_estado(GIRAR_ESQUERDA, myrio)
 
-        angulo_atual[0] = Direcao.get_angulo_atual(intervalo_verificacoes) - angulo_inicial
-        if (np.abs((angulo_atual[0])) > angulo_limite):  
-            print("desalinhado com a pista")
-            if angulo_atual[0] > 0:
-                Atual.trocar_para(GIRAR_DIREITA)
-            else:
-                Atual.trocar_para(GIRAR_ESQUERDA)
-            serial_output.write(Atual.getName())
-            Atual.trocar_para(Estado.quando_parar_de_alinhar(angulo_limite/2)) 
-            serial_output.write(Atual.getName())
-            print("direçao corrigida")
+                estado.Trocar_estado(funcoes.quando_parar_de_alinhar(angulo_limite/2, s_giroscopio)) 
+                print("direçao corrigida")
+                
             
+    except KeyboardInterrupt:
+        estado.Trocar_estado(PARAR, myrio)
+        print(" CTRL+C detectado. O loop foi interrompido.")
+
+    estado.Trocar_estado(PARAR, myrio)
         
-except KeyboardInterrupt:
-    Atual.trocar_para(PARAR)    
-    serial_output.write(Atual.getName())
-    print(" CTRL+C detectado. O loop foi interrompido.")
-
-Atual.trocar_para(PARAR)
-serial_output.write(Atual.getName())
-print(Atual)
-    
+if __name__ == "__main__": main()
