@@ -1,3 +1,4 @@
+from main_2021_v1 import Atual
 import serial
 import RPi.GPIO as GPIO
 import RTIMU

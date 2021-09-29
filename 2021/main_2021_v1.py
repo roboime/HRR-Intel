@@ -20,6 +20,7 @@ import math
 import classes
 import funcoes
 
+import funcoes
 
 #Variaveis auxiliares, a velocidade esta em cm/seg
 #velocidade = ???                
@@ -38,6 +39,14 @@ estado = classes.Classe_estado()
 myrio = classes.Classe_porta_serial()
 s_distancia = classes.Classe_distancia()
 s_giroscopio = classes.Classe_giroscopio()
+
+estado = classes.Classe_estado()
+myrio = classes.Classe_porta_serial()
+estado.Trocar_estado(PARAR, myrio)
+
+s_distancia = classes.Classe_distancia()
+
+giroscopio = classes.Classe_giroscopio()
 
 
 #Funcao main
