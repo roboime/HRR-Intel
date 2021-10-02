@@ -29,11 +29,11 @@ import funcoes
 
 
 #Variaveis auxiliares, a velocidade esta em cm/seg                
-tolerancia_desalinhamento = ???
-proximidade_subida = ???
-proximidade_descida = ???
-tempo_de_subida = ???
-tempo_de_descida = ???
+#tolerancia_desalinhamento = ???
+#proximidade_subida = ???
+#proximidade_descida = ???
+#tempo_de_subida = ???
+#tempo_de_descida = ???
 
 
 ANDAR="0"                 
