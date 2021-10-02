@@ -20,7 +20,6 @@ import math
 import classes
 import funcoes
 
-import funcoes
 
 #Variaveis auxiliares, a velocidade esta em cm/seg
 #velocidade = ???                
