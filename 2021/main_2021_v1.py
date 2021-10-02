@@ -57,7 +57,7 @@ print("Programa rodando... pode ser interrompido usando CTRL+C")
 try:                    
     while True:
         print("Estado padrao")
-        estado.Trocar_estado(PARAR, myrio)  
+        estado.Trocar_estado(ANDAR, myrio)  
         
         if (s_distancia.Get_distance() <= distancialimite):
             print ("obstaculo detectado")
@@ -82,7 +82,6 @@ try:
             
         
 except KeyboardInterrupt:
-    estado.Trocar_estado(PARAR, myrio)
     print(" CTRL+C detectado. O loop foi interrompido.")
 
 estado.Trocar_estado(PARAR, myrio)
