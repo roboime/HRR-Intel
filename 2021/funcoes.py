@@ -233,9 +233,9 @@ def quando_parar_de_girar(sensor_distancia, vel_ang, largura_robo):
     return PARAR
 
 def calcular_porcentagem(valor_comparar):
-    img = cv2.imread('./imagens/pista2.jpg')
-    preto = cv2.imread('./imagens/pista2.jpg') 
-    fundo = cv2.imread('./imagens/pista2.jpg') 
+    img = cv2.imread('./imagens/pista2.jpg') #trocar o diretorio da imagem
+    preto = cv2.imread('./imagens/pista2.jpg') #trocar o diretorio da imagem
+    fundo = cv2.imread('./imagens/pista2.jpg') #trocar o diretorio da imagem
     preto = cv2.circle(preto, (0,0), 4000,(0,0) , -1) ##cria imagem toda preta do mesmo tamanho
     fundo = cv2.circle(preto, (0,0), 4000,(0,0) , -1) ##cria imagem toda preta do mesmo tamanho
     (altura, largura) = img.shape[:2] 
