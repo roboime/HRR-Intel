@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-img = cv2.imread('images\imagem2.jpeg')
+img = cv2.imread('i.jpg')
 img_hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 window_original_name = 'Original'
 window_detection_name = 'Threshold'

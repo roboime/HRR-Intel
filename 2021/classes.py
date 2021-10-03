@@ -1,4 +1,3 @@
-from main_2021_v1 import Atual
 import serial
 import RPi.GPIO as GPIO
 import RTIMU
@@ -6,12 +5,26 @@ import VL53L0X
 #import pickle
 import time
 import math
+import picamera
 
-ANDAR = "0"    
-GIRAR_ESQUERDA = "1"
-GIRAR_DIREITA = "2"
-PARAR = "1"
 
+ANDAR="0"                 
+GIRAR_ESQUERDA="1"        
+GIRAR_DIREITA="2"         
+PARAR="3"
+SUBIR = "4"
+DESCER = "5"
+
+class Classe_camera():
+    def __init__(self):
+        self.camera = picamera.PiCamera()
+
+    def Take_photo(self):
+        self.camera.start_preview()
+        time.sleep(2.5)
+        image = self.camera.capture('/home/pi/image.jpg')
+        self.camera.stop_preview()
+        return image
 
 class Classe_giroscopio():
     def __init__(self):
@@ -33,10 +46,7 @@ class Classe_giroscopio():
 
         #self.Save_config(self)
 
-    def Save_config(self, obj):
-        with open('IMU_config.pkl', 'wb') as outp:  
-            pickle.dump(obj, outp, pickle.HIGHEST_PROTOCOL)                             # guarda o objeto criado no arquivo .pkl
-
+    
     def __Calcular_angulo_yaw(self):
         t_0 = time.time()
         t_1 = time.time()
@@ -63,9 +73,6 @@ class Classe_distancia():
         self.anterior = 100
         self.atual = 100
 
-    def Save_config(self, obj):
-        with open('VL53L0X_config.pkl', 'wb') as outp:  
-            pickle.dump(obj, outp, pickle.HIGHEST_PROTOCOL)                             # guarda o objeto criado no arquivo .pkl
     #ocorre divisao por 10 para passar para cm
     def Get_distance(self):
         self.anterior = self.atual
@@ -89,23 +96,20 @@ class Classe_porta_serial():
         
         #self.Save_config(self)
 
-    def Save_config(self, obj):
-        with open('MyRio_config.pkl', 'wb') as outp:  
-            pickle.dump(obj, outp, pickle.HIGHEST_PROTOCOL)                             # guarda o objeto criado no arquivo .pkl
-
     def Escrever_estado(self, state):
         self.serial_output.write(state)
 
 class Classe_estado:
-    def __init__(self):
+    def __init__(self, myrio):
         self.atual = PARAR
+        self.Trocar_estado(PARAR, myrio)
 
     def Obter_estado_atual(self):
         return self.atual
 
-    def Trocar_estado(self, state, myrio):
+    def Trocar_estado(self, state, serial_obj):
         self.atual = state
-        myrio.Escrever_estado(state)
+        serial_obj.Escrever_estado(state)
     
     def __str__(self):          #string associada ao objeto de "Classe_estado". Sera mostrada ao printar um objeto desse tipo
         name = {    ANDAR : "PARAR",
@@ -121,9 +125,3 @@ class Classe_estado:
                 }
         atual = self.Obter_estado_atual()
         return "Estado atual: " + name[atual] + ".\nindice: " + str(atual) + ".\nCorrecao: " + need[atual] + "\n"
-
-
-def Load_config(filename):
-    with open(filename, 'wb') as inp:
-        return pickle.load(inp)                                        # retorna um objeto que esteja salvo em um arquivo .pkl
-

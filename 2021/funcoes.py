@@ -2,8 +2,7 @@
 import time
 import numpy as np
 import cv2
-import picamera
-
+import visao
 
 ANDAR="0"                 
 GIRAR_ESQUERDA="1"        
@@ -99,16 +98,9 @@ def ponto_medio_borda_inferior(imagem):
 
 
 
-# Ainda precisa da funcao ponto_medio_borda_inferior e edge().
-# Silverio e Breda podem atualizar a parte do picamera que aparece na funcao. Eu so tirei o comentario.
-def decisao_desvio():
-    camera = picamera.PiCamera()
-    camera.start_preview()
-    time.sleep(2.5)
-    image = camera.capture('/home/pi/image.jpg')
-    camera.stop_preview()
-    x, y = ponto_medio_borda_inferior(image)
-    poly_left, poly_right, j = edge_detector.edge()
+def decisao_desvio(camera):
+    x, y = ponto_medio_borda_inferior(camera.Take_photo())
+    poly_left, poly_right, j = visao.bordas_laterais()
 
     # j = 1: linha central. j = 2: borda direita. j = 3: borda esquerda. j = 0: nenhuma borda
     pixel_scale = 20.4
@@ -116,7 +108,7 @@ def decisao_desvio():
     x_robot = 0
     if x == 0 and y == 0:
         # Não detectou obstáculo
-        return 0
+        return ANDAR
     else:
         if j == 1:
             poly_inv_left = [1/poly_left[0], -poly_left[1]/poly_left[0]]
@@ -139,41 +131,41 @@ def decisao_desvio():
                 if d_left > d_min and d_right > d_min:
                     d = max(d_left, d_right)
                     if d == d_left:
-                        return 1
+                        return GIRAR_ESQUERDA
                     else:
-                        return 2
+                        return GIRAR_DIREITA
                 elif d_left > d_min and d_right <= d_min:
-                    return 1
+                    return GIRAR_ESQUERDA
                 elif d_left <= d_min and d_right > d_min:
-                    return 2
+                    return GIRAR_DIREITA
                 else:
                     d = max(d_left, d_right)
                     if d == d_left:
-                        return 1
+                        return GIRAR_ESQUERDA
                     else:
-                        return 2
+                        return GIRAR_DIREITA
             if x_robot == 1:
                 if d_left < d_min:
-                    return 2
+                    return GIRAR_DIREITA
                 else:
-                    return 1
+                    return GIRAR_ESQUERDA
             if x_robot == 2:
                 if d_right < d_min:
-                    return 1
+                    return GIRAR_ESQUERDA
                 else:
-                    return 2
+                    return GIRAR_DIREITA
         if j == 2:
             poly_inv = [1/poly_right[0], -poly_right[1]/poly_right[0]]
             x_linha = poly_inv[1] + poly_inv[0]*y
             if abs(x - x_linha) > d_min*pixel_scale:
-                return 2
+                return GIRAR_DIREITA
             else:
-                return 1
+                return GIRAR_ESQUERDA
         if j == 3:
             poly_inv = [1/poly_left[0], -poly_left[1]/poly_left[0]]
             x_linha = poly_inv[1] + poly_inv[0]*y
             if abs(x - x_linha) > d_min*pixel_scale:
-                return 1
+                return GIRAR_ESQUERDA
             else:
-                return 2
-        if j == 0: return 0
+                return GIRAR_DIREITA
+        if j == 0: return ANDAR
