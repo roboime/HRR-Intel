@@ -202,6 +202,9 @@ def decisao_desvio(camera):
         if j == 0: return ANDAR
 
 def quando_parar_de_girar(sensor_distancia, vel_ang, largura_robo):
+    global DIST_MIN_OBST_ATUAL
+    global ANG_GIRADO_VEL_ANG
+    global ANG_GIRADO_TRIGO
     tempo1 = tempo2 = time.time()
     while (tempo2 - tempo1 < 5):
         print(sensor_distancia.Get_distance())
@@ -210,7 +213,7 @@ def quando_parar_de_girar(sensor_distancia, vel_ang, largura_robo):
     intervalo_medicoes = 0.2
     mult_dist = 1
     mult_largura = 0.75
-    global DIST_MIN_OBST_ATUAL = sensor_distancia.Get_distance()
+    DIST_MIN_OBST_ATUAL = sensor_distancia.Get_distance()
     
     t_0 = t_1 = time.time()
     while True:
@@ -224,7 +227,7 @@ def quando_parar_de_girar(sensor_distancia, vel_ang, largura_robo):
             ANG_GIRADO_TRIGO = np.arctan2( DIST_MIN_OBST_ATUAL*np.tan(theta_trigo) + largura_robo*mult_largura, DIST_MIN_OBST_ATUAL)
             print("ANG_GIRADO_VEL_ANG: ", ANG_GIRADO_VEL_ANG, "\nANG_GIRADO_TRIGO: ", ANG_GIRADO_TRIGO, "\n")
             break;
-            
+
     print("Saimo familia")
 
     return PARAR
