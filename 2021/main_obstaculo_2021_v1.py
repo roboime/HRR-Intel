@@ -28,6 +28,7 @@ angulo_limite = 10
 #intervalo_alinhamento = ???
 #largura_do_robo = ???
 
+
 ANDAR="0"                 
 GIRAR_ESQUERDA="1"        
 GIRAR_DIREITA="2"         
@@ -44,7 +45,6 @@ estado = classes.Classe_estado(myrio)
 #Funcao main
 
 def Loop_obstaculo():
-    print("Programa rodando... pode ser interrompido usando CTRL+C")
     t_0 = time()
     while True:
         t_1 = time()
@@ -78,6 +78,7 @@ def Loop_obstaculo():
 
 if __name__ == "__main__":
     try:
+        print("Programa rodando... pode ser interrompido usando CTRL+C")
         Loop_obstaculo()
     except KeyboardInterrupt:
         print(" CTRL+C detectado. O loop foi interrompido.")

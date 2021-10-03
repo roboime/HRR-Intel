@@ -44,7 +44,6 @@ estado = classes.Classe_estado(myrio)
 #Funcao main
 
 def Loop_obstaculo():
-    print("Programa rodando... pode ser interrompido usando CTRL+C")
     t_0 = time()
     while True:
         t_1 = time()
@@ -65,6 +64,7 @@ def Loop_obstaculo():
 
 if __name__ == "__main__":
     try:
+        print("Programa rodando... pode ser interrompido usando CTRL+C")
         Loop_obstaculo()
     except KeyboardInterrupt:
         print(" CTRL+C detectado. O loop foi interrompido.")

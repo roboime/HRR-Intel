@@ -109,8 +109,6 @@ def ponto_medio_borda_inferior(imagem):
     return x_med, y_max
 
 
-
-
 def decisao_desvio(camera):
     x, y = ponto_medio_borda_inferior(camera.Take_photo())
     poly_left, poly_right, j = visao.bordas_laterais()
@@ -182,3 +180,11 @@ def decisao_desvio(camera):
             else:
                 return GIRAR_DIREITA
         if j == 0: return ANDAR
+
+def quando_parar_de_girar(sensor_distancia):
+    intervalo_medicoes = 0.5
+    global DMIN = sensor_distancia.Get_distance()
+
+    while True:
+        time.sleep(intervalo_medicoes)
+        
