@@ -11,10 +11,11 @@ PARAR = "3"
 SUBIR = "4"
 DESCER = "5"
 
+ANG_GIRADO = 0.0
 
 #peguei o giroscopio pois imaginei que o robo poderia precisar fazer alguma correcao 
 # durante a trajetoria futuramente
-def quando_parar_de_andar(giroscopio, s_distancia, velocidade, largura_do_robo):
+def quando_parar_de_andar_giroscopio(giroscopio, s_distancia, velocidade, largura_do_robo):
     projecao_horizontal_trajetoria = s_distancia.anterior*np.cos(np.pi/180 * giroscopio.Obter_angulo_yaw()) + largura_do_robo
     projecao_vertical_trajetoria = s_distancia.anterior*np.sin(np.pi/180 * giroscopio.Obter_angulo_yaw())
 
@@ -28,6 +29,12 @@ def quando_parar_de_andar(giroscopio, s_distancia, velocidade, largura_do_robo):
     return PARAR
 
 
+
+def quando_parar_de_andar_visaocomp(s_distancia, velocidade, largura_do_robo):
+
+
+
+    return PARAR
 
 # Essa funcao roda até o robô estar alinhado com a pista
 # O alinhamento é medido pela função "esta_alinhado()"
