@@ -4,10 +4,10 @@ import numpy as np
 import cv2
 import visao
 
-ANDAR="0"                 
-GIRAR_ESQUERDA="1"        
-GIRAR_DIREITA="2"         
-PARAR="3"
+ANDAR = "0"                 
+GIRAR_ESQUERDA = "1"        
+GIRAR_DIREITA = "2"         
+PARAR = "3"
 SUBIR = "4"
 DESCER = "5"
 
@@ -17,6 +17,7 @@ DESCER = "5"
 def quando_parar_de_andar(giroscopio, s_distancia, velocidade, largura_do_robo):
     projecao_horizontal_trajetoria = s_distancia.anterior*np.cos(np.pi/180 * giroscopio.Obter_angulo_yaw()) + largura_do_robo
     projecao_vertical_trajetoria = s_distancia.anterior*np.sin(np.pi/180 * giroscopio.Obter_angulo_yaw())
+
     trajetoria = ( projecao_vertical_trajetoria**2 +projecao_horizontal_trajetoria**2 ) ** (1/2)
     tempo_necessario = trajetoria/velocidade
     instante_inicial = time.time()
@@ -25,6 +26,18 @@ def quando_parar_de_andar(giroscopio, s_distancia, velocidade, largura_do_robo):
         print("andamos ", velocidade*time.time() - instante_inicial(), " de ", trajetoria)
 
     return PARAR
+
+
+
+# Essa funcao roda até o robô estar alinhado com a pista
+# O alinhamento é medido pela função "esta_alinhado()"
+# Falta implementar a funcao 'esta_alinhado()'
+def quando_parar_de_alinhar(angulo_erro_max, s_giroscopio):
+    while (not esta_alinhado(angulo_erro_max)):
+        continue
+    return PARAR
+
+
 
 # Essa funcao deve devolver o ponto medio ( (x,y) ) da borda inferior do obstaculo mais proximo
 def ponto_medio_borda_inferior(imagem):
