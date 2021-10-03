@@ -11,10 +11,14 @@ PARAR = "3"
 SUBIR = "4"
 DESCER = "5"
 
+ANG_GIRADO = 0.0
+ANG_CABECA_OBSTACULO = 0.0
+ANG_CABECA_DEGRAU = 0.0
 
+# Utiliza giroscopio, a principio nao vai ser utilizado
 #peguei o giroscopio pois imaginei que o robo poderia precisar fazer alguma correcao 
 # durante a trajetoria futuramente
-def quando_parar_de_andar(giroscopio, s_distancia, velocidade, largura_do_robo):
+def quando_parar_de_andar_giroscopio(giroscopio, s_distancia, velocidade, largura_do_robo):
     projecao_horizontal_trajetoria = s_distancia.anterior*np.cos(np.pi/180 * giroscopio.Obter_angulo_yaw()) + largura_do_robo
     projecao_vertical_trajetoria = s_distancia.anterior*np.sin(np.pi/180 * giroscopio.Obter_angulo_yaw())
 
@@ -24,6 +28,21 @@ def quando_parar_de_andar(giroscopio, s_distancia, velocidade, largura_do_robo):
 
     while (time.time() - instante_inicial < tempo_necessario):
         print("andamos ", velocidade*time.time() - instante_inicial(), " de ", trajetoria)
+
+    return PARAR
+
+
+
+# Utiliza somente a camera e o sensor de distancia
+# Deixa o robo andando durante o tempo necessario
+def quando_parar_de_andar_visaocomp(dmin, velocidade):
+    instante_inicial = time.time()
+
+    dist_estimado = (dmin*np.cos(ANG_CABECA_OBSTACULO)) / np.cos(ANG_GIRADO)
+    tempo_estimado = dist_estimado / velocidade
+
+    while (time.time() - instante_inicial < tempo_estimado):
+        continue
 
     return PARAR
 
