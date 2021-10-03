@@ -12,6 +12,8 @@ SUBIR = "4"
 DESCER = "5"
 
 ANG_GIRADO = 0.0
+ANG_CABECA_OBSTACULO = 0.0
+ANG_CABECA_DEGRAU = 0.0
 
 #peguei o giroscopio pois imaginei que o robo poderia precisar fazer alguma correcao 
 # durante a trajetoria futuramente
