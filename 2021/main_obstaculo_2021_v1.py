@@ -23,8 +23,8 @@ import funcoes
 
 #Variaveis auxiliares, a velocidade esta em cm/seg
 #velocidade = ???                
-distancialimite = 46
-angulo_limite = 10
+distancialimite = 46.0
+angulo_limite = 10.0
 #intervalo_alinhamento = ???
 #largura_do_robo = ???
 

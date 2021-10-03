@@ -14,6 +14,7 @@ DESCER = "5"
 ANG_GIRADO = 0.0
 ANG_CABECA_OBSTACULO = 0.0
 ANG_CABECA_DEGRAU = 0.0
+DIST_MIN_OBST_ATUAL = 46.0
 
 # Utiliza giroscopio, a principio nao vai ser utilizado
 #peguei o giroscopio pois imaginei que o robo poderia precisar fazer alguma correcao 
@@ -35,10 +36,10 @@ def quando_parar_de_andar_giroscopio(giroscopio, s_distancia, velocidade, largur
 
 # Utiliza somente a camera e o sensor de distancia
 # Deixa o robo andando durante o tempo necessario
-def quando_parar_de_andar_visaocomp(dmin, velocidade):
+def quando_parar_de_andar_visaocomp(velocidade):
     instante_inicial = time.time()
 
-    dist_estimado = (dmin*np.cos(ANG_CABECA_OBSTACULO)) / np.cos(ANG_GIRADO)
+    dist_estimado = (DIST_MIN_OBST_ATUAL*np.cos(ANG_CABECA_OBSTACULO)) / np.cos(ANG_GIRADO)
     tempo_estimado = dist_estimado / velocidade
 
     while (time.time() - instante_inicial < tempo_estimado):
@@ -200,10 +201,30 @@ def decisao_desvio(camera):
                 return GIRAR_DIREITA
         if j == 0: return ANDAR
 
-def quando_parar_de_girar(sensor_distancia):
-    intervalo_medicoes = 0.5
-    global DMIN = sensor_distancia.Get_distance()
-
+def quando_parar_de_girar(sensor_distancia, vel_ang, largura_robo):
+    tempo1 = tempo2 = time.time()
+    while (tempo2 - tempo1 < 5):
+        print(sensor_distancia.Get_distance())
+        tempo2 = time.time()
+    
+    intervalo_medicoes = 0.2
+    mult_dist = 1
+    mult_largura = 0.75
+    global DIST_MIN_OBST_ATUAL = sensor_distancia.Get_distance()
+    
+    t_0 = t_1 = time.time()
     while True:
         time.sleep(intervalo_medicoes)
-        
+        sensor_distancia.Get_distance()
+        if(abs(sensor_distancia.atual - sensor_distancia.anterior) > mult_dist*sensor_distancia.anterior):    
+            t_1 = time.time() - intervalo_medicoes/2
+            theta_vel_ang = vel_ang*(t_1 - t_0)
+            theta_trigo = np.arccos(DIST_MIN_OBST_ATUAL/sensor_distancia.anterior)
+            ANG_GIRADO_VEL_ANG = np.arctan2( DIST_MIN_OBST_ATUAL*np.tan(theta_vel_ang) + largura_robo*mult_largura, DIST_MIN_OBST_ATUAL)
+            ANG_GIRADO_TRIGO = np.arctan2( DIST_MIN_OBST_ATUAL*np.tan(theta_trigo) + largura_robo*mult_largura, DIST_MIN_OBST_ATUAL)
+            print("ANG_GIRADO_VEL_ANG: ", ANG_GIRADO_VEL_ANG, "\nANG_GIRADO_TRIGO: ", ANG_GIRADO_TRIGO, "\n")
+            break;
+            
+    print("Saimo familia")
+
+    return PARAR
