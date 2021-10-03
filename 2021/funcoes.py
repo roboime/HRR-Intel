@@ -15,6 +15,7 @@ ANG_GIRADO = 0.0
 ANG_CABECA_OBSTACULO = 0.0
 ANG_CABECA_DEGRAU = 0.0
 
+# Utiliza giroscopio, a principio nao vai ser utilizado
 #peguei o giroscopio pois imaginei que o robo poderia precisar fazer alguma correcao 
 # durante a trajetoria futuramente
 def quando_parar_de_andar_giroscopio(giroscopio, s_distancia, velocidade, largura_do_robo):
@@ -32,11 +33,20 @@ def quando_parar_de_andar_giroscopio(giroscopio, s_distancia, velocidade, largur
 
 
 
-def quando_parar_de_andar_visaocomp(s_distancia, velocidade, largura_do_robo):
+# Utiliza somente a camera e o sensor de distancia
+# Deixa o robo andando durante o tempo necessario
+def quando_parar_de_andar_visaocomp(dmin, velocidade):
+    instante_inicial = time.time()
 
+    dist_estimado = (dmin*np.cos(ANG_CABECA_OBSTACULO)) / np.cos(ANG_GIRADO)
+    tempo_estimado = dist_estimado / velocidade
 
+    while (time.time() - instante_inicial < tempo_estimado):
+        continue
 
     return PARAR
+
+
 
 # Essa funcao roda até o robô estar alinhado com a pista
 # O alinhamento é medido pela função "esta_alinhado()"
