@@ -23,10 +23,11 @@ import funcoes
 
 #Variaveis auxiliares, a velocidade esta em cm/seg
 #velocidade = ???                
-distancialimite = 46
-angulo_limite = 10
-#intervalo_alinhamento = ???
-#largura_do_robo = ???
+distancialimite = 46.0
+angulo_limite = 10.0
+intervalo_alinhamento = 5
+largura_do_robo = 25.0
+
 
 ANDAR="0"                 
 GIRAR_ESQUERDA="1"        
@@ -44,7 +45,6 @@ estado = classes.Classe_estado(myrio)
 #Funcao main
 
 def Loop_obstaculo():
-    print("Programa rodando... pode ser interrompido usando CTRL+C")
     t_0 = time()
     while True:
         t_1 = time()
@@ -63,6 +63,7 @@ def Loop_obstaculo():
                 estado.Trocar_estado(ANDAR, myrio)
                 estado.Trocar_estado(funcoes.quando_parar_de_andar(sensor_distancia, velocidade, largura_do_robo), myrio)
                 print("obstaculo ultrapassado")
+            t_1 = time()
 
         ########################################### Checando alinhamento com a pista ###########################################
         if t_1 - t_0 > intervalo_alinhamento:
@@ -72,12 +73,12 @@ def Loop_obstaculo():
                 estado.Trocar_estado(funcoes.checar_alinhamento_pista(), myrio)
                 sleep(0.5)
             print("direçao corrigida")
-            t_1 = time()
-            t_0 = t_1
+            t_0 = t_1 = time()
                 
 
 if __name__ == "__main__":
     try:
+        print("Programa rodando... pode ser interrompido usando CTRL+C")
         Loop_obstaculo()
     except KeyboardInterrupt:
         print(" CTRL+C detectado. O loop foi interrompido.")

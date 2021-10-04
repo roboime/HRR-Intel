@@ -70,8 +70,8 @@ class Classe_distancia():
         self.sensor_distancia.start_ranging(VL53L0X.VL53L0X_BETTER_ACCURACY_MODE)     #configurando alcance e precisao do sensor
         
         #self.Save_config(self)
-        self.anterior = 100
-        self.atual = 100
+        self.anterior = 2000
+        self.atual = 2000
 
     #ocorre divisao por 10 para passar para cm
     def Get_distance(self):

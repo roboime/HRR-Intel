@@ -55,9 +55,7 @@ giroscopio = classes.Classe_giroscopio()
 
 #Funcao main
 
-
-print("Programa rodando... pode ser interrompido usando CTRL+C")
-try:   
+def Loop_degrau():
     estado.Trocar_estado(ANDAR, myrio)                  
     while funcoes.checa_proximidade(proximidade_subida):
         print("Andando em frente")
@@ -87,9 +85,10 @@ try:
 
             
         
-except KeyboardInterrupt:
+if __name__ == "__main__":
+    try:
+        print("Programa rodando... pode ser interrompido usando CTRL+C")
+        Loop_degrau()
+    except KeyboardInterrupt:
+        print(" CTRL+C detectado. O loop foi interrompido.")
     estado.Trocar_estado(PARAR, myrio)
-    print(" CTRL+C detectado. O loop foi interrompido.")
-
-estado.Trocar_estado(PARAR, myrio)
-    
