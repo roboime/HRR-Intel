@@ -47,15 +47,14 @@ DESCER = "5"
 estado = classes.Classe_estado()
 myrio = classes.Classe_porta_serial()
 estado.Trocar_estado(PARAR, myrio)
-
 s_distancia = classes.Classe_distancia()
-
-giroscopio = classes.Classe_giroscopio()
 
 
 #Funcao main
 
 def Loop_degrau():
+
+
     estado.Trocar_estado(ANDAR, myrio)                  
     while funcoes.checa_proximidade(proximidade_subida):
         print("Andando em frente")
