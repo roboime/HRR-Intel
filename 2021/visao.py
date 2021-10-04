@@ -71,4 +71,4 @@ def bordas_laterais():
     if left_edge is None: return [], [right_edge.angCoef, right_edge.linCoef], 2   # somente a borda da esquerda foi detectada
     if right_edge is None: return [left_edge.angCoef, left_edge.linCoef], [], 3 # somente a borda da direita foi detectada
     return [left_edge.angCoef, left_edge.linCoef], [right_edge.angCoef, right_edge.linCoef], 1 # as duas bordas da pista foram detectadas
-    
+   

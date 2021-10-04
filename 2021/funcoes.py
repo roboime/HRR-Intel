@@ -233,3 +233,75 @@ def decisao_desvio(camera):
             else:
                 return GIRAR_DIREITA
         if j == 0: return ANDAR
+
+def calcular_porcentagem(valor_comparar):
+    img = cv2.imread('./imagens/pista2.jpg') #trocar o diretorio da imagem
+    preto = cv2.imread('./imagens/pista2.jpg') #trocar o diretorio da imagem
+    fundo = cv2.imread('./imagens/pista2.jpg') #trocar o diretorio da imagem
+    preto = cv2.circle(preto, (0,0), 4000,(0,0) , -1) ##cria imagem toda preta do mesmo tamanho
+    fundo = cv2.circle(preto, (0,0), 4000,(0,0) , -1) ##cria imagem toda preta do mesmo tamanho
+    (altura, largura) = img.shape[:2] 
+    centro = (largura // 2, altura // 2) 
+
+        # Gerar matriz de rotação, em seguida transforma a imagem baseado em uma matriz
+    M = cv2.getRotationMatrix2D(centro, 180, 1.0)  
+    img = cv2.warpAffine(img, M, (largura, altura))
+    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV) ### muda as cores para o padrao
+    mask = cv2.inRange(hsv, (0,130,76), (179,255,255)) ##cria a mascara
+    kernel = np.ones((3,3), np.uint8) ##cria ao tal do kernel q eh uma matriz p andar na imagem
+    mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel) ## tiras sugeirinhas fora, conforme o feedback atestou
+
+
+
+    kernel = np.ones((3,3), np.uint8)
+    mask = cv2.dilate(mask, kernel) ## tira os buracos de dentro
+    mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel) 
+
+
+
+    _, th = cv2.threshold(mask, 0, 255, cv2.THRESH_BINARY) 
+    contours, _ = cv2.findContours(th, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
+    ##cv2.imshow("criado o contours", contours)
+
+
+    for contour in contours:
+        area = cv2.contourArea(contour)
+        if area > 1000:
+            approx = cv2.approxPolyDP(contour, 0.001*cv2.arcLength(contour, True), True)
+            cv2.drawContours(preto, [approx], 0, (255, 255, 255), 2) 
+            
+            x,y,w,h = cv2.boundingRect(contour) ##pega as coordenadas do extremo inferior esquerdo e a altura e largura
+            #cv2.rectangle(img, (x,y), (x+w,y+h), (255,0,0), 2) ##desenha um retangulo
+
+
+    #cv2.imshow("contorno no preto", preto)
+
+    gray=cv2.cvtColor(preto,cv2.COLOR_BGR2GRAY)
+    #cv2.imshow("gray",gray)
+    edges = cv2.Canny(gray, 50, 150, apertureSize=3)
+    #cv2.imshow("edges",edges)
+    lines = cv2.HoughLinesP(edges, 1, np.pi/180, 100, minLineLength=250, maxLineGap=900)
+
+    # indices para as coordenadas
+    x1 = 0
+    y1 = 1
+    x2 = 2
+    y2 = 3
+    maximo = 0
+
+    try:
+        for i in range(0,100):
+            if(((lines[i][0][y1]+lines[i][0][y2])/2)>maximo):  
+
+                maximo = lines[i][0][y1]
+            
+
+
+
+    except:
+        porcentagem = (maximo/altura)*100
+        print(lines)
+        if(porcentagem>valor_comparar):
+            return True
+        else:
+            return False
