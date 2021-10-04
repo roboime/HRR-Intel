@@ -25,8 +25,8 @@ import funcoes
 #velocidade = ???                
 distancialimite = 46.0
 angulo_limite = 10.0
-#intervalo_alinhamento = ???
-#largura_do_robo = ???
+intervalo_alinhamento = 5
+largura_do_robo = 25.0
 
 
 ANDAR="0"                 
@@ -63,6 +63,7 @@ def Loop_obstaculo():
                 estado.Trocar_estado(ANDAR, myrio)
                 estado.Trocar_estado(funcoes.quando_parar_de_andar(sensor_distancia, velocidade, largura_do_robo), myrio)
                 print("obstaculo ultrapassado")
+            t_1 = time()
 
         ########################################### Checando alinhamento com a pista ###########################################
         if t_1 - t_0 > intervalo_alinhamento:
@@ -72,8 +73,7 @@ def Loop_obstaculo():
                 estado.Trocar_estado(funcoes.checar_alinhamento_pista(), myrio)
                 sleep(0.5)
             print("direçao corrigida")
-            t_1 = time()
-            t_0 = t_1
+            t_0 = t_1 = time()
                 
 
 if __name__ == "__main__":

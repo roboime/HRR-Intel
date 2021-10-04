@@ -58,8 +58,7 @@ def Loop_obstaculo():
                 estado.Trocar_estado(funcoes.checar_alinhamento_pista(), myrio)
                 sleep(0.5)
             print("direçao corrigida")
-            t_1 = time()
-            t_0 = t_1
+            t_0 = t_1 = time()
                 
 
 if __name__ == "__main__":
