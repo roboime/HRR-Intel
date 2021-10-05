@@ -85,9 +85,9 @@ def bordas_laterais_ebert(input_camera):
 
 def bordas_laterais(input_camera):
     img = input_camera
-    preto = img
+    np.zeros((728,1024,3), np.uint8)
     ##cria imagem toda preta para usar como fundo
-    preto = cv2.circle(preto, (0,0), 4000,(0,0) , -1) 
+     
 
     (altura, largura) = img.shape[:2] 
     centro = (largura // 2, altura // 2) 
