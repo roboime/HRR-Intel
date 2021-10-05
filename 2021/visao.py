@@ -13,10 +13,17 @@ SO_ESQUERDA = 2
 SO_DIREITA = 3
 
 
+X1 = 0
+Y1 = 1
+X2 = 2
+Y2 = 3
 def coef_angular(lista):
 
-    if lista[2] != lista[0]: return (math.atan((lista[3]-lista[1]) / (lista[2]-lista[0])))
-    else: return 1000
+    if lista[X2] != lista[X1]: return (math.atan((lista[Y2]-lista[Y1]) / (lista[X2]-lista[X1])))
+    else: return 99999
+
+def coef_linear(lista):
+    return lista[Y1] - coef_angular(lista)*lista[X1]
 
 class line():
 
@@ -154,11 +161,13 @@ def bordas_laterais(input_camera):
     if ha_reta_na_direita == False and ha_reta_na_esquerda == False:
         return [],[],NAO_HA_RETA
     if ha_reta_na_direita == True and ha_reta_na_esquerda == True:
-        return coef_angular(lista_media_esquerda),coef_angular(lista_media_direita),HA_DUAS_RETAS
+        return [coef_angular(lista_media_esquerda), coef_angular(lista_media_esquerda)],[coef_angular(lista_media_direita), coef_angular(lista_media_direita)], HA_DUAS_RETAS
+    SO_ESQUERDA = 2
     if ha_reta_na_direita == False and ha_reta_na_esquerda == True:
-       return coef_angular(lista_media_esquerda), [], SO_ESQUERDA
+       return [coef_angular(lista_media_esquerda), coef_angular(lista_media_esquerda)], [], SO_ESQUERDA
+    SO_DIREITA = 3
     if ha_reta_na_direita == True and ha_reta_na_esquerda == False:
-       return [],coef_angular(lista_media_direita),SO_DIREITA
+       return [],[coef_angular(lista_media_direita), coef_angular(lista_media_direita)],SO_DIREITA
 
     
 
