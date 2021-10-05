@@ -54,17 +54,21 @@ intervalo_alinhamento = 10
 intervalo_enquanto_gira = 0.5
 
 
+# Anda até a proximidade do degrau desajada e realinha
 def Loop_degrau(Estado, proximidade):
     estado.Trocar_estado(ANDAR, myrio)                  
     while funcoes.checa_proximidade(proximidade):
         print("Andando em frente")
 
-    if funcoes.esta_desalinhado(tolerancia_desalinhamento):
-        estado.Trocar_estado(funcoes.decisao_alinhamento(), myrio)
-        while(funcoes.esta_desalinhado(tolerancia_desalinhamento)):
+    estado.Trocar_estado(PARAR, myrio)
+    decisao = funcoes.decisao_alinhamento()
+
+    if decisao != ANDAR:
+        estado.Trocar_estado(decisao, myrio)
+        while(funcoes.decisao_alinhamento() != ANDAR):
             print("Alinhando...")
 
-    estado.Trocar_estado(Estado , myrio)
+    estado.Trocar_estado(Estado, myrio)
 
 #Funcao main
         
