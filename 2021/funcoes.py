@@ -101,8 +101,9 @@ def quando_parar_de_alinhar(angulo_erro_max, s_giroscopio):
 
 def decisao_desvio(camera):
     x, y = visao.ponto_medio_borda_inferior(camera.Take_photo())
-    poly_left, poly_right, j = visao.bordas_laterais()
-
+    lista_esquerda, lista_direita, j = visao.bordas_laterais()
+    poly_left = [visao.coef_angular(lista_esquerda), visao.coef_linear(lista_esquerda)]
+    poly_right = [visao.coef_angular(lista_direita), visao.coef_linear(lista_direita)]
     # j = 1: linha central. j = 2: borda direita. j = 3: borda esquerda. j = 0: nenhuma borda
     pixel_scale = 20.4
     d_min = 40

@@ -161,13 +161,13 @@ def bordas_laterais(input_camera):
     if ha_reta_na_direita == False and ha_reta_na_esquerda == False:
         return [],[],NAO_HA_RETA
     if ha_reta_na_direita == True and ha_reta_na_esquerda == True:
-        return [coef_angular(lista_media_esquerda), coef_angular(lista_media_esquerda)],[coef_angular(lista_media_direita), coef_angular(lista_media_direita)], HA_DUAS_RETAS
+        return lista_media_esquerda, lista_media_direita, HA_DUAS_RETAS
     SO_ESQUERDA = 2
     if ha_reta_na_direita == False and ha_reta_na_esquerda == True:
-       return [coef_angular(lista_media_esquerda), coef_angular(lista_media_esquerda)], [], SO_ESQUERDA
+       return lista_media_esquerda, [], SO_ESQUERDA
     SO_DIREITA = 3
     if ha_reta_na_direita == True and ha_reta_na_esquerda == False:
-       return [],[coef_angular(lista_media_direita), coef_angular(lista_media_direita)],SO_DIREITA
+       return [], lista_media_direita, SO_DIREITA
 
     
 
