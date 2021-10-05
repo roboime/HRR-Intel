@@ -1,10 +1,18 @@
 import cv2
 import numpy as np
 import math
-   
+
+
 IMG_WIDTH = 0
 RIGHT = 1
 LEFT = -1
+
+NAO_HA_RETA = 0
+HA_DUAS_RETAS = 1
+SO_ESQUERDA = 2
+SO_DIREITA = 3
+
+
 def coef_angular(lista):
 
     if lista[2] != lista[0]: return (math.atan((lista[3]-lista[1]) / (lista[2]-lista[0])))
@@ -143,16 +151,12 @@ def bordas_laterais(input_camera):
         #img = cv2.putText(img, text, (int(((x1+x2)/2))-450,int(((y1+y2)/2))), cv2.FONT_HERSHEY_COMPLEX, 1, (255,255,255), 1, cv2.LINE_AA)
 
 
-    NAO_HA_RETA = 0
     if ha_reta_na_direita == False and ha_reta_na_esquerda == False:
         return [],[],NAO_HA_RETA
-    HA_DUAS_RETAS = 1
     if ha_reta_na_direita == True and ha_reta_na_esquerda == True:
         return coef_angular(lista_media_esquerda),coef_angular(lista_media_direita),HA_DUAS_RETAS
-    SO_ESQUERDA = 2
     if ha_reta_na_direita == False and ha_reta_na_esquerda == True:
        return coef_angular(lista_media_esquerda), [], SO_ESQUERDA
-    SO_DIREITA = 3
     if ha_reta_na_direita == True and ha_reta_na_esquerda == False:
        return [],coef_angular(lista_media_direita),SO_DIREITA
 
