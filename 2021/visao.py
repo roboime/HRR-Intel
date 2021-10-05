@@ -243,7 +243,7 @@ def ponto_medio_borda_inferior(imagem):
 
 def calcular_porcentagem(valor_comparar,input_imagem):
     img = input_imagem.copy() #trocar o diretorio da imagem
-    cv2.imwrite("imagem original.png", img)
+    #cv2.imwrite("imagem original.png", img)
     
     preto = input_imagem.copy() #trocar o diretorio da imagem
     fundo = input_imagem.copy() #trocar o diretorio da imagem
@@ -255,7 +255,7 @@ def calcular_porcentagem(valor_comparar,input_imagem):
     # Gerar matriz de rotação, em seguida transforma a imagem baseado em uma matriz
     M = cv2.getRotationMatrix2D(centro, 180, 1.0)  
     img = cv2.warpAffine(img, M, (largura, altura))
-    cv2.imwrite("invertendo a imagem.png", img)
+    #cv2.imwrite("invertendo a imagem.png", img)
     
 
     hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV) ### muda as cores para o padrao
@@ -293,7 +293,7 @@ def calcular_porcentagem(valor_comparar,input_imagem):
     #cv2.imwrite("gray.png",gray)
     
     edges = cv2.Canny(gray, 50, 150, apertureSize=3)
-    cv2.imwrite("edges.png",edges)
+    #cv2.imwrite("edges.png",edges)
    
     lines = cv2.HoughLinesP(edges, 1, np.pi/180, 100, minLineLength=150, maxLineGap=900)
     print(lines)
