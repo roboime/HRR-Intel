@@ -58,7 +58,7 @@ def Loop_obstaculo():
             if (estado.atual == GIRAR_ESQUERDA or estado.atual == GIRAR_DIREITA):            
                 estado.Trocar_estado(funcoes.quando_parar_de_girar(sensor_giroscopio,sensor_distancia), myrio)    
                 estado.Trocar_estado(ANDAR, myrio)
-                estado.Trocar_estado(funcoes.quando_parar_de_andar(sensor_giroscopio,sensor_distancia, velocidade, largura_do_robo), myrio)
+                estado.Trocar_estado(funcoes.quando_parar_de_andar_giroscopio(sensor_giroscopio,sensor_distancia, velocidade, largura_do_robo), myrio)
                 print("obstaculo ultrapassado")
             
         if (np.abs((sensor_giroscopio.Obter_angulo_yaw())) > angulo_limite):  

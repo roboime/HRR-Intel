@@ -32,9 +32,8 @@ class line():
         return self.linCoef + self.angCoef * x
 
 
-def white_mask():
+def white_mask(img):
     global IMG_WIDTH
-    img = cv2.imread('img.png')
     IMG_WIDTH = img.shape[1]
 
     hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV) # converte a cor para hsv
@@ -48,8 +47,8 @@ def white_mask():
     return mask
 
 
-def bordas_laterais_ebert():
-    edges = cv2.Canny(white_mask(), 75, 150) # destaca as linhas da imagem convertida em preto e branco
+def bordas_laterais_ebert(input_camera):
+    edges = cv2.Canny(white_mask(input_camera), 75, 150) # destaca as linhas da imagem convertida em preto e branco
     segments = cv2.HoughLinesP(edges, 1, np.pi/180, 20, maxLineGap=20, minLineLength=50) # obtem os pontos que formam os segmentos de reta das linhas
     if segments is None: return [], [], 0 #não achou nenhum segmento de reta
     lines = []
@@ -94,7 +93,6 @@ def bordas_laterais(input_camera):
 
     _, th = cv2.threshold(mask, 0, 255, cv2.THRESH_BINARY) 
     contours, _ = cv2.findContours(th, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
-   
     for contour in contours:
         area = cv2.contourArea(contour)
         if 1000000 > area > 50:
@@ -159,3 +157,145 @@ def bordas_laterais(input_camera):
        return [],coef_angular(lista_media_direita),SO_DIREITA
 
     
+
+   
+# Essa funcao deve devolver o ponto medio ( (x,y) ) da borda inferior do obstaculo mais proximo
+def ponto_medio_borda_inferior(imagem):
+    (altura, largura) = imagem.shape[:2] 
+    centro = (largura // 2, altura // 2) 
+
+    # Gerar matriz de rotação, em seguida transforma a imagem baseado em uma matriz
+    M = cv2.getRotationMatrix2D(centro, 180, 1.0)  
+    imagem = cv2.warpAffine(imagem, M, (largura, altura))
+
+    #blur opcional
+    # imagem = cv2.blur(imagem, (7, 7))
+
+    imagem_hls = cv2.cvtColor(imagem, cv2.COLOR_BGR2HLS)
+    limite_inf_filtro_laranja = np.array([5, 0, 0])
+    limite_sup_filtro_laranja = np.array([25, 255, 255])
+    orangemask = cv2.inRange(imagem_hls, limite_inf_filtro_laranja, limite_sup_filtro_laranja)
+
+    # Usamos "Canny" para pegar os contornos
+    lista_bordas = cv2.Canny(orangemask, 100, 300, apertureSize=3)
+
+
+    minLineLength = 90  # Parametro da HoughLines
+
+    # Utlizar HoughLinesP para retornar (x1,y1) (x2,y2)
+    segmentos = cv2.HoughLinesP(lista_bordas, rho=1, theta=np.pi/180, threshold=100,
+                            lines=np.array([]), minLineLength=minLineLength, maxLineGap=200)
+
+    
+    #se quisermos visualizar
+    '''for segmento in segmentos:
+        x1,y1,x2,y2= segmento[0]
+        cv2.line(imagem, (x1,y1), (x2,y2), (0,255,0), 2)'''
+
+    numero_segmentos, _, _ = segmentos.shape
+
+    #legenda de indices importantes em segmentos
+    x1 = 0
+    y1 = 1
+    x2 = 2
+    y2 = 3
+
+    ymed_bloco_todo = 0
+    for i in range(numero_segmentos):
+        ymed_bloco_todo+=segmentos[i][0][1] + segmentos[i][0][3]
+    ymed_bloco_todo/=2*numero_segmentos
+
+    y_max = -1
+    x_min = largura
+    x_max = 0
+    #esse fator para baixo serve para procurar segmentos ainda mais abaixo do ponto medio
+    fator_para_baixo = 1.3
+
+    for i in range(numero_segmentos):
+        if ((segmentos[i][0][y1]+segmentos[i][0][y2])/2 > ymed_bloco_todo*fator_para_baixo):
+            x_min = min(x_min, segmentos[i][0][x1], segmentos[i][0][x2])
+            x_max = max(x_max, segmentos[i][0][x1], segmentos[i][0][x2])
+            y_max = max(y_max, segmentos[i][0][y1], segmentos[i][0][y2])
+    x_med = (x_min + x_max) / 2
+
+    ##feedback
+    '''imagem = cv2.circle(imagem, (int(largura//2),int(fator_para_baixo*ymed_bloco_todo)), 50,(0,255,0) , -1)
+    imagem = cv2.circle(imagem, (int(x_min),int(y_max)), 50,(0,255,0) , -1)
+    imagem = cv2.circle(imagem, (int(x_max),int(y_max)), 50,(0,255,0) , -1)
+    imagem = cv2.circle(imagem, (int(x_med),int(y_max)), 50,(255,0,0) , -1)
+    little = cv2.resize(imagem, (960, 540)) 
+    cv2.imshow("com o ponto medio", little)
+    cv2.waitKey()'''
+    return x_med, y_max
+
+def calcular_porcentagem(valor_comparar):
+    img = cv2.imread('./imagens/pista2.jpg') #trocar o diretorio da imagem
+    preto = cv2.imread('./imagens/pista2.jpg') #trocar o diretorio da imagem
+    fundo = cv2.imread('./imagens/pista2.jpg') #trocar o diretorio da imagem
+    preto = cv2.circle(preto, (0,0), 4000,(0,0) , -1) ##cria imagem toda preta do mesmo tamanho
+    fundo = cv2.circle(preto, (0,0), 4000,(0,0) , -1) ##cria imagem toda preta do mesmo tamanho
+    (altura, largura) = img.shape[:2] 
+    centro = (largura // 2, altura // 2) 
+
+        # Gerar matriz de rotação, em seguida transforma a imagem baseado em uma matriz
+    M = cv2.getRotationMatrix2D(centro, 180, 1.0)  
+    img = cv2.warpAffine(img, M, (largura, altura))
+    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV) ### muda as cores para o padrao
+    mask = cv2.inRange(hsv, (0,130,76), (179,255,255)) ##cria a mascara
+    kernel = np.ones((3,3), np.uint8) ##cria ao tal do kernel q eh uma matriz p andar na imagem
+    mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel) ## tiras sugeirinhas fora, conforme o feedback atestou
+
+
+
+    kernel = np.ones((3,3), np.uint8)
+    mask = cv2.dilate(mask, kernel) ## tira os buracos de dentro
+    mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel) 
+
+
+
+    _, th = cv2.threshold(mask, 0, 255, cv2.THRESH_BINARY) 
+    contours, _ = cv2.findContours(th, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
+    ##cv2.imshow("criado o contours", contours)
+
+
+    for contour in contours:
+        area = cv2.contourArea(contour)
+        if area > 1000:
+            approx = cv2.approxPolyDP(contour, 0.001*cv2.arcLength(contour, True), True)
+            cv2.drawContours(preto, [approx], 0, (255, 255, 255), 2) 
+            
+            x,y,w,h = cv2.boundingRect(contour) ##pega as coordenadas do extremo inferior esquerdo e a altura e largura
+            #cv2.rectangle(img, (x,y), (x+w,y+h), (255,0,0), 2) ##desenha um retangulo
+
+
+    #cv2.imshow("contorno no preto", preto)
+
+    gray=cv2.cvtColor(preto,cv2.COLOR_BGR2GRAY)
+    #cv2.imshow("gray",gray)
+    edges = cv2.Canny(gray, 50, 150, apertureSize=3)
+    #cv2.imshow("edges",edges)
+    lines = cv2.HoughLinesP(edges, 1, np.pi/180, 100, minLineLength=250, maxLineGap=900)
+
+    # indices para as coordenadas
+    x1 = 0
+    y1 = 1
+    x2 = 2
+    y2 = 3
+    maximo = 0
+
+    try:
+        for i in range(0,100):
+            if(((lines[i][0][y1]+lines[i][0][y2])/2)>maximo):  
+
+                maximo = lines[i][0][y1]
+            
+
+
+
+    except:
+        porcentagem = (maximo/altura)*100
+        print(lines)
+        if(porcentagem>valor_comparar):
+            return True
+        else:
+            return False
