@@ -92,12 +92,12 @@ def bordas_laterais_ebert(input_camera):
 
 def bordas_laterais(input_camera):
     img = input_camera
-    np.zeros((728,1024,3), np.uint8)
+    (altura, largura) = img.shape[:2] 
+    centro = (largura // 2, altura // 2) 
+    preto = np.zeros((largura, altura, 3), np.uint8)
     ##cria imagem toda preta para usar como fundo
      
 
-    (altura, largura) = img.shape[:2] 
-    centro = (largura // 2, altura // 2) 
 
     # Gerar matriz de rotação, em seguida transforma a imagem baseado em uma matriz
     M = cv2.getRotationMatrix2D(centro, 180, 1.0)  
