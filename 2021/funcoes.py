@@ -3,6 +3,7 @@ import time
 import numpy as np
 import cv2
 import visao
+import PiCamera as picamera
 
 def coef_angular(lista):
 
@@ -96,14 +97,13 @@ def quando_parar_de_andar_visaocomp(velocidade):
 
 
 # Essa funcao roda até o robô estar alinhado com a pista
-# O alinhamento é medido pela função "esta_alinhado()"
-# Falta implementar a funcao 'esta_alinhado()'
-def quando_parar_de_alinhar(angulo_erro_max, s_giroscopio):
-    while (not esta_alinhado(angulo_erro_max)):
+def quando_parar_de_alinhar(tolerancia_centro, tolerancia_para_frente):
+    camera = picamera.PiCamera()
+    
+    while (checar_alinhamento_pista(camera, tolerancia_centro, tolerancia_para_frente) != ANDAR):
         continue
+
     return PARAR
-
-
 
 
 
