@@ -238,7 +238,7 @@ def ponto_medio_borda_inferior(imagem):
     cv2.waitKey()'''
     return x_med, y_max
 
-def calcular_porcentagem(valor_comparar,input_imagem):
+def checar_proximidade(valor_comparar,input_imagem):
     img = input_imagem.copy() #função para pegar a imagem e armazena-la
     #cv2.imwrite("imagem original.png", img)
     

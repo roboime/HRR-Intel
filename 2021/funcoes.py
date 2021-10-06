@@ -5,6 +5,11 @@ import cv2
 import visao
 import PiCamera as picamera
 
+X1 = 0
+Y1 = 1
+X2 = 2
+Y2 = 3
+
 def coef_angular(lista):
 
     if lista[2] != lista[0]: return (lista[3]-lista[1])/(lista[2]-lista[0])
@@ -108,8 +113,9 @@ def quando_parar_de_alinhar(tolerancia_centro, tolerancia_para_frente):
 
 
 def decisao_desvio(camera):
-    x, y = visao.ponto_medio_borda_inferior(camera.Take_photo())
-    lista_esquerda, lista_direita, j = visao.bordas_laterais()
+    img = camera.Take_photo()
+    x, y = visao.ponto_medio_borda_inferior(img)
+    lista_esquerda, lista_direita, j = visao.bordas_laterais(img)
     poly_left = [visao.coef_angular(lista_esquerda), visao.coef_linear(lista_esquerda)]
     poly_right = [visao.coef_angular(lista_direita), visao.coef_linear(lista_direita)]
     # j = 1: linha central. j = 2: borda direita. j = 3: borda esquerda. j = 0: nenhuma borda
@@ -185,12 +191,8 @@ HA_DUAS_RETAS = 1
 SO_ESQUERDA = 2
 SO_DIREITA = 3
 casos_dic = ["NAO_HA_RETA", "HA_DUAS_RETAS", "SO_ESQUERDA", "SO_DIREITA"]
-X1 = 0
-Y1 = 1
-X2 = 2
-Y2 = 3
 
-def checar_alinhamento_pista(camera, tolerancia_centro, tolerancia_para_frente):
+def checar_alinhamento_pista(camera, tolerancia_central, tolerancia_para_frente):
     img = camera.Take_photo()
     reta_esquerda, reta_direita, caso = visao.bordas_laterais(img)
 
@@ -209,15 +211,15 @@ def checar_alinhamento_pista(camera, tolerancia_centro, tolerancia_para_frente):
         cv2.line(img, (reta_esquerda[X1], reta_esquerda[Y1]), (reta_esquerda[X2], reta_esquerda[Y2]), (0,0,255), 2)    
         cv2.imshow("na main as DUAS e o PONTO", img)
         cv2.waitKey(0)'''
-        proximidade_do_meio = abs((x_intersecao- (largura/2) )*100/largura)
+        proximidade_do_meio = abs((x_intersecao - (largura/2))*100/largura)
         print(proximidade_do_meio)
-        if(proximidade_do_meio<tolerancia_centro):
+        if(proximidade_do_meio < tolerancia_central):
             print("ANDAR")
             return(ANDAR)
         elif x_intersecao < (largura/2):
             print("GIRAR_ESQUERDA")
             return(GIRAR_ESQUERDA)
-        else: 
+        else:
             print("GIRAR_DIREITA")
             return(GIRAR_DIREITA)
 

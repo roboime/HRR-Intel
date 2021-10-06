@@ -22,12 +22,15 @@ import funcoes
 
 
 #Variaveis auxiliares, a velocidade esta em cm/seg
-#velocidade = ???                
+velocidade = 5             
 distancialimite = 46.0
 angulo_limite = 10.0
 intervalo_alinhamento = 5
 largura_do_robo = 25.0
-
+tempo_para_parar = 1
+intervalo_enquanto_gira = 1
+tolerancia_central = 15
+tolerancia_para_frente = 60
 
 ANDAR="0"                 
 GIRAR_ESQUERDA="1"        
@@ -46,7 +49,7 @@ estado = classes.Classe_estado(myrio)
 
 def Loop_obstaculo():
     t_0 = time()
-    t_1 = intervalo_alinhamento + t_0
+    t_1 = t_0
     while True:
         print("Estado padrao")
         estado.Trocar_estado(ANDAR, myrio)  
@@ -71,17 +74,21 @@ def Loop_obstaculo():
             t_1 = time()
 
         ########################################### Checando alinhamento com a pista ###########################################
-        if t_1 - t_0 >= intervalo_alinhamento:
-            estado.Trocar_estado(funcoes.checar_alinhamento_pista(), myrio) #PARAR, GIRAR_ESQUERDA ou GIRAR_DIREITA
-            print(estado)
-            while estado.Obter_estado_atual() != PARAR: 
+        if t_1 - t_0 > intervalo_alinhamento:
+            estado.Trocar_estado(PARAR, myrio)
+            sleep(tempo_para_parar)
+            estado.Trocar_estado(funcoes.checar_alinhamento_pista(camera, tolerancia_central, tolerancia_para_frente), myrio)  # Frente, GIRAR_ESQUERDA ou GIRAR_DIREITA
+            while estado.Obter_estado_atual() != PARAR or estado.Obter_estado_atual() != ANDAR:
                 print("desalinhado com a pista")
-                estado.Trocar_estado(funcoes.checar_alinhamento_pista(), myrio)
-                print(estado)
-                sleep(0.5)
-            print("alinhamento corrigido")
+                sleep(intervalo_enquanto_gira)
+                estado.Trocar_estado(PARAR, myrio)
+                sleep(tempo_para_parar)
+                estado.Trocar_estado(funcoes.checar_alinhamento_pista(camera, tolerancia_central, tolerancia_para_frente), myrio)
+            print("direçao corrigida")
+            print(estado.atual)
             t_0 = t_1 = time()
-        else: t_1 = time()
+        else:
+            t_1 = time()
 
 if __name__ == "__main__":
     try:

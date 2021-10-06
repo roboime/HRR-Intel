@@ -57,7 +57,8 @@ def Loop_corrida():
             while estado.Obter_estado_atual() != PARAR or estado.Obter_estado_atual() != ANDAR:
                 print("desalinhado com a pista")
                 sleep(intervalo_enquanto_gira)
-                #posivelmente colocar o robo para parar para bater a foto aqui
+                estado.Trocar_estado(PARAR, myrio)
+                sleep(tempo_para_parar)
                 estado.Trocar_estado(funcoes.checar_alinhamento_pista(camera, tolerancia_central, tolerancia_para_frente), myrio)
             print("direçao corrigida")
             print(estado.atual)

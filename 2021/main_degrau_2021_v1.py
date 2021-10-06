@@ -26,15 +26,17 @@ import classes
 import VL53L0X
 from main_corrida_2021_v1 import Loop_corrida
 import PiCamera as picamera
+import visao
 
 import funcoes
 
 
 #Variaveis auxiliares, a velocidade esta em cm/seg                
-tolerancia_desalinhamento = 10
+
 proximidade_subida = 10
 proximidade_descida = 10
 tempo_para_parar = 1
+tempo_enquanto_gira = 0.5
 
 
 ANDAR="0"                 
@@ -50,26 +52,28 @@ myrio = classes.Classe_porta_serial()
 camera = classes.Classe_camera()
 estado.Trocar_estado(PARAR, myrio)
 
-tolerancia_alinhamento = 10
+
 intervalo_alinhamento = 10
-intervalo_enquanto_gira = 0.5
-tolerancia_centro = 20
+tolerancia_centro = 15
 tolerancia_para_frente = 60
 
 # Anda até a proximidade do degrau desajada e realinha
 def Loop_degrau(Estado, proximidade):
-    estado.Trocar_estado(ANDAR, myrio)                  
-    while funcoes.checa_proximidade(proximidade):
+    estado.Trocar_estado(ANDAR, myrio)
+    ##ponto em que seria bom parar para tirar a foto                  
+    while visao.checar_proximidade(proximidade, camera.Take_photo()):
         print("Andando em frente")
     estado.Trocar_estado(PARAR, myrio)
 
-    camera = picamera.PiCamera()
-    decisao = funcoes.checar_alinhamento_pista(camera, tolerancia_centro, tolerancia_para_frente)
+    situacao = funcoes.checar_alinhamento_pista(camera, tolerancia_centro, tolerancia_para_frente)
 
-    if decisao != ANDAR:
-        estado.Trocar_estado(decisao, myrio)
-        while(funcoes.checar_alinhamento_pista(camera, tolerancia_centro, tolerancia_para_frente) != ANDAR):
-            print("Alinhando...")
+    while situacao != ANDAR:
+        estado.Trocar_estado(situacao, myrio)
+        sleep(tempo_enquanto_gira)
+        estado.Trocar_estado(PARAR, myrio)
+        sleep(tempo_para_parar)
+        situacao = funcoes.checar_alinhamento_pista(camera, tolerancia_centro, tolerancia_para_frente)
+        print("Alinhando...")
 
     estado.Trocar_estado(Estado, myrio)
 
