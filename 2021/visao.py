@@ -92,7 +92,7 @@ def bordas_laterais_ebert(input_camera):
 
 def bordas_laterais(input_camera):
     img = input_camera
-    np.zeros((728,1024,3), np.uint8)
+    preto = np.zeros((728,1024,3), np.uint8)
     ##cria imagem toda preta para usar como fundo
      
 
@@ -162,12 +162,9 @@ def bordas_laterais(input_camera):
         return [],[],NAO_HA_RETA
     if ha_reta_na_direita == True and ha_reta_na_esquerda == True:
         return lista_media_esquerda, lista_media_direita, HA_DUAS_RETAS
-    SO_ESQUERDA = 2
     if ha_reta_na_direita == False and ha_reta_na_esquerda == True:
        return lista_media_esquerda, [], SO_ESQUERDA
-    SO_DIREITA = 3
-    if ha_reta_na_direita == True and ha_reta_na_esquerda == False:
-       return [], lista_media_direita, SO_DIREITA
+    return [], lista_media_direita,SO_DIREITA
 
     
 
@@ -246,13 +243,13 @@ def calcular_porcentagem(valor_comparar,input_imagem):
     #cv2.imwrite("imagem original.png", img)
     
     preto = input_imagem.copy() #trocar o diretorio da imagem
-    fundo = input_imagem.copy() #trocar o diretorio da imagem
+    fundo = input_imagem.copy() #trocar o diretorio da imagem #trocar o diretorio da imagem
     preto = cv2.circle(preto, (0,0), 4000,(0,0) , -1) ##cria imagem toda preta do mesmo tamanho
     fundo = cv2.circle(preto, (0,0), 4000,(0,0) , -1) ##cria imagem toda preta do mesmo tamanho
     (altura, largura) = img.shape[:2] 
     centro = (largura // 2, altura // 2) 
 
-    # Gerar matriz de rotação, em seguida transforma a imagem baseado em uma matriz
+        # Gerar matriz de rotação, em seguida transforma a imagem baseado em uma matriz
     M = cv2.getRotationMatrix2D(centro, 180, 1.0)  
     img = cv2.warpAffine(img, M, (largura, altura))
     #cv2.imwrite("invertendo a imagem.png", img)
@@ -327,6 +324,3 @@ def calcular_porcentagem(valor_comparar,input_imagem):
             return False
 
 
-
-    
-    
