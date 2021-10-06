@@ -239,19 +239,19 @@ def ponto_medio_borda_inferior(imagem):
     return x_med, y_max
 
 def calcular_porcentagem(valor_comparar,input_imagem):
-    img = input_imagem.copy() #trocar o diretorio da imagem
+    img = input_imagem.copy() #função para pegar a imagem e armazena-la
     #cv2.imwrite("imagem original.png", img)
     
-    preto = input_imagem.copy() #trocar o diretorio da imagem
-    fundo = input_imagem.copy() #trocar o diretorio da imagem #trocar o diretorio da imagem
+    preto = input_imagem.copy() #criar uma imagem reserva
+    fundo = input_imagem.copy() #criar uma imagem reserva
     preto = cv2.circle(preto, (0,0), 4000,(0,0) , -1) ##cria imagem toda preta do mesmo tamanho
-    fundo = cv2.circle(preto, (0,0), 4000,(0,0) , -1) ##cria imagem toda preta do mesmo tamanho
+    fundo = cv2.circle(preto, (0,0), 4000,(0,0) , -1) ##cria imagem toda preta do mesmo tamanho reserva
     (altura, largura) = img.shape[:2] 
     centro = (largura // 2, altura // 2) 
 
         # Gerar matriz de rotação, em seguida transforma a imagem baseado em uma matriz
     M = cv2.getRotationMatrix2D(centro, 180, 1.0)  
-    img = cv2.warpAffine(img, M, (largura, altura))
+    img = cv2.warpAffine(img, M, (largura, altura))##inverter a imagem, já que a foto vem de cabeça para baixo
     #cv2.imwrite("invertendo a imagem.png", img)
     
 
@@ -276,9 +276,9 @@ def calcular_porcentagem(valor_comparar,input_imagem):
 
     for contour in contours:
         area = cv2.contourArea(contour)
-        if area > 500:
+        if area > 500:##pegar os contornos com um tamanho minimo para evitar ruidos
             approx = cv2.approxPolyDP(contour, 0.001*cv2.arcLength(contour, True), True)
-            cv2.drawContours(preto, [approx], 0, (255, 255, 255), 2) 
+            cv2.drawContours(preto, [approx], 0, (255, 255, 255), 2) ##desenhar os contornos na imagem preta, para ter uma imagem só com os contornos
             
             x,y,w,h = cv2.boundingRect(contour) ##pega as coordenadas do extremo inferior esquerdo e a altura e largura
             #cv2.rectangle(img, (x,y), (x+w,y+h), (255,0,0), 2) ##desenha um retangulo
@@ -292,8 +292,8 @@ def calcular_porcentagem(valor_comparar,input_imagem):
     edges = cv2.Canny(gray, 50, 150, apertureSize=3)
     #cv2.imwrite("edges.png",edges)
    
-    lines = cv2.HoughLinesP(edges, 1, np.pi/180, 100, minLineLength=150, maxLineGap=900)
-    print(lines)
+    lines = cv2.HoughLinesP(edges, 1, np.pi/180, 100, minLineLength=150, maxLineGap=900)#criar um vetor com dois pontos(coordenadas x e y de cada ponto) para determinar uma reta
+    #print(lines)
 
     # indices para as coordenadas
     x1 = 0
@@ -305,15 +305,15 @@ def calcular_porcentagem(valor_comparar,input_imagem):
     try:
         for i in range(0,100):
             coefienete_angular = abs((lines[i][0][y2]-lines[i][0][y1])/(lines[i][0][x1]-lines[i][0][x2]))
-            if coefienete_angular < 1:
+            if coefienete_angular < 1:#eliminar retas muito inclinadas pq queremos retas horizontais
                 cv2.line(img,(lines[i][0][x1],lines[i][0][y1]),(lines[i][0][x2],lines[i][0][y2]),(255,0,0),9)
-                if(((lines[i][0][y1]+lines[i][0][y2])/2)>maximo):  
+                if(((lines[i][0][y1]+lines[i][0][y2])/2)>maximo):  #encontrar a reta mais próxima do robô, por meio da coordenada y
                     maximo = lines[i][0][y1]
             
 
 
 
-    except:
+    except:#quando ele não encontrar mais nenhuma reta no vetor line, ele vai dar erro e vir para essa parte do código. 
         porcentagem = (maximo/altura)*100
         #print(maximo)
         if(porcentagem>valor_comparar):
