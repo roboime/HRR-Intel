@@ -60,7 +60,7 @@ def Loop_corrida():
         print(estado.atual)
         ########################################### Checando alinhamento com a pista ###########################################
         if t_1 - t_0 >= intervalo_alinhamento:
-            estado.Trocar_estado(funcoes.checar_alinhamento_pista(), myrio) #PARAR, GIRAR_ESQUERDA ou GIRAR_DIREITA
+            estado.Trocar_estado(funcoes.checar_alinhamento_pista(), myrio) #ANDAR, GIRAR_ESQUERDA ou GIRAR_DIREITA
             print(estado.atual)
             while estado.Obter_estado_atual() != PARAR: 
                 print("desalinhado com a pista")
