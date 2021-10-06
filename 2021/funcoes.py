@@ -204,51 +204,51 @@ def checar_alinhamento_pista(camera, tolerancia_centro, tolerancia_para_frente):
     print("Estamos no seguinte caso:", casos_dic[caso])
     if(caso == HA_DUAS_RETAS):
         x_intersecao = (coef_linear(reta_direita)-coef_linear(reta_esquerda))/(coef_angular(reta_esquerda)-coef_angular(reta_direita)) 
-        cv2.circle(img, (int(x_intersecao) , int(coef_angular(reta_direita)*x_intersecao+coef_linear(reta_direita))) , 10,(100,100) , -1)
+        '''cv2.circle(img, (int(x_intersecao) , int(coef_angular(reta_direita)*x_intersecao+coef_linear(reta_direita))) , 10,(100,100) , -1)
         cv2.line(img, (reta_direita[X1], reta_direita[Y1]), (reta_direita[X2], reta_direita[Y2]), (0,0,255), 2)
         cv2.line(img, (reta_esquerda[X1], reta_esquerda[Y1]), (reta_esquerda[X2], reta_esquerda[Y2]), (0,0,255), 2)    
         cv2.imshow("na main as DUAS e o PONTO", img)
-        cv2.waitKey(0)
+        cv2.waitKey(0)'''
         proximidade_do_meio = abs((x_intersecao- (largura/2) )*100/largura)
         print(proximidade_do_meio)
         if(proximidade_do_meio<tolerancia_centro):
             print("ANDAR")
-            #return(ANDAR)
+            return(ANDAR)
         elif x_intersecao < (largura/2):
             print("GIRAR_ESQUERDA")
-            #return(GIRAR_ESQUERDA)
+            return(GIRAR_ESQUERDA)
         else: 
             print("GIRAR_DIREITA")
-            #return(GIRAR_DIREITA)
+            return(GIRAR_DIREITA)
 
     elif(caso == SO_DIREITA):
         
-        cv2.circle(img, (largura//2 , altura) , 50,(100,100) , -1)
+        #cv2.circle(img, (largura//2 , altura) , 50,(100,100) , -1)
         projecao_na_reta = coef_angular(reta_direita)*(largura/2) + coef_linear(reta_direita)
-        cv2.line(img, (reta_direita[X1], reta_direita[Y1]), (reta_direita[X2], reta_direita[Y2]), (0,0,255), 2)
+        '''cv2.line(img, (reta_direita[X1], reta_direita[Y1]), (reta_direita[X2], reta_direita[Y2]), (0,0,255), 2)
         cv2.circle(img, (largura//2 , int(projecao_na_reta)) , 10,(100,100) , -1)
         cv2.imshow("so direita", img)
-        cv2.waitKey(0)
+        cv2.waitKey(0)'''
         if ((altura-projecao_na_reta)*100 / altura) > tolerancia_para_frente:
             print("ANDAR")
-            #return(ANDAR)
+            return(ANDAR)
         else:
             print("GIRAR_ESQUERDA")
-            #return(GIRAR_ESQUERDA)
+            return(GIRAR_ESQUERDA)
 
     elif(caso == SO_ESQUERDA):
-        cv2.circle(img, (largura//2 , altura) , 50,(100,100) , -1)
+        #cv2.circle(img, (largura//2 , altura) , 50,(100,100) , -1)
         projecao_na_reta = coef_angular(reta_esquerda)*(largura/2) + coef_linear(reta_esquerda)
-        cv2.line(img, (reta_esquerda[X1], reta_esquerda[Y1]), (reta_esquerda[X2], reta_esquerda[Y2]), (0,0,255), 2)
+        '''cv2.line(img, (reta_esquerda[X1], reta_esquerda[Y1]), (reta_esquerda[X2], reta_esquerda[Y2]), (0,0,255), 2)
         cv2.circle(img, (largura//2 , int(projecao_na_reta)) , 10,(100,100) , -1)
-        cv2.imshow("so direita", img)
-        cv2.waitKey(0)
+        cv2.imshow("so esquerda", img)
+        cv2.waitKey(0)'''
         if ((altura-projecao_na_reta)*100 / altura) > tolerancia_para_frente:
             print("ANDAR")
-            #return(ANDAR)
+            return(ANDAR)
         else:
             print("GIRAR_DIREITA")
-            #return(GIRAR_DIREITA)
+            return(GIRAR_DIREITA)
 
     else:
         print("nenhuma reta encontrada, andando em frente")
