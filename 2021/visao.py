@@ -162,12 +162,9 @@ def bordas_laterais(input_camera):
         return [],[],NAO_HA_RETA
     if ha_reta_na_direita == True and ha_reta_na_esquerda == True:
         return lista_media_esquerda, lista_media_direita, HA_DUAS_RETAS
-    SO_ESQUERDA = 2
     if ha_reta_na_direita == False and ha_reta_na_esquerda == True:
        return lista_media_esquerda, [], SO_ESQUERDA
-    SO_DIREITA = 3
-    if ha_reta_na_direita == True and ha_reta_na_esquerda == False:
-       return [], lista_media_direita, SO_DIREITA
+    return [], lista_media_direita,SO_DIREITA
 
     
 
@@ -241,12 +238,12 @@ def ponto_medio_borda_inferior(imagem):
     cv2.waitKey()'''
     return x_med, y_max
 
-def calcular_porcentagem(valor_comparar):
-    img = cv2.imread('./imagens/pista2.jpg') #trocar o diretorio da imagem
+def calcular_porcentagem(valor_comparar,input_imagem):
+    img = input_imagem.copy() #trocar o diretorio da imagem
     #cv2.imwrite("imagem original.png", img)
     
-    preto = cv2.imread('./imagens/pista2.jpg') #trocar o diretorio da imagem
-    fundo = cv2.imread('./imagens/pista2.jpg') #trocar o diretorio da imagem
+    preto = input_imagem.copy() #trocar o diretorio da imagem
+    fundo = input_imagem.copy() #trocar o diretorio da imagem #trocar o diretorio da imagem
     preto = cv2.circle(preto, (0,0), 4000,(0,0) , -1) ##cria imagem toda preta do mesmo tamanho
     fundo = cv2.circle(preto, (0,0), 4000,(0,0) , -1) ##cria imagem toda preta do mesmo tamanho
     (altura, largura) = img.shape[:2] 
@@ -325,3 +322,5 @@ def calcular_porcentagem(valor_comparar):
         else:
             #cv2.imwrite("imagem com linhas.png", img)
             return False
+
+

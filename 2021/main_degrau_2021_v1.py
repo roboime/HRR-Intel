@@ -25,6 +25,7 @@ import RPi.GPIO as GPIO
 import classes
 import VL53L0X
 from main_corrida_2021_v1 import Loop_corrida
+import PiCamera as picamera
 
 import funcoes
 
@@ -52,19 +53,25 @@ estado.Trocar_estado(PARAR, myrio)
 tolerancia_alinhamento = 10
 intervalo_alinhamento = 10
 intervalo_enquanto_gira = 0.5
+tolerancia_centro = 20
+tolerancia_para_frente = 60
 
-
+# Anda até a proximidade do degrau desajada e realinha
 def Loop_degrau(Estado, proximidade):
     estado.Trocar_estado(ANDAR, myrio)                  
     while funcoes.checa_proximidade(proximidade):
         print("Andando em frente")
+    estado.Trocar_estado(PARAR, myrio)
 
-    if funcoes.esta_desalinhado(tolerancia_desalinhamento):
-        estado.Trocar_estado(funcoes.decisao_alinhamento(), myrio)
-        while(funcoes.esta_desalinhado(tolerancia_desalinhamento)):
+    camera = picamera.PiCamera()
+    decisao = funcoes.checar_alinhamento_pista(camera, tolerancia_centro, tolerancia_para_frente)
+
+    if decisao != ANDAR:
+        estado.Trocar_estado(decisao, myrio)
+        while(funcoes.checar_alinhamento_pista(camera, tolerancia_centro, tolerancia_para_frente) != ANDAR):
             print("Alinhando...")
 
-    estado.Trocar_estado(Estado , myrio)
+    estado.Trocar_estado(Estado, myrio)
 
 #Funcao main
         
