@@ -2,7 +2,6 @@ import serial
 import RPi.GPIO as GPIO
 import RTIMU
 import VL53L0X
-#import pickle
 import time
 import math
 import picamera
@@ -18,13 +17,19 @@ DESCER = "5"
 class Classe_camera():
     def __init__(self):
         self.camera = picamera.PiCamera()
-
+        self.intervalo_foto = 2.5
     def Take_photo(self):
         self.camera.start_preview()
-        time.sleep(2.5)
+        time.sleep(self.intervalo_foto)
         image = self.camera.capture('/home/pi/image.jpg')
         self.camera.stop_preview()
-        return image
+        return image 
+    def parar_fotografar(self, estado, myrio):
+        atual = estado.Obter_estado_atual()
+        estado.Trocar_estado(PARAR, myrio)
+        img = self.Take_photo()
+        estado.Trocar_estado(atual, myrio)
+        return img
 
 class Classe_giroscopio():
     def __init__(self):

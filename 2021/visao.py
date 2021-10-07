@@ -52,13 +52,47 @@ def white_mask(img):
     IMG_WIDTH = img.shape[1]
 
     hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV) # converte a cor para hsv
-    lower = np.array([0,0,140])   #range de cores em hsv para reconhecer as bordas
-    upper = np.array([255,255,255])
+    with open("ranges_branco.txt", "r") as f:
+        lines = f.readlines()
+        range = lines[0].split(",")
+        lower = np.array([range[0],range[1],range[2]])   #range de cores em hsv para reconhecer as bordas
+        upper = np.array([range[3],range[4],range[5]])
     mask = cv2.inRange(hsv, lower, upper)
 
     kernel = np.ones((5,5), np.uint8) 
     mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel, iterations=2)
-    cv2.imwrite('edge.png', mask)
+    return mask
+
+def orange_mask(img):
+    global IMG_WIDTH
+    IMG_WIDTH = img.shape[1]
+
+    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV) # converte a cor para hsv
+    with open("ranges_laranja.txt", "r") as f:
+        lines = f.readlines()
+        range = lines[0].split(",")
+        lower = np.array([range[0],range[1],range[2]])   #range de cores em hsv para reconhecer as bordas
+        upper = np.array([range[3],range[4],range[5]])
+    mask = cv2.inRange(hsv, lower, upper)
+
+    kernel = np.ones((5,5), np.uint8) 
+    mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel, iterations=2)
+    return mask
+
+def red_mask(img):
+    global IMG_WIDTH
+    IMG_WIDTH = img.shape[1]
+
+    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV) # converte a cor para hsv
+    with open("ranges_vermelho.txt", "r") as f:
+        lines = f.readlines()
+        range = lines[0].split(",")
+        lower = np.array([range[0],range[1],range[2]])   #range de cores em hsv para reconhecer as bordas
+        upper = np.array([range[3],range[4],range[5]])
+    mask = cv2.inRange(hsv, lower, upper)
+
+    kernel = np.ones((5,5), np.uint8) 
+    mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel, iterations=2)
     return mask
 
 
