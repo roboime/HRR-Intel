@@ -14,16 +14,25 @@ PARAR="3"
 SUBIR = "4"
 DESCER = "5"
 
+
+
 class Classe_camera():
     def __init__(self):
         self.camera = picamera.PiCamera()
         self.intervalo_foto = 2.5
+        self.indice_atual = 1
+        self.path_pasta = "./tests/fotos/"
+        self.path_atual = self.path + "1.jpg"
+
     def Take_photo(self):
         self.camera.start_preview()
         time.sleep(self.intervalo_foto)
-        image = self.camera.capture('/home/pi/image.jpg')
+        self.path_atual = self.path_pasta+str(self.indice_atual)+".jpg"
+        self.camera.capture(self.path_atual)
         self.camera.stop_preview()
-        return image 
+        self.indice_atual = self.indice_atual % 10 +1
+        return self.path_atual
+
     def parar_fotografar(self, estado, myrio):
         atual = estado.Obter_estado_atual()
         estado.Trocar_estado(PARAR, myrio)
