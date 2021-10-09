@@ -35,10 +35,8 @@ ANG_CABECA_OBSTACULO = 0.0
 ANG_CABECA_DEGRAU = 0.0
 DIST_MIN_OBST_ATUAL = 46.0
 
-# Utiliza giroscopio, a principio nao vai ser utilizado
-#peguei o giroscopio pois imaginei que o robo poderia precisar fazer alguma correcao 
-# durante a trajetoria futuramente
-
+'''Gira o robo ate haver uma variacao brusca de distancia, quando eh suposto nao haver mais obstaculo na direcao, acrescido
+de uma margem de segurnca dependente da altura do robo. Usada em Loop Obstaculo'''
 def quando_parar_de_girar(sensor_distancia, vel_ang, largura_robo):
     global DIST_MIN_OBST_ATUAL
     global ANG_GIRADO
@@ -70,10 +68,13 @@ def quando_parar_de_girar(sensor_distancia, vel_ang, largura_robo):
 
   #  print("Saimo familia")
     return PARAR
-
+'''
+Funcao que seria usada no loop de obstaculo conseguissemos usar o giroscopio.'''
 def quando_parar_de_andar_giroscopio(giroscopio, s_distancia, velocidade, largura_do_robo):
-    projecao_horizontal_trajetoria = s_distancia.anterior*np.cos(np.pi/180 * giroscopio.Obter_angulo_yaw()) + largura_do_robo
-    projecao_vertical_trajetoria = s_distancia.anterior*np.sin(np.pi/180 * giroscopio.Obter_angulo_yaw())
+    projecao_horizontal_trajetoria = s_distancia.anterior * \
+        np.cos(np.pi/180 * giroscopio.Obter_angulo_yaw()) + largura_do_robo
+    projecao_vertical_trajetoria = s_distancia.anterior * \
+        np.sin(np.pi/180 * giroscopio.Obter_angulo_yaw())
 
     trajetoria = ( projecao_vertical_trajetoria**2 +projecao_horizontal_trajetoria**2 ) ** (1/2)
     tempo_necessario = trajetoria/velocidade
@@ -86,8 +87,7 @@ def quando_parar_de_andar_giroscopio(giroscopio, s_distancia, velocidade, largur
 
 
 
-# Utiliza somente a camera e o sensor de distancia
-# Deixa o robo andando durante o tempo necessario
+'''Utiliza somente a velocidade e a variavel global angular definida pela funcao quando parar de girar'''
 def quando_parar_de_andar_visaocomp(velocidade):
     instante_inicial = time.time()
 
@@ -101,7 +101,7 @@ def quando_parar_de_andar_visaocomp(velocidade):
 
 
 
-# Essa funcao roda até o robô estar alinhado com a pista
+# No momento nao utilizada em funcao de poder ser feita apenas com whiles dentro do loop
 def quando_parar_de_alinhar(tolerancia_centro, tolerancia_para_frente):
     camera = picamera.PiCamera()
     
@@ -111,7 +111,7 @@ def quando_parar_de_alinhar(tolerancia_centro, tolerancia_para_frente):
     return PARAR
 
 
-
+'''Decide para onde virar quando encontra um obstaculo. Recebe somente a camera. Usado apenas no loop de obstaculo.'''
 def decisao_desvio(camera):
     img = camera.Take_photo()
     x, y = visao.ponto_medio_borda_inferior(img)
@@ -192,6 +192,9 @@ SO_ESQUERDA = 2
 SO_DIREITA = 3
 casos_dic = ["NAO_HA_RETA", "HA_DUAS_RETAS", "SO_ESQUERDA", "SO_DIREITA"]
 
+'''Recebe o sensor camera, uma tolerancia em relacao ao centro da imagem, e uma tolerancia em relacao ao quanto eh possivel
+andar sem encontrar uma borda lateral para retornar uma direcao de giro ou entao andar em frente a partir das bordas.
+Usada em todos os loops'''
 def checar_alinhamento_pista(camera, tolerancia_central, tolerancia_para_frente):
     img = camera.Take_photo()
     reta_esquerda, reta_direita, caso = visao.bordas_laterais(img)
