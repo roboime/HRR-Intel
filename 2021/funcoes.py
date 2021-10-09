@@ -2,21 +2,15 @@
 import time
 import numpy as np
 import cv2
-import visao
+from visao import *
 import PiCamera as picamera
+import classes
+
 
 X1 = 0
 Y1 = 1
 X2 = 2
 Y2 = 3
-
-def coef_angular(lista):
-
-    if lista[2] != lista[0]: return (lista[3]-lista[1])/(lista[2]-lista[0])
-    else: return 1000
-
-def coef_linear(lista):
-    return lista[Y1] - coef_angular(lista)*lista[X1]
 
 ANDAR = "0"                 
 GIRAR_ESQUERDA = "1"        
@@ -29,6 +23,7 @@ NAO_HA_RETA = 0
 HA_DUAS_RETAS = 1
 SO_ESQUERDA = 2
 SO_DIREITA = 3
+casos_dic = ["NAO_HA_RETA", "HA_DUAS_RETAS", "SO_ESQUERDA", "SO_DIREITA"]
 
 ANG_GIRADO = 0.0
 ANG_CABECA_OBSTACULO = 0.0
@@ -113,11 +108,12 @@ def quando_parar_de_alinhar(tolerancia_centro, tolerancia_para_frente):
 
 '''Decide para onde virar quando encontra um obstaculo. Recebe somente a camera. Usado apenas no loop de obstaculo.'''
 def decisao_desvio(camera):
-    img = camera.Take_photo()
-    x, y = visao.ponto_medio_borda_inferior(img)
-    lista_esquerda, lista_direita, j = visao.bordas_laterais(img)
-    poly_left = [visao.coef_angular(lista_esquerda), visao.coef_linear(lista_esquerda)]
-    poly_right = [visao.coef_angular(lista_direita), visao.coef_linear(lista_direita)]
+    camera.Take_photo()
+    objeto_imagem = classes.Classe_imagem(camera.image_path)
+    x, y = ponto_medio_borda_inferior(objeto_imagem)
+    lista_esquerda, lista_direita, j = bordas_laterais_v2(objeto_imagem)
+    poly_left = [coef_angular(lista_esquerda), coef_linear(lista_esquerda)]
+    poly_right = [coef_angular(lista_direita), coef_linear(lista_direita)]
     # j = 1: linha central. j = 2: borda direita. j = 3: borda esquerda. j = 0: nenhuma borda
     pixel_scale = 20.4
     d_min = 40
@@ -197,15 +193,15 @@ andar sem encontrar uma borda lateral para retornar uma direcao de giro ou entao
 Usada em todos os loops'''
 def checar_alinhamento_pista(camera, tolerancia_central, tolerancia_para_frente):
     img = camera.Take_photo()
-    reta_esquerda, reta_direita, caso = visao.bordas_laterais(img)
+    reta_esquerda, reta_direita, caso = bordas_laterais_v2(img)
+    return reta_esquerda, reta_direita, caso
 
-    (altura, largura) = img.shape[:2] 
-    centro = (largura // 2, altura // 2) 
+def checar_alinhamento_pista_v1(camera, tolerancia_central, tolerancia_para_frente):
+    path = camera.Take_photo()
+    objeto_imagem = Classe_imagem(path)
+    reta_esquerda, reta_direita, caso = bordas_laterais_v1(objeto_imagem)
+    largura, altura = objeto_imagem.largura, objeto_imagem.altura
 
-     # Gerar matriz de rotação, em seguida transforma a imagem baseado em uma matriz
-    M = cv2.getRotationMatrix2D(centro, 180, 1.0)  
-    img = cv2.warpAffine(img, M, (largura, altura))
-    
     print("Estamos no seguinte caso:", casos_dic[caso])
     if(caso == HA_DUAS_RETAS):
         x_intersecao = (coef_linear(reta_direita)-coef_linear(reta_esquerda))/(coef_angular(reta_esquerda)-coef_angular(reta_direita)) 
@@ -257,4 +253,55 @@ def checar_alinhamento_pista(camera, tolerancia_central, tolerancia_para_frente)
 
     else:
         print("nenhuma reta encontrada, andando em frente")
-        #return(ANDAR)
+        return(ANDAR)
+
+def checar_alinhamento_pista_v2(camera):
+    path = camera.Take_photo()
+    objeto_imagem = Classe_imagem(path)
+    left, right, caso = bordas_laterais_v2(objeto_imagem)
+    k = objeto_imagem.largura//2
+    if caso == SO_DIREITA:
+        horizontal = [0, objeto_imagem.topo_da_pista, objeto_imagem.largura, objeto_imagem.topo_da_pista]
+        x, _ = interscetion(horizontal, right)
+        delta_x = x-objeto_imagem.largura//2
+        min_largura = k - (objeto_imagem.altura - objeto_imagem.topo_da_pista) / coef_angular(right)
+  #      objeto_imagem.img = cv2.circle(objeto_imagem.img, (x, objeto_imagem.topo_da_pista), radius=10, color=(0, 0, 255), thickness=-1)
+   #     objeto_imagem.img = cv2.line(objeto_imagem.img, (objeto_imagem.largura//2 + min_largura, 0), (objeto_imagem.largura//2 + min_largura, objeto_imagem.altura), (127, 127, 0), 2)
+    #    objeto_imagem.img = cv2.line(objeto_imagem.img, (objeto_imagem.largura//2, 0), (objeto_imagem.largura//2, objeto_imagem.altura), (255, 0, 0), 2)
+        if delta_x > min_largura and delta_x > 0:
+            return ANDAR
+        else:
+            return GIRAR_ESQUERDA
+    elif caso == SO_ESQUERDA:
+        horizontal = [0, objeto_imagem.topo_da_pista, objeto_imagem.largura, objeto_imagem.topo_da_pista]
+        x, _ = interscetion(horizontal, left)
+        delta_x = -x + objeto_imagem.largura//2
+        min_largura = k + (objeto_imagem.altura - objeto_imagem.topo_da_pista) / coef_angular(left)
+        #objeto_imagem.img = cv2.circle(objeto_imagem.img, (x, objeto_imagem.topo_da_pista), radius=10, color=(0, 0, 255), thickness=-1)
+        #objeto_imagem.img = cv2.line(objeto_imagem.img, (objeto_imagem.largura//2 + min_largura, 0), (objeto_imagem.largura//2 + min_largura, objeto_imagem.altura), (127, 127, 0), 2)
+        #objeto_imagem.img = cv2.line(objeto_imagem.img, (objeto_imagem.largura//2, 0), (objeto_imagem.largura//2, objeto_imagem.altura), (255, 0, 0), 2)
+        if delta_x > min_largura and delta_x > 0:
+            return ANDAR
+        else:
+            return GIRAR_DIREITA
+    elif caso == NAO_HA_RETA:
+        return ANDAR
+    else:
+        horizontal = [0, objeto_imagem.topo_da_pista, objeto_imagem.largura, objeto_imagem.topo_da_pista]
+        x1, _ = interscetion(horizontal, left)
+        x2, _ = interscetion(horizontal, right)
+        largura_pista = abs(x2 - x1)
+        mult_largura_pista = 0.7
+        delta_x = (x1+x2)//2-objeto_imagem.largura//2
+#        objeto_imagem.img = cv2.line(objeto_imagem.img, (objeto_imagem.largura//2, 0), (objeto_imagem.largura//2, objeto_imagem.altura), (255, 0, 0), 2)
+ #       objeto_imagem.img = cv2.line(objeto_imagem.img, (int(objeto_imagem.largura_pista//2*objeto_imagem.mult_largura_pista)+(x1+x2)//2, 0), (int(objeto_imagem.largura_pista//2*objeto_imagem.mult_largura_pista)+(x1+x2)//2, objeto_imagem.altura), (127, 127, 0), 2)
+  #      objeto_imagem.img = cv2.line(objeto_imagem.img, (-int(objeto_imagem.largura_pista//2*objeto_imagem.mult_largura_pista)+(x1+x2)//2, 0), (-int(objeto_imagem.largura_pista//2*objeto_imagem.mult_largura_pista)+(x1+x2)//2, objeto_imagem.altura), (127, 127, 0), 2)
+   #     objeto_imagem.img = cv2.circle(objeto_imagem.img, (x1, objeto_imagem.topo_da_pista), radius=10, color=(0, 255, 255), thickness=-1)
+    #    objeto_imagem.img = cv2.circle(objeto_imagem.img, (x2, objeto_imagem.topo_da_pista), radius=10, color=(0, 255, 255), thickness=-1)
+     #   objeto_imagem.img = cv2.circle(objeto_imagem.img, ((x1+x2)//2, objeto_imagem.topo_da_pista), radius=10, color=(0, 0, 255), thickness=-1)
+        if largura_pista//2*mult_largura_pista > abs(delta_x):
+            return ANDAR
+        elif delta_x > 0:
+            return GIRAR_DIREITA
+        else:
+            return GIRAR_ESQUERDA

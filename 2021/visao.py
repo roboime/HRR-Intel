@@ -2,227 +2,95 @@ import cv2
 import numpy as np
 import math
 
-
-IMG_WIDTH = 0
-RIGHT = 1
-LEFT = -1
-
 NAO_HA_RETA = 0
 HA_DUAS_RETAS = 1
 SO_ESQUERDA = 2
 SO_DIREITA = 3
 
-
 X1 = 0
 Y1 = 1
 X2 = 2
 Y2 = 3
+
+RANGE_INCLINACAO = 70 #Em graus
+
+
+class Classe_imagem():
+    def __init__(self, path):
+        img = cv2.imread(path)
+        img = np.array(img)
+        (self.altura, self.largura) = img.shape[:2] 
+        self.centro = (self.largura // 2, self.altura // 2) 
+        M = cv2.getRotationMatrix2D(self.centro, 180, 1.0)  
+        img = cv2.warpAffine(img, M, (self.largura, self.altura))
+        self.img = img
+
+        self.topo_da_pista = 0 #coordenada y do topo da pista
+        self.meio_da_pista = 0 # coordenada x do meio da pista
+        self.largura_pista = 0 # largura do final da pista na imagem
+        self.mult_largura_pista = 0.7 #ate quanto da metade da largura da pista ainda eh atravessavel pelo robo
+
+    def mask(self, ranges_file_path):
+        hsv = cv2.cvtColor(self.img, cv2.COLOR_BGR2HSV) # converte a cor para hsv
+        with open(ranges_file_path, "r") as f:
+            lines = f.readlines()
+            range = lines[0].split(",")
+            lower = np.array([int(range[0]),int(range[1]),int(range[2])])  #range de cores em hsv para reconhecer as bordas
+            upper = np.array([int(range[3]),int(range[4]),int(range[5])])
+        mask = cv2.inRange(hsv, lower, upper)
+        kernel = np.ones((5,5), np.uint8) 
+        mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel, iterations=2)
+        return mask
+
 def coef_angular(lista):
 
-    if lista[X2] != lista[X1]: return (math.atan((lista[Y2]-lista[Y1]) / (lista[X2]-lista[X1])))
-    else: return 99999
+    if lista[X2] != lista[X1]: return (lista[Y2]-lista[Y1]) / (lista[X2]-lista[X1])
+    else: return np.Inf
 
 def coef_linear(lista):
     return lista[Y1] - coef_angular(lista)*lista[X1]
-
-class line():
-
-    def __init__(self, segment):
-
-        segment = segment.reshape(4)
-        self.x1, self.y1, self.x2, self.y2 = segment
-
-        side = (self.x1 + self.x2)/2 - IMG_WIDTH/2
-        self.side = side / abs(side) # 1 para lado direito e -1 para lado esquerdo
-
-        if self.x1 != self.x2:
-            self.angCoef = (self.y2-self.y1)/(self.x2-self.x1)
-            self.inc = math.atan(self.angCoef)
-            self.linCoef = self.y1 - self.angCoef * self.x1
-        else:
-            self.linCoef = None
-            self.angCoef = None
-            self.inc = math.pi/2
-    def get_y(self, x):
-        return self.linCoef + self.angCoef * x
+# Essa funcao deve devolver o ponto medio ( (x,y) ) da borda inferior do obstaculo mais proximo
 
 
-def white_mask(img):
-    global IMG_WIDTH
-    IMG_WIDTH = img.shape[1]
-
-    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV) # converte a cor para hsv
-    with open("ranges_branco.txt", "r") as f:
-        lines = f.readlines()
-        range = lines[0].split(",")
-        lower = np.array([range[0],range[1],range[2]])   #range de cores em hsv para reconhecer as bordas
-        upper = np.array([range[3],range[4],range[5]])
-    mask = cv2.inRange(hsv, lower, upper)
-
-    kernel = np.ones((5,5), np.uint8) 
-    mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel, iterations=2)
-    return mask
-
-def orange_mask(img):
-    global IMG_WIDTH
-    IMG_WIDTH = img.shape[1]
-
-    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV) # converte a cor para hsv
-    with open("ranges_laranja.txt", "r") as f:
-        lines = f.readlines()
-        range = lines[0].split(",")
-        lower = np.array([range[0],range[1],range[2]])   #range de cores em hsv para reconhecer as bordas
-        upper = np.array([range[3],range[4],range[5]])
-    mask = cv2.inRange(hsv, lower, upper)
-
-    kernel = np.ones((5,5), np.uint8) 
-    mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel, iterations=2)
-    return mask
-
-def red_mask(img):
-    global IMG_WIDTH
-    IMG_WIDTH = img.shape[1]
-
-    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV) # converte a cor para hsv
-    with open("ranges_vermelho.txt", "r") as f:
-        lines = f.readlines()
-        range = lines[0].split(",")
-        lower = np.array([range[0],range[1],range[2]])   #range de cores em hsv para reconhecer as bordas
-        upper = np.array([range[3],range[4],range[5]])
-    mask = cv2.inRange(hsv, lower, upper)
-
-    kernel = np.ones((5,5), np.uint8) 
-    mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel, iterations=2)
-    return mask
-
-
-def bordas_laterais_ebert(input_camera):
-    edges = cv2.Canny(white_mask(input_camera), 75, 150) # destaca as linhas da imagem convertida em preto e branco
-    segments = cv2.HoughLinesP(edges, 1, np.pi/180, 20, maxLineGap=20, minLineLength=50) # obtem os pontos que formam os segmentos de reta das linhas
-    if segments is None: return [], [], 0 #não achou nenhum segmento de reta
-    lines = []
-    for segment in segments:
-        l = line(segment) 
-        lines.append(l)
-    left_major = right_major = np.NINF
-    left_edge = right_edge = None
-
-    for l in lines:
-        if l.angCoef is not None: # se não for inclinada de 90°
-            if l.side*l.angCoef < 3.5 and l.side*l.angCoef > 2/7: #está dentro do range da inclinação
-                r_intersect = l.get_y(IMG_WIDTH) # intersecção com a borda direita da imagem
-                l_intersect = l.linCoef # intersecção com a borda esquerda da imagem
-
-                if l.side == RIGHT and r_intersect > right_major:           #
-                    right_major = r_intersect                               #
-                    right_edge = l                                          #     a reta cuja intersecção com a borda lateral é
-                if l.side == LEFT and l_intersect > left_major:             #     mais próxima da borda inferior será a borda lateral
-                    left_major = l_intersect                                #     da pista
-                    left_edge = l                                           #
-    if left_edge is None and right_edge is None: return [], [], 0   # nenhuma das retas é borda da pista
-    if left_edge is None: return [], [right_edge.angCoef, right_edge.linCoef], 2   # somente a borda da esquerda foi detectada
-    if right_edge is None: return [left_edge.angCoef, left_edge.linCoef], [], 3 # somente a borda da direita foi detectada
-    return [left_edge.angCoef, left_edge.linCoef], [right_edge.angCoef, right_edge.linCoef], 1 # as duas bordas da pista foram detectadas
-
-def bordas_laterais(input_camera):
-    img = input_camera
-    (altura, largura) = img.shape[:2] 
-    centro = (largura // 2, altura // 2) 
-    preto = np.zeros((largura, altura, 3), np.uint8)
-    ##cria imagem toda preta para usar como fundo
-     
-
-
-    # Gerar matriz de rotação, em seguida transforma a imagem baseado em uma matriz
-    M = cv2.getRotationMatrix2D(centro, 180, 1.0)  
-    img = cv2.warpAffine(img, M, (largura, altura))
-
-    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV) 
-    mask = cv2.inRange(hsv, (0,3,117), (179,65,255)) 
-
+def reconhecer_pista(mask, objeto_imagem):
     _, th = cv2.threshold(mask, 0, 255, cv2.THRESH_BINARY) 
     contours, _ = cv2.findContours(th, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
+    pista = contours[0]
     for contour in contours:
-        area = cv2.contourArea(contour)
-        if 1000000 > area > 50:
-            approx = cv2.approxPolyDP(contour, 0.001*cv2.arcLength(contour, True), True)
-            cv2.drawContours(preto, [approx], 0, (255, 255, 255), 2) 
-            
-
-    gray=cv2.cvtColor(preto,cv2.COLOR_BGR2GRAY)
-
-    edges = cv2.Canny(gray, 50, 150, apertureSize=3)
-
-    lines = cv2.HoughLinesP(edges, 1, np.pi/180, 100, minLineLength=50, maxLineGap=100)
-    coordleft = []
-    coordright =[]
-
-    for line in lines:
-        x1,y1,x2,y2= line[0]
-        if ( y1>altura/2 or y2>altura/2) and 0.09<abs(((y2-y1)/(x2-x1))) and abs(((y2-y1)/(x2-x1)))<10:
-            if ((y2-y1)/(x2-x1)) > 0:
-                coordright.append([x1,y1,x2,y2])
-                #cv2.line(img, (x1,y1), (x2,y2), (255,255,255), 2)
-            else:
-                coordleft.append([x1,y1,x2,y2])
-                #cv2.line(img, (x1,y1), (x2,y2), (0,255,0), 2)
+        if cv2.contourArea(contour) > cv2.contourArea(pista): pista = contour 
     
-    ha_reta_na_direita = False
+    x,y,w,h = cv2.boundingRect(pista)
+    objeto_imagem.topo_da_pista = y
+    objeto_imagem.meio_da_pista = x+w//2
+    objeto_imagem.img = cv2.line(objeto_imagem.img, (objeto_imagem.meio_da_pista, objeto_imagem.topo_da_pista), (objeto_imagem.meio_da_pista, objeto_imagem.altura), (0, 255, 255), 2)
+    objeto_imagem.img = cv2.line(objeto_imagem.img, (0, objeto_imagem.topo_da_pista), (objeto_imagem.largura, objeto_imagem.topo_da_pista), (0, 255, 255), 2)
 
-    if(len(coordright) != 0):
-        ha_reta_na_direita = True
-        coordright=np.array(coordright)
-        mediaright = np.mean(coordright,axis=0)
-        lista_media_direita = mediaright.tolist()
-        mediaright=mediaright.astype(np.int64)
-        [x1,y1,x2,y2]=mediaright
-        #cv2.line(img, (x1,y1), (x2,y2), (0,0,255), 2)
-        
-    ha_reta_na_esquerda = False
+def interscetion(r1, r2):
+    ml = coef_angular(r1)
+    mr = coef_angular(r2)
+    nl = coef_linear(r1)
+    nr = coef_linear(r2)
+    x = (nr-nl)/(ml-mr)
+    y = mr*x+nr
+    #IMG = cv2.circle(IMG, (int(x),int(y)), radius=10, color=(0, 255, 255), thickness=-1)
+    return int(x), int(y)   
 
-    if(len(coordleft) != 0):
-        ha_reta_na_esquerda = True
-        coordleft=np.array(coordleft)
-        medialeft = np.mean(coordleft,axis=0)
-        lista_media_esquerda = medialeft.tolist()
-        medialeft=medialeft.astype(np.int64)
-        [x1,y1,x2,y2]=medialeft
-        #cv2.line(img, (x1,y1), (x2,y2), (0,0,255), 2)
-        #text= 'y_direita = '+str((y2-y1)/(x2-x1))+' *x + ' +str(y1-(((y2-y1)*x1)/(x2-x1)))
-        #img = cv2.putText(img, text, (int(((x1+x2)/2))-450,int(((y1+y2)/2))), cv2.FONT_HERSHEY_COMPLEX, 1, (255,255,255), 1, cv2.LINE_AA)
+def aiming_point(left, right, objeto_imagem):
+    horizontal = [0, objeto_imagem.topo_da_pista, objeto_imagem.largura, objeto_imagem.topo_da_pista]
+    #cv2.line(IMG, (horizontal[0],horizontal[1]), (horizontal[2],horizontal[3]), (255,0,255), 2)
+ #   vertical = [LARGURA//2, 0, LARGURA//2, ALTURA]
+  #  cv2.line(IMG, (vertical[0],vertical[1]), (vertical[2],vertical[3]), (255,0,255), 2)
+    x1, y1 = interscetion(horizontal, left)
+    x2, y2 = interscetion(horizontal, right)
+    largura_pista = abs(x2 - x1)
+    return (x1+x2)//2, (y1+y2)//2, largura_pista
 
-
-    if ha_reta_na_direita == False and ha_reta_na_esquerda == False:
-        return [],[],NAO_HA_RETA
-    if ha_reta_na_direita == True and ha_reta_na_esquerda == True:
-        return lista_media_esquerda, lista_media_direita, HA_DUAS_RETAS
-    if ha_reta_na_direita == False and ha_reta_na_esquerda == True:
-       return lista_media_esquerda, [], SO_ESQUERDA
-    return [], lista_media_direita,SO_DIREITA
-
+def ponto_medio_borda_inferior(objeto_imagem):
     
-
-   
-# Essa funcao deve devolver o ponto medio ( (x,y) ) da borda inferior do obstaculo mais proximo
-def ponto_medio_borda_inferior(imagem):
-    (altura, largura) = imagem.shape[:2] 
-    centro = (largura // 2, altura // 2) 
-
-    # Gerar matriz de rotação, em seguida transforma a imagem baseado em uma matriz
-    M = cv2.getRotationMatrix2D(centro, 180, 1.0)  
-    imagem = cv2.warpAffine(imagem, M, (largura, altura))
-
-    #blur opcional
-    # imagem = cv2.blur(imagem, (7, 7))
-
-    imagem_hls = cv2.cvtColor(imagem, cv2.COLOR_BGR2HLS)
-    limite_inf_filtro_laranja = np.array([5, 0, 0])
-    limite_sup_filtro_laranja = np.array([25, 255, 255])
-    orangemask = cv2.inRange(imagem_hls, limite_inf_filtro_laranja, limite_sup_filtro_laranja)
-
+    orangemask = objeto_imagem.mask("ranges_laranja.txt")
+    largura = objeto_imagem.largura
     # Usamos "Canny" para pegar os contornos
     lista_bordas = cv2.Canny(orangemask, 100, 300, apertureSize=3)
-
 
     minLineLength = 90  # Parametro da HoughLines
 
@@ -272,41 +140,151 @@ def ponto_medio_borda_inferior(imagem):
     cv2.waitKey()'''
     return x_med, y_max
 
-def checar_proximidade(valor_comparar,input_imagem):
+
+def bordas_laterais_v1(objeto_imagem):
+    img = objeto_imagem.img
+    largura, altura = objeto_imagem.largura, objeto_imagem.altura
+    preto = np.zeros((largura, altura, 3), np.uint8)
+    mask = objeto_imagem.mask("ranges_branco.txt")
+
+    _, th = cv2.threshold(mask, 0, 255, cv2.THRESH_BINARY) 
+    contours, _ = cv2.findContours(th, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
+    for contour in contours:
+        area = cv2.contourArea(contour)
+        if 1000000 > area > 50:
+            approx = cv2.approxPolyDP(contour, 0.001*cv2.arcLength(contour, True), True)
+            cv2.drawContours(preto, [approx], 0, (255, 255, 255), 2) 
+            
+
+    gray=cv2.cvtColor(preto,cv2.COLOR_BGR2GRAY)
+
+    edges = cv2.Canny(gray, 50, 150, apertureSize=3)
+
+    lines = cv2.HoughLinesP(edges, 1, np.pi/180, 100, minLineLength=50, maxLineGap=100)
+    coordleft = []
+    coordright =[]
+    if lines is not None:
+        for line in lines:
+            x1,y1,x2,y2= line[0]
+            if ( y1>altura/2 or y2>altura/2) and 0.09<abs(((y2-y1)/(x2-x1))) and abs(((y2-y1)/(x2-x1)))<10:
+                if ((y2-y1)/(x2-x1)) > 0:
+                    coordright.append([x1,y1,x2,y2])
+                    #cv2.line(img, (x1,y1), (x2,y2), (255,255,255), 2)
+                else:
+                    coordleft.append([x1,y1,x2,y2])
+                    #cv2.line(img, (x1,y1), (x2,y2), (0,255,0), 2)
+    else: return [],[],NAO_HA_RETA
+    ha_reta_na_direita = False
+
+    if(len(coordright) != 0):
+        ha_reta_na_direita = True
+        coordright=np.array(coordright)
+        mediaright = np.mean(coordright,axis=0)
+        lista_media_direita = mediaright.tolist()
+        mediaright=mediaright.astype(np.int64)
+        [x1,y1,x2,y2]=mediaright
+        #cv2.line(img, (x1,y1), (x2,y2), (0,0,255), 2)
+        
+    ha_reta_na_esquerda = False
+
+    if(len(coordleft) != 0):
+        ha_reta_na_esquerda = True
+        coordleft=np.array(coordleft)
+        medialeft = np.mean(coordleft,axis=0)
+        lista_media_esquerda = medialeft.tolist()
+        medialeft=medialeft.astype(np.int64)
+        [x1,y1,x2,y2]=medialeft
+        #cv2.line(img, (x1,y1), (x2,y2), (0,0,255), 2)
+        #text= 'y_direita = '+str((y2-y1)/(x2-x1))+' *x + ' +str(y1-(((y2-y1)*x1)/(x2-x1)))
+        #img = cv2.putText(img, text, (int(((x1+x2)/2))-450,int(((y1+y2)/2))), cv2.FONT_HERSHEY_COMPLEX, 1, (255,255,255), 1, cv2.LINE_AA)
+
+
+    if ha_reta_na_direita == False and ha_reta_na_esquerda == False:
+        return [],[],NAO_HA_RETA
+    if ha_reta_na_direita == True and ha_reta_na_esquerda == True:
+        return lista_media_esquerda, lista_media_direita, HA_DUAS_RETAS
+    if ha_reta_na_direita == False and ha_reta_na_esquerda == True:
+       return lista_media_esquerda, [], SO_ESQUERDA
+    return [], lista_media_direita,SO_DIREITA
+
+def bordas_laterais_v2(objeto_imagem):
+    mask = objeto_imagem.mask("ranges_branco.txt")
+    reconhecer_pista(mask, objeto_imagem)
+    img = objeto_imagem.img
+    edges = cv2.Canny(mask, 50, 150, apertureSize=3)
+    #cv2.imwrite("edges_mask.png", edges)
+
+    lines = cv2.HoughLinesP(edges, 1, np.pi/180, 100, minLineLength=10, maxLineGap=150)
+    coordleft = []
+    coordright =[]
+   # todas_as_linhas = IMG
+    if lines is not None:
+        for line in lines:
+            line = line.reshape(4)
+            x1,y1,x2,y2 = line
+         #   img = cv2.line(img, (x1,y1), (x2,y2), (0,127,255), 2)
+        
+            theta = np.pi/180*RANGE_INCLINACAO
+            if y1>objeto_imagem.topo_da_pista and x1 > objeto_imagem.meio_da_pista or y2>objeto_imagem.topo_da_pista and x2 > objeto_imagem.meio_da_pista:
+                if math.atan(1)-theta/2 < math.atan(coef_angular(line)) < math.atan(1)+theta/2:
+                    coordright.append([x1,y1,x2,y2])
+                #    print("angulo : ", 180/np.pi*math.atan(coef_angular(line)))
+                  #  print([x1, y1, x2, y2])
+                 #   cv2.line(objeto_imagem.img, (x1,y1), (x2,y2), (0,255,0), 2)
+            if y1>objeto_imagem.topo_da_pista and x1 < objeto_imagem.meio_da_pista or y2>objeto_imagem.topo_da_pista and x2 < objeto_imagem.meio_da_pista:
+                if math.atan(-1)-theta/2 < math.atan(coef_angular(line)) < math.atan(-1)+theta/2:
+                    coordleft.append([x1,y1,x2,y2])
+                 #   cv2.line(objeto_imagem.img, (x1,y1), (x2,y2), (0,127,0), 2)
+    else: return [],[],NAO_HA_RETA
+    ha_reta_na_direita = False
+   # cv2.imwrite("todas_as_linhas.png", todas_as_linhas)
+    if(len(coordright) != 0):
+        ha_reta_na_direita = True
+        coordright=np.array(coordright)
+        mediaright = np.mean(coordright,axis=0)
+        lista_media_direita = mediaright.tolist()
+        mediaright=mediaright.astype(np.int64)
+        [x1,y1,x2,y2]=mediaright
+      #  cv2.line(objeto_imagem.img, (x1,y1), (x2,y2), (0,0,255), 2)
+        
+    ha_reta_na_esquerda = False
+
+    if(len(coordleft) != 0):
+        ha_reta_na_esquerda = True
+        coordleft=np.array(coordleft)
+        medialeft = np.mean(coordleft,axis=0)
+        lista_media_esquerda = medialeft.tolist()
+        medialeft=medialeft.astype(np.int64)
+        [x1,y1,x2,y2]=medialeft
+      #  cv2.line(objeto_imagem.img, (x1,y1), (x2,y2), (0,0,255), 2)
+        #text= 'y_direita = '+str((y2-y1)/(x2-x1))+' *x + ' +str(y1-(((y2-y1)*x1)/(x2-x1)))
+        #img = cv2.putText(img, text, (int(((x1+x2)/2))-450,int(((y1+y2)/2))), cv2.FONT_HERSHEY_COMPLEX, 1, (255,255,255), 1, cv2.LINE_AA)
+
+    if ha_reta_na_direita == False and ha_reta_na_esquerda == False:
+        return [],[],NAO_HA_RETA
+    if ha_reta_na_direita == True and ha_reta_na_esquerda == True:
+        return lista_media_esquerda, lista_media_direita, HA_DUAS_RETAS
+    if ha_reta_na_direita == False and ha_reta_na_esquerda == True:
+       return lista_media_esquerda, [], SO_ESQUERDA
+    if ha_reta_na_direita == True and ha_reta_na_esquerda == False:
+       return [], lista_media_direita, SO_DIREITA
+
+
+def checar_proximidade(valor_comparar,objeto_imagem):
+
+    input_imagem = objeto_imagem.img
+    altura = objeto_imagem.altura
     img = input_imagem.copy() #função para pegar a imagem e armazena-la
     #cv2.imwrite("imagem original.png", img)
     
     preto = input_imagem.copy() #criar uma imagem reserva
-    fundo = input_imagem.copy() #criar uma imagem reserva
     preto = cv2.circle(preto, (0,0), 4000,(0,0) , -1) ##cria imagem toda preta do mesmo tamanho
-    fundo = cv2.circle(preto, (0,0), 4000,(0,0) , -1) ##cria imagem toda preta do mesmo tamanho reserva
-    (altura, largura) = img.shape[:2] 
-    centro = (largura // 2, altura // 2) 
-
-        # Gerar matriz de rotação, em seguida transforma a imagem baseado em uma matriz
-    M = cv2.getRotationMatrix2D(centro, 180, 1.0)  
-    img = cv2.warpAffine(img, M, (largura, altura))##inverter a imagem, já que a foto vem de cabeça para baixo
-    #cv2.imwrite("invertendo a imagem.png", img)
     
-
-    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV) ### muda as cores para o padrao
-    mask = cv2.inRange(hsv, (0,53,16), (17,255,255)) ##cria a mascara
-    kernel = np.ones((3,3), np.uint8) ##cria ao tal do kernel q eh uma matriz p andar na imagem
-    mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel) ## tiras sugeirinhas fora, conforme o feedback atestou
-
-
-
-    kernel = np.ones((3,3), np.uint8)
-    mask = cv2.dilate(mask, kernel) ## tira os buracos de dentro
-    mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel) 
+    mask = objeto_imagem.mask("ranges_vermelho.txt")
     #cv2.imwrite("criado a mask.png", mask)
-    
-
-
 
     _, th = cv2.threshold(mask, 0, 255, cv2.THRESH_BINARY) 
-    contours, _ = cv2.findContours(th, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
-   
+    contours, _ = cv2.findContours(th, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)  
 
     for contour in contours:
         area = cv2.contourArea(contour)
@@ -343,9 +321,6 @@ def checar_proximidade(valor_comparar,input_imagem):
                 cv2.line(img,(lines[i][0][x1],lines[i][0][y1]),(lines[i][0][x2],lines[i][0][y2]),(255,0,0),9)
                 if(((lines[i][0][y1]+lines[i][0][y2])/2)>maximo):  #encontrar a reta mais próxima do robô, por meio da coordenada y
                     maximo = lines[i][0][y1]
-            
-
-
 
     except:#quando ele não encontrar mais nenhuma reta no vetor line, ele vai dar erro e vir para essa parte do código. 
         porcentagem = (maximo/altura)*100
@@ -356,5 +331,3 @@ def checar_proximidade(valor_comparar,input_imagem):
         else:
             #cv2.imwrite("imagem com linhas.png", img)
             return False
-
-
