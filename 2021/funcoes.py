@@ -250,7 +250,15 @@ def checar_alinhamento_pista_v1(camera, tolerancia_central, tolerancia_para_fren
         return(ANDAR)
 
 '''
-
+    Funcao que retorna ANDAR, caso o robo esteja alinhado com a pista, e GIRAR_ESQUERDA ou GIRAR_DIREITA, caso contrario.
+    Recebe objeto relativo a Classe_camera(), tira a foto e obtem dela as bordas laterais.
+    Em seuida analisa-se os casos:
+    NAO_HA_RETA - Acontecera quando o robo estiver muito proximo da linha de chegada, entao retorna ANDAR.
+    SO_DIREITA ou SO_ESQUERDA - Calcula-se a interseccao (x, y) da borda com o topo_da_pista. Se a borda nao cortar o meio da imagem
+    e (x - largura)//2  for maior que min_largura, que calculado eh usando a geometria da imagem, entao a direcao esta certa. Senao,
+    retornara para girar.
+    HA_DUAS_RETAS - Neste caso, calcula-se a interseccao das duas bordas com o topo da pista. Se o meio da imagem estiver entre os 2 pontos
+    e numa folga relativa a largura do robo, entao o robo esta na direcao certa. Senao, retornara para girar.
 '''
 def checar_alinhamento_pista_v2(camera):
     path = camera.Take_photo()

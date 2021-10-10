@@ -14,7 +14,8 @@ Y2 = 3
 
 RANGE_INCLINACAO = 70 #Em graus
 
-
+""" Classe relacionada a imagem obtida pela camera. Ao ser chamada, inverte a imagem e salva constantes relacionadas a imagem, como altura, largura e centro.
+ Possui o metodo mask, que retorna a mascara da imagem, passando o arquivo onde esta salvo os ranges da cor."""
 class Classe_imagem():
     def __init__(self, path):
         img = cv2.imread(path)
@@ -55,7 +56,8 @@ def coef_linear(lista):
     return lista[Y1] - coef_angular(lista)*lista[X1]
 # Essa funcao deve devolver o ponto medio ( (x,y) ) da borda inferior do obstaculo mais proximo
 
-#ebert comenta
+""" recebe a mascara do branco e o objeto_imagem e procura o contorno fechado de maior area (pista). salva o y da pista como topo_da_pista e o x + largura/2
+ como o meio_da_pista no objeto_imagem"""
 def reconhecer_pista(mask, objeto_imagem):
     _, th = cv2.threshold(mask, 0, 255, cv2.THRESH_BINARY) 
     contours, _ = cv2.findContours(th, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
@@ -69,7 +71,7 @@ def reconhecer_pista(mask, objeto_imagem):
     objeto_imagem.img = cv2.line(objeto_imagem.img, (objeto_imagem.meio_da_pista, objeto_imagem.topo_da_pista), (objeto_imagem.meio_da_pista, objeto_imagem.altura), (0, 255, 255), 2)
     objeto_imagem.img = cv2.line(objeto_imagem.img, (0, objeto_imagem.topo_da_pista), (objeto_imagem.largura, objeto_imagem.topo_da_pista), (0, 255, 255), 2)
 
-#
+""" recebe duas retas no formato [x1, y1, x2, y2] e retora o ponto de interseccao x, y """
 def interscetion(r1, r2):
     ml = coef_angular(r1)
     mr = coef_angular(r2)
@@ -80,16 +82,6 @@ def interscetion(r1, r2):
     #IMG = cv2.circle(IMG, (int(x),int(y)), radius=10, color=(0, 255, 255), thickness=-1)
     return int(x), int(y)   
 
-#
-def aiming_point(left, right, objeto_imagem):
-    horizontal = [0, objeto_imagem.topo_da_pista, objeto_imagem.largura, objeto_imagem.topo_da_pista]
-    #cv2.line(IMG, (horizontal[0],horizontal[1]), (horizontal[2],horizontal[3]), (255,0,255), 2)
- #   vertical = [LARGURA//2, 0, LARGURA//2, ALTURA]
-  #  cv2.line(IMG, (vertical[0],vertical[1]), (vertical[2],vertical[3]), (255,0,255), 2)
-    x1, y1 = interscetion(horizontal, left)
-    x2, y2 = interscetion(horizontal, right)
-    largura_pista = abs(x2 - x1)
-    return (x1+x2)//2, (y1+y2)//2, largura_pista
 
 ''' identifica a borda laranja mais baixa e traca o ponto medio dela, retornando-o. Usada na decisao desvio'''
 def ponto_medio_borda_inferior(objeto_imagem):
@@ -210,7 +202,9 @@ def bordas_laterais_v1(objeto_imagem):
        return lista_media_esquerda, [], SO_ESQUERDA
     return [], lista_media_direita,SO_DIREITA
 
-#ebert comenta
+""" adaptacao da bordas_laterais_v1 que adiciona 3 restricoes para encontrar as retas. A primeira eh a RANGE_INCLINACAO, que seleciona um coeficiente angular minimo
+ e maximo para considerar como borda. A segunda eh o topo_da_pista, que seleciona apenas as retas que estão abaixo do topo da pista para evitar ruídos. A terceira
+  eh o meio_da_pista que divide as retas da borda da esquerda e da borda da direita."""
 def bordas_laterais_v2(objeto_imagem):
     mask = objeto_imagem.mask("ranges_branco.txt")
     reconhecer_pista(mask, objeto_imagem)
