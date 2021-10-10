@@ -1,11 +1,11 @@
 """
-Função principal do projeto Humanoide RoboIME 2021
+Funcao principal do projeto Humanoide RoboIME 2021
 
-Tomada de decisão para transição entre os estados
+Tomada de decisao para transicao entre os estados
 Feita para ser utilizada em Raspberry Pi
 Segunda versao
 
-    OBSERVAÇÕES:
+    OBSERVACOES:
     
 
 Baseado em main_INTEL_humanoid_2020
@@ -23,7 +23,7 @@ import funcoes
 
 #Variaveis auxiliares, a velocidade esta em cm/seg
 
-intervalo_alinhamento = 10
+intervalo_alinhamento = 2
 intervalo_enquanto_gira = 0.5
 tolerancia_central = 10
 tolerancia_para_frente = 15
@@ -53,14 +53,14 @@ def Loop_corrida():
         if t_1 - t_0 > intervalo_alinhamento:
             estado.Trocar_estado(PARAR, myrio)
             sleep(tempo_para_parar)
-            estado.Trocar_estado(funcoes.checar_alinhamento_pista(camera, tolerancia_central, tolerancia_para_frente), myrio)  # Frente, GIRAR_ESQUERDA ou GIRAR_DIREITA
+            estado.Trocar_estado(funcoes.checar_alinhamento_pista_v1(camera, tolerancia_central, tolerancia_para_frente), myrio)  # Frente, GIRAR_ESQUERDA ou GIRAR_DIREITA
             while estado.Obter_estado_atual() != PARAR or estado.Obter_estado_atual() != ANDAR:
                 print("desalinhado com a pista")
                 sleep(intervalo_enquanto_gira)
                 estado.Trocar_estado(PARAR, myrio)
                 sleep(tempo_para_parar)
                 estado.Trocar_estado(funcoes.checar_alinhamento_pista(camera, tolerancia_central, tolerancia_para_frente), myrio)
-            print("direçao corrigida")
+            print("direcao corrigida")
             print(estado.atual)
             t_0 = t_1 = time()
         else:

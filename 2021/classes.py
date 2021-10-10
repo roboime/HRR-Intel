@@ -5,7 +5,7 @@ import VL53L0X
 import time
 import math
 import picamera
-
+import os
 
 ANDAR="0"                 
 GIRAR_ESQUERDA="1"        
@@ -20,17 +20,18 @@ class Classe_camera():
     def __init__(self):
         self.camera = picamera.PiCamera()
         self.intervalo_foto = 2.5
-        self.indice_atual = 1
-        self.path_pasta = "./tests/fotos/"
-        self.path_atual = self.path + "1.jpg"
+        self.indice_atual = 0
+        self.path_pasta = os.path.dirname(os.path.abspath(__file__))
+        self.path_atual = self.path_pasta + "1.jpg"
 
     def Take_photo(self):
         self.camera.start_preview()
         time.sleep(self.intervalo_foto)
-        self.path_atual = self.path_pasta+str(self.indice_atual)+".jpg"
+        self.path_atual = "/home/pi/Pictures/imagem_main" + str(self.indice_atual) + ".jpg"
+        print(" foto tirada em " + self.path_atual)
         self.camera.capture(self.path_atual)
         self.camera.stop_preview()
-        self.indice_atual = self.indice_atual % 10 +1
+        self.indice_atual = (self.indice_atual + 1) % 10
         return self.path_atual
 
     def parar_fotografar(self, estado, myrio):
@@ -79,7 +80,7 @@ class Classe_giroscopio():
 
 class Classe_distancia():
     def __init__(self):
-        ######################################### Configuracoes do sensor de distância #########################################
+        ######################################### Configuracoes do sensor de distancia #########################################
         self.sensor_distancia = VL53L0X.VL53L0X()                                 # Criando o objeto associado ao sensor VL53L0X
         self.sensor_distancia.start_ranging(VL53L0X.VL53L0X_BETTER_ACCURACY_MODE)     #configurando alcance e precisao do sensor
         
@@ -91,7 +92,7 @@ class Classe_distancia():
     def Get_distance(self):
         self.anterior = self.atual
         self.atual = self.sensor_distancia.get_distance()/10
-        return self.atual                             # retorna a distância ate o obstaculo em cm
+        return self.atual                             # retorna a distancia ate o obstaculo em cm
 
 
 

@@ -3,7 +3,7 @@ import time
 import numpy as np
 import cv2
 from visao import *
-import PiCamera as picamera
+import picamera
 import classes
 
 
@@ -118,7 +118,7 @@ def decisao_desvio(camera):
     d_min = 40
     x_robot = 0
     if x == 0 and y == 0:
-        # Não detectou obstáculo
+        # Nao detectou obstaculo
         return ANDAR
     else:
         if j == 1:

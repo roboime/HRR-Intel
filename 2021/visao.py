@@ -42,16 +42,20 @@ class Classe_imagem():
         mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel, iterations=2)
         return mask
 
+'''tira o coeficiente angular ( delta y / delta x) a partir de uma lista de coordenadas x1 y1 x2 y2. utilizada em funcoes 
+dessa biblioteca: '''
 def coef_angular(lista):
 
     if lista[X2] != lista[X1]: return (lista[Y2]-lista[Y1]) / (lista[X2]-lista[X1])
     else: return np.Inf
 
+'''tira o coeficiente linear ( y1 - coef_angular *x1 = coef_linear) a partir de uma lista de coordenadas x1 y1 x2 y2. 
+utilizada em funcoes dessa biblioteca: '''
 def coef_linear(lista):
     return lista[Y1] - coef_angular(lista)*lista[X1]
 # Essa funcao deve devolver o ponto medio ( (x,y) ) da borda inferior do obstaculo mais proximo
 
-
+#ebert comenta
 def reconhecer_pista(mask, objeto_imagem):
     _, th = cv2.threshold(mask, 0, 255, cv2.THRESH_BINARY) 
     contours, _ = cv2.findContours(th, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
@@ -65,6 +69,7 @@ def reconhecer_pista(mask, objeto_imagem):
     objeto_imagem.img = cv2.line(objeto_imagem.img, (objeto_imagem.meio_da_pista, objeto_imagem.topo_da_pista), (objeto_imagem.meio_da_pista, objeto_imagem.altura), (0, 255, 255), 2)
     objeto_imagem.img = cv2.line(objeto_imagem.img, (0, objeto_imagem.topo_da_pista), (objeto_imagem.largura, objeto_imagem.topo_da_pista), (0, 255, 255), 2)
 
+#
 def interscetion(r1, r2):
     ml = coef_angular(r1)
     mr = coef_angular(r2)
@@ -75,6 +80,7 @@ def interscetion(r1, r2):
     #IMG = cv2.circle(IMG, (int(x),int(y)), radius=10, color=(0, 255, 255), thickness=-1)
     return int(x), int(y)   
 
+#
 def aiming_point(left, right, objeto_imagem):
     horizontal = [0, objeto_imagem.topo_da_pista, objeto_imagem.largura, objeto_imagem.topo_da_pista]
     #cv2.line(IMG, (horizontal[0],horizontal[1]), (horizontal[2],horizontal[3]), (255,0,255), 2)
@@ -85,6 +91,7 @@ def aiming_point(left, right, objeto_imagem):
     largura_pista = abs(x2 - x1)
     return (x1+x2)//2, (y1+y2)//2, largura_pista
 
+''' identifica a borda laranja mais baixa e traca o ponto medio dela, retornando-o. Usada na decisao desvio'''
 def ponto_medio_borda_inferior(objeto_imagem):
     
     orangemask = objeto_imagem.mask("ranges_laranja.txt")
@@ -106,12 +113,6 @@ def ponto_medio_borda_inferior(objeto_imagem):
 
     numero_segmentos, _, _ = segmentos.shape
 
-    #legenda de indices importantes em segmentos
-    x1 = 0
-    y1 = 1
-    x2 = 2
-    y2 = 3
-
     ymed_bloco_todo = 0
     for i in range(numero_segmentos):
         ymed_bloco_todo+=segmentos[i][0][1] + segmentos[i][0][3]
@@ -124,10 +125,10 @@ def ponto_medio_borda_inferior(objeto_imagem):
     fator_para_baixo = 1.3
 
     for i in range(numero_segmentos):
-        if ((segmentos[i][0][y1]+segmentos[i][0][y2])/2 > ymed_bloco_todo*fator_para_baixo):
-            x_min = min(x_min, segmentos[i][0][x1], segmentos[i][0][x2])
-            x_max = max(x_max, segmentos[i][0][x1], segmentos[i][0][x2])
-            y_max = max(y_max, segmentos[i][0][y1], segmentos[i][0][y2])
+        if ((segmentos[i][0][Y1]+segmentos[i][0][Y2])/2 > ymed_bloco_todo*fator_para_baixo):
+            x_min = min(x_min, segmentos[i][0][X1], segmentos[i][0][X2])
+            x_max = max(x_max, segmentos[i][0][X1], segmentos[i][0][Y2])
+            y_max = max(y_max, segmentos[i][0][Y1], segmentos[i][0][Y2])
     x_med = (x_min + x_max) / 2
 
     ##feedback
@@ -140,7 +141,10 @@ def ponto_medio_borda_inferior(objeto_imagem):
     cv2.waitKey()'''
     return x_med, y_max
 
-
+'''Recebe apenas a imagem. Retorna o x1 y1 x2 y2 das bordas laterais e uma variavel auxiliar que inidica se
+foram encontrada, duas retas, zero retas ou uma reta ( e qual eh ela). Versao do fernandes que utiliza uma mascara branca
+e uma area branca nao tao grande para tentar pegar a parte mais externa das bordas pretas, alem de filtrar as muito
+deitadas ou muito verticais. Usada na alinhamento_pista e na decisao_desvio'''
 def bordas_laterais_v1(objeto_imagem):
     img = objeto_imagem.img
     largura, altura = objeto_imagem.largura, objeto_imagem.altura
@@ -198,7 +202,6 @@ def bordas_laterais_v1(objeto_imagem):
         #text= 'y_direita = '+str((y2-y1)/(x2-x1))+' *x + ' +str(y1-(((y2-y1)*x1)/(x2-x1)))
         #img = cv2.putText(img, text, (int(((x1+x2)/2))-450,int(((y1+y2)/2))), cv2.FONT_HERSHEY_COMPLEX, 1, (255,255,255), 1, cv2.LINE_AA)
 
-
     if ha_reta_na_direita == False and ha_reta_na_esquerda == False:
         return [],[],NAO_HA_RETA
     if ha_reta_na_direita == True and ha_reta_na_esquerda == True:
@@ -207,6 +210,7 @@ def bordas_laterais_v1(objeto_imagem):
        return lista_media_esquerda, [], SO_ESQUERDA
     return [], lista_media_direita,SO_DIREITA
 
+#ebert comenta
 def bordas_laterais_v2(objeto_imagem):
     mask = objeto_imagem.mask("ranges_branco.txt")
     reconhecer_pista(mask, objeto_imagem)
@@ -269,12 +273,12 @@ def bordas_laterais_v2(objeto_imagem):
     if ha_reta_na_direita == True and ha_reta_na_esquerda == False:
        return [], lista_media_direita, SO_DIREITA
 
-
+#caruso comenta
 def checar_proximidade(valor_comparar,objeto_imagem):
 
     input_imagem = objeto_imagem.img
     altura = objeto_imagem.altura
-    img = input_imagem.copy() #função para pegar a imagem e armazena-la
+    img = input_imagem.copy() #funcao para pegar a imagem e armazena-la
     #cv2.imwrite("imagem original.png", img)
     
     preto = input_imagem.copy() #criar uma imagem reserva
@@ -290,7 +294,7 @@ def checar_proximidade(valor_comparar,objeto_imagem):
         area = cv2.contourArea(contour)
         if area > 500:##pegar os contornos com um tamanho minimo para evitar ruidos
             approx = cv2.approxPolyDP(contour, 0.001*cv2.arcLength(contour, True), True)
-            cv2.drawContours(preto, [approx], 0, (255, 255, 255), 2) ##desenhar os contornos na imagem preta, para ter uma imagem só com os contornos
+            cv2.drawContours(preto, [approx], 0, (255, 255, 255), 2) ##desenhar os contornos na imagem preta, para ter uma imagem so com os contornos
             
             x,y,w,h = cv2.boundingRect(contour) ##pega as coordenadas do extremo inferior esquerdo e a altura e largura
             #cv2.rectangle(img, (x,y), (x+w,y+h), (255,0,0), 2) ##desenha um retangulo
@@ -319,10 +323,10 @@ def checar_proximidade(valor_comparar,objeto_imagem):
             coefienete_angular = abs((lines[i][0][y2]-lines[i][0][y1])/(lines[i][0][x1]-lines[i][0][x2]))
             if coefienete_angular < 1:#eliminar retas muito inclinadas pq queremos retas horizontais
                 cv2.line(img,(lines[i][0][x1],lines[i][0][y1]),(lines[i][0][x2],lines[i][0][y2]),(255,0,0),9)
-                if(((lines[i][0][y1]+lines[i][0][y2])/2)>maximo):  #encontrar a reta mais próxima do robô, por meio da coordenada y
+                if(((lines[i][0][y1]+lines[i][0][y2])/2)>maximo):  #encontrar a reta mais proxima do robo, por meio da coordenada y
                     maximo = lines[i][0][y1]
 
-    except:#quando ele não encontrar mais nenhuma reta no vetor line, ele vai dar erro e vir para essa parte do código. 
+    except:#quando ele nao encontrar mais nenhuma reta no vetor line, ele vai dar erro e vir para essa parte do codigo. 
         porcentagem = (maximo/altura)*100
         #print(maximo)
         if(porcentagem>valor_comparar):
