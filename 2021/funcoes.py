@@ -3,7 +3,7 @@ import time
 import numpy as np
 import cv2
 from visao import *
-import PiCamera as picamera
+import picamera
 import classes
 
 
@@ -119,7 +119,7 @@ def decisao_desvio(camera):
     d_min = 40
     x_robot = 0
     if x == 0 and y == 0:
-        # Não detectou obstáculo
+        # Nao detectou obstaculo
         return ANDAR
     else:
         if j == 1:
@@ -192,7 +192,8 @@ casos_dic = ["NAO_HA_RETA", "HA_DUAS_RETAS", "SO_ESQUERDA", "SO_DIREITA"]
 andar sem encontrar uma borda lateral para retornar uma direcao de giro ou entao andar em frente a partir das bordas.
 Usada em todos os loops'''
 def checar_alinhamento_pista(camera, tolerancia_central, tolerancia_para_frente):
-    img = camera.Take_photo()
+    print(camera.Take_photo())
+    img = cv2.imread(camera.Take_photo())
     reta_esquerda, reta_direita, caso = bordas_laterais_v2(img)
     return reta_esquerda, reta_direita, caso
 

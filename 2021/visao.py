@@ -278,7 +278,7 @@ def checar_proximidade(valor_comparar,objeto_imagem):
 
     input_imagem = objeto_imagem.img
     altura = objeto_imagem.altura
-    img = input_imagem.copy() #função para pegar a imagem e armazena-la
+    img = input_imagem.copy() #funcao para pegar a imagem e armazena-la
     #cv2.imwrite("imagem original.png", img)
     
     preto = input_imagem.copy() #criar uma imagem reserva
@@ -294,7 +294,7 @@ def checar_proximidade(valor_comparar,objeto_imagem):
         area = cv2.contourArea(contour)
         if area > 500:##pegar os contornos com um tamanho minimo para evitar ruidos
             approx = cv2.approxPolyDP(contour, 0.001*cv2.arcLength(contour, True), True)
-            cv2.drawContours(preto, [approx], 0, (255, 255, 255), 2) ##desenhar os contornos na imagem preta, para ter uma imagem só com os contornos
+            cv2.drawContours(preto, [approx], 0, (255, 255, 255), 2) ##desenhar os contornos na imagem preta, para ter uma imagem so com os contornos
             
             x,y,w,h = cv2.boundingRect(contour) ##pega as coordenadas do extremo inferior esquerdo e a altura e largura
             #cv2.rectangle(img, (x,y), (x+w,y+h), (255,0,0), 2) ##desenha um retangulo
@@ -323,10 +323,10 @@ def checar_proximidade(valor_comparar,objeto_imagem):
             coefienete_angular = abs((lines[i][0][y2]-lines[i][0][y1])/(lines[i][0][x1]-lines[i][0][x2]))
             if coefienete_angular < 1:#eliminar retas muito inclinadas pq queremos retas horizontais
                 cv2.line(img,(lines[i][0][x1],lines[i][0][y1]),(lines[i][0][x2],lines[i][0][y2]),(255,0,0),9)
-                if(((lines[i][0][y1]+lines[i][0][y2])/2)>maximo):  #encontrar a reta mais próxima do robô, por meio da coordenada y
+                if(((lines[i][0][y1]+lines[i][0][y2])/2)>maximo):  #encontrar a reta mais proxima do robo, por meio da coordenada y
                     maximo = lines[i][0][y1]
 
-    except:#quando ele não encontrar mais nenhuma reta no vetor line, ele vai dar erro e vir para essa parte do código. 
+    except:#quando ele nao encontrar mais nenhuma reta no vetor line, ele vai dar erro e vir para essa parte do codigo. 
         porcentagem = (maximo/altura)*100
         #print(maximo)
         if(porcentagem>valor_comparar):
