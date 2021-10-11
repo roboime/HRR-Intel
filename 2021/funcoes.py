@@ -26,7 +26,7 @@ SO_DIREITA = 3
 casos_dic = ["NAO_HA_RETA", "HA_DUAS_RETAS", "SO_ESQUERDA", "SO_DIREITA"]
 
 ANG_GIRADO = 0.0
-ANG_CABECA_OBSTACULO = 0.0
+ANG_PITCH_CABECA = 0.0
 ANG_CABECA_DEGRAU = 0.0
 DIST_MIN_OBST_ATUAL = 46.0
 
@@ -48,6 +48,7 @@ def quando_parar_de_girar(sensor_distancia, vel_ang, largura_robo):
         sensor_distancia.Get_distance()
         if sensor_distancia.atual < sensor_distancia.anterior:
             DIST_MIN_OBST_ATUAL = sensor_distancia.atual
+            DIST_MIN_OBST_ATUAL *= np.cos(ANG_PITCH_CABECA)
             t_0 = t_1
         if(abs(sensor_distancia.atual - sensor_distancia.anterior) > mult_dist*sensor_distancia.anterior):    
             t_1 = time.time() - intervalo_medicoes/2
@@ -66,10 +67,8 @@ def quando_parar_de_girar(sensor_distancia, vel_ang, largura_robo):
 '''
 Funcao que seria usada no loop de obstaculo conseguissemos usar o giroscopio.'''
 def quando_parar_de_andar_giroscopio(giroscopio, s_distancia, velocidade, largura_do_robo):
-    projecao_horizontal_trajetoria = s_distancia.anterior * \
-        np.cos(np.pi/180 * giroscopio.Obter_angulo_yaw()) + largura_do_robo
-    projecao_vertical_trajetoria = s_distancia.anterior * \
-        np.sin(np.pi/180 * giroscopio.Obter_angulo_yaw())
+    projecao_horizontal_trajetoria = s_distancia.anterior *np.cos(ANG_PITCH_CABECA) / np.cos(np.pi/180 * giroscopio.Obter_angulo_yaw()) + largura_do_robo
+    projecao_vertical_trajetoria = s_distancia.anterior *np.cos(ANG_PITCH_CABECA) / np.sin(np.pi/180 * giroscopio.Obter_angulo_yaw())
 
     trajetoria = ( projecao_vertical_trajetoria**2 +projecao_horizontal_trajetoria**2 ) ** (1/2)
     tempo_necessario = trajetoria/velocidade
@@ -86,7 +85,7 @@ def quando_parar_de_andar_giroscopio(giroscopio, s_distancia, velocidade, largur
 def quando_parar_de_andar_visaocomp(velocidade):
     instante_inicial = time.time()
 
-    dist_estimado = (DIST_MIN_OBST_ATUAL*np.cos(ANG_CABECA_OBSTACULO)) / np.cos(ANG_GIRADO)
+    dist_estimado = (DIST_MIN_OBST_ATUAL*np.cos(ANG_PITCH_CABECA)) / np.cos(ANG_GIRADO)
     tempo_estimado = dist_estimado / velocidade
 
     while (time.time() - instante_inicial < tempo_estimado):
@@ -100,7 +99,7 @@ def quando_parar_de_andar_visaocomp(velocidade):
 def quando_parar_de_alinhar(tolerancia_centro, tolerancia_para_frente):
     camera = picamera.PiCamera()
     
-    while (checar_alinhamento_pista(camera, tolerancia_centro, tolerancia_para_frente) != ANDAR):
+    while (checar_alinhamento_pista_v1(camera, tolerancia_centro, tolerancia_para_frente) != ANDAR):
         continue
 
     return PARAR
@@ -191,12 +190,6 @@ casos_dic = ["NAO_HA_RETA", "HA_DUAS_RETAS", "SO_ESQUERDA", "SO_DIREITA"]
 '''Recebe o sensor camera, uma tolerancia em relacao ao centro da imagem, e uma tolerancia em relacao ao quanto eh possivel
 andar sem encontrar uma borda lateral para retornar uma direcao de giro ou entao andar em frente a partir das bordas.
 Usada em todos os loops'''
-def checar_alinhamento_pista(camera, tolerancia_central, tolerancia_para_frente):
-    print(camera.Take_photo())
-    img = cv2.imread(camera.Take_photo())
-    reta_esquerda, reta_direita, caso = bordas_laterais_v2(img)
-    return reta_esquerda, reta_direita, caso
-
 def checar_alinhamento_pista_v1(camera, tolerancia_central, tolerancia_para_frente):
     path = camera.Take_photo()
     objeto_imagem = Classe_imagem(path)
@@ -256,6 +249,17 @@ def checar_alinhamento_pista_v1(camera, tolerancia_central, tolerancia_para_fren
         print("nenhuma reta encontrada, andando em frente")
         return(ANDAR)
 
+'''
+    Funcao que retorna ANDAR, caso o robo esteja alinhado com a pista, e GIRAR_ESQUERDA ou GIRAR_DIREITA, caso contrario.
+    Recebe objeto relativo a Classe_camera(), tira a foto e obtem dela as bordas laterais.
+    Em seuida analisa-se os casos:
+    NAO_HA_RETA - Acontecera quando o robo estiver muito proximo da linha de chegada, entao retorna ANDAR.
+    SO_DIREITA ou SO_ESQUERDA - Calcula-se a interseccao (x, y) da borda com o topo_da_pista. Se a borda nao cortar o meio da imagem
+    e (x - largura)//2  for maior que min_largura, que calculado eh usando a geometria da imagem, entao a direcao esta certa. Senao,
+    retornara para girar.
+    HA_DUAS_RETAS - Neste caso, calcula-se a interseccao das duas bordas com o topo da pista. Se o meio da imagem estiver entre os 2 pontos
+    e numa folga relativa a largura do robo, entao o robo esta na direcao certa. Senao, retornara para girar.
+'''
 def checar_alinhamento_pista_v2(camera):
     path = camera.Take_photo()
     objeto_imagem = Classe_imagem(path)
