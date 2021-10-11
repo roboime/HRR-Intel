@@ -4,7 +4,7 @@ from os import listdir
 from os.path import  join
 from visao import *
 
-path = "/home/Pictures/"
+path = "/home/pi/Pictures/"
 
 IMAGES = [Classe_imagem(join(path, f)) for f in listdir(join(path))]
 
@@ -140,7 +140,7 @@ for IMG in IMAGES:
         print("desalinhado: girar esquerda")
     if ret == ANDAR:
         print("Andando")
-    cv2.imwrite( "/home/Pictures/finais/"+str(i)+".png", IMG.img)
+    cv2.imwrite( path+"finais/"+str(i)+".png", IMG.img)
     i+=1
     
 
