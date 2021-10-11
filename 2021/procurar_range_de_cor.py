@@ -1,4 +1,4 @@
-""" Programa para calibrar os ranges de cor utilizados para reconhecer a pista e os obstáculos pelo robo.
+""" Programa para calibrar os ranges de cor utilizados para reconhecer a pista e os obstaculos pelo robo.
     Siga os passos para utiliza-lo:
 
     1 - Coloque o path correto da imagem na variavel global PATH.
