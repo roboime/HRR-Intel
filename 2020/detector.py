@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 img = cv2.imread('images\imagem5.jpeg')
 img_hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-#cv2.imshow('HSV', img_hsv)
+#cv2.imshow('HSV', img_hsv) teste
 kernel = np.ones((5, 5), np.uint8)
 rangomax = np.array([20, 255, 255])
 rangomin = np.array([5, 125, 90])
