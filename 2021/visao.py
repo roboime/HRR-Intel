@@ -60,7 +60,7 @@ def coef_linear(lista):
  como o meio_da_pista no objeto_imagem"""
 def reconhecer_pista(mask, objeto_imagem):
     _, th = cv2.threshold(mask, 0, 255, cv2.THRESH_BINARY) 
-    contours, _ = cv2.findContours(th, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
+    contours, _ = cv2.findContours(th, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)[-2:]
     pista = contours[0]
     for contour in contours:
         if cv2.contourArea(contour) > cv2.contourArea(pista): pista = contour 
@@ -144,7 +144,7 @@ def bordas_laterais_v1(objeto_imagem):
     mask = objeto_imagem.mask("ranges_branco.txt")
 
     _, th = cv2.threshold(mask, 0, 255, cv2.THRESH_BINARY) 
-    contours, _ = cv2.findContours(th, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
+    contours, _ = cv2.findContours(th, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)[-2:]
     for contour in contours:
         area = cv2.contourArea(contour)
         if 1000000 > area > 50:
@@ -203,7 +203,7 @@ def bordas_laterais_v1(objeto_imagem):
     return [], lista_media_direita,SO_DIREITA
 
 """ adaptacao da bordas_laterais_v1 que adiciona 3 restricoes para encontrar as retas. A primeira eh a RANGE_INCLINACAO, que seleciona um coeficiente angular minimo
- e maximo para considerar como borda. A segunda eh o topo_da_pista, que seleciona apenas as retas que estão abaixo do topo da pista para evitar ruídos. A terceira
+ e maximo para considerar como borda. A segunda eh o topo_da_pista, que seleciona apenas as retas que estao abaixo do topo da pista para evitar ruidos. A terceira
   eh o meio_da_pista que divide as retas da borda da esquerda e da borda da direita."""
 def bordas_laterais_v2(objeto_imagem):
     mask = objeto_imagem.mask("ranges_branco.txt")
@@ -282,7 +282,7 @@ def checar_proximidade(valor_comparar,objeto_imagem):
     #cv2.imwrite("criado a mask.png", mask)
 
     _, th = cv2.threshold(mask, 0, 255, cv2.THRESH_BINARY) 
-    contours, _ = cv2.findContours(th, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)  
+    contours, _ = cv2.findContours(th, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)[-2:]
 
     for contour in contours:
         area = cv2.contourArea(contour)
