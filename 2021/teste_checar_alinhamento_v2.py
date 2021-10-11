@@ -17,7 +17,7 @@ DESCER = "5"
 
 
 def bordas_laterais_v3(objeto_imagem):
-    mask = objeto_imagem.mask("ranges_branco.txt")
+    mask = objeto_imagem.mask("ranges_preto.txt")
     reconhecer_pista(mask, objeto_imagem)
     img = objeto_imagem.img
     edges = cv2.Canny(mask, 50, 150, apertureSize=3)
@@ -39,11 +39,11 @@ def bordas_laterais_v3(objeto_imagem):
                     coordright.append([x1,y1,x2,y2])
                 #    print("angulo : ", 180/np.pi*math.atan(coef_angular(line)))
                   #  print([x1, y1, x2, y2])
-                 #   cv2.line(objeto_imagem.img, (x1,y1), (x2,y2), (0,255,0), 2)
+                    cv2.line(objeto_imagem.img, (x1,y1), (x2,y2), (0,255,0), 2)
             if y1>objeto_imagem.topo_da_pista and x1 < objeto_imagem.meio_da_pista or y2>objeto_imagem.topo_da_pista and x2 < objeto_imagem.meio_da_pista:
                 if math.atan(-1)-theta/2 < math.atan(coef_angular(line)) < math.atan(-1)+theta/2:
                     coordleft.append([x1,y1,x2,y2])
-                 #   cv2.line(objeto_imagem.img, (x1,y1), (x2,y2), (0,127,0), 2)
+                    cv2.line(objeto_imagem.img, (x1,y1), (x2,y2), (0,127,0), 2)
     else: return [],[],NAO_HA_RETA
     ha_reta_na_direita = False
    # cv2.imwrite("todas_as_linhas.png", todas_as_linhas)
@@ -54,7 +54,7 @@ def bordas_laterais_v3(objeto_imagem):
         lista_media_direita = mediaright.tolist()
         mediaright=mediaright.astype(np.int64)
         [x1,y1,x2,y2]=mediaright
-      #  cv2.line(objeto_imagem.img, (x1,y1), (x2,y2), (0,0,255), 2)
+        cv2.line(objeto_imagem.img, (x1,y1), (x2,y2), (0,0,255), 2)
         
     ha_reta_na_esquerda = False
 
@@ -65,7 +65,7 @@ def bordas_laterais_v3(objeto_imagem):
         lista_media_esquerda = medialeft.tolist()
         medialeft=medialeft.astype(np.int64)
         [x1,y1,x2,y2]=medialeft
-      #  cv2.line(objeto_imagem.img, (x1,y1), (x2,y2), (0,0,255), 2)
+        cv2.line(objeto_imagem.img, (x1,y1), (x2,y2), (0,0,255), 2)
         #text= 'y_direita = '+str((y2-y1)/(x2-x1))+' *x + ' +str(y1-(((y2-y1)*x1)/(x2-x1)))
         #img = cv2.putText(img, text, (int(((x1+x2)/2))-450,int(((y1+y2)/2))), cv2.FONT_HERSHEY_COMPLEX, 1, (255,255,255), 1, cv2.LINE_AA)
 
@@ -101,7 +101,7 @@ def checar_alinhamento_pista_v2(objeto_imagem):
         delta_x = -x + objeto_imagem.largura//2
         min_largura = int(k + (objeto_imagem.altura - objeto_imagem.topo_da_pista) / coef_angular(left))
         objeto_imagem.img = cv2.circle(objeto_imagem.img, (x, objeto_imagem.topo_da_pista), radius=10, color=(0, 0, 255), thickness=-1)
-        objeto_imagem.img = cv2.line(objeto_imagem.img, (objeto_imagem.largura//2 + min_largura, 0), (objeto_imagem.largura//2 + min_largura, objeto_imagem.altura), (127, 127, 0), 2)
+        objeto_imagem.img = cv2.line(objeto_imagem.img, (objeto_imagem.largura//2 - min_largura, 0), (objeto_imagem.largura//2 - min_largura, objeto_imagem.altura), (127, 127, 0), 2)
         objeto_imagem.img = cv2.line(objeto_imagem.img, (objeto_imagem.largura//2, 0), (objeto_imagem.largura//2, objeto_imagem.altura), (255, 0, 0), 2)
         if delta_x > min_largura and delta_x > 0:
             print("ALINHADO")
