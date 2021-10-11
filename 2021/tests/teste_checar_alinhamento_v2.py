@@ -4,7 +4,9 @@ from os import listdir
 from os.path import  join
 from visao import *
 
-IMAGES = [Classe_imagem(join("tests", "fotos", f)) for f in listdir(join("tests", "fotos"))]
+path = "/home/Pictures/"
+
+IMAGES = [Classe_imagem(join(path, f)) for f in listdir(join(path))]
 
 ANDAR = "0"                 
 GIRAR_ESQUERDA = "1"        
@@ -89,6 +91,7 @@ def checar_alinhamento_pista_v2(objeto_imagem):
         objeto_imagem.img = cv2.line(objeto_imagem.img, (objeto_imagem.largura//2 + min_largura, 0), (objeto_imagem.largura//2 + min_largura, objeto_imagem.altura), (127, 127, 0), 2)
         objeto_imagem.img = cv2.line(objeto_imagem.img, (objeto_imagem.largura//2, 0), (objeto_imagem.largura//2, objeto_imagem.altura), (255, 0, 0), 2)
         if delta_x > min_largura and delta_x > 0:
+            print("ALINHADO")
             return ANDAR
         else:
             return GIRAR_ESQUERDA
@@ -101,10 +104,12 @@ def checar_alinhamento_pista_v2(objeto_imagem):
         objeto_imagem.img = cv2.line(objeto_imagem.img, (objeto_imagem.largura//2 + min_largura, 0), (objeto_imagem.largura//2 + min_largura, objeto_imagem.altura), (127, 127, 0), 2)
         objeto_imagem.img = cv2.line(objeto_imagem.img, (objeto_imagem.largura//2, 0), (objeto_imagem.largura//2, objeto_imagem.altura), (255, 0, 0), 2)
         if delta_x > min_largura and delta_x > 0:
+            print("ALINHADO")
             return ANDAR
         else:
             return GIRAR_DIREITA
     elif caso == NAO_HA_RETA:
+        print("NAO HA RETA")
         return ANDAR
     else:
         horizontal = [0, objeto_imagem.topo_da_pista, objeto_imagem.largura, objeto_imagem.topo_da_pista]
@@ -120,6 +125,7 @@ def checar_alinhamento_pista_v2(objeto_imagem):
         objeto_imagem.img = cv2.circle(objeto_imagem.img, (x2, objeto_imagem.topo_da_pista), radius=10, color=(0, 255, 255), thickness=-1)
         objeto_imagem.img = cv2.circle(objeto_imagem.img, ((x1+x2)//2, objeto_imagem.topo_da_pista), radius=10, color=(0, 0, 255), thickness=-1)
         if objeto_imagem.largura_pista//2*objeto_imagem.mult_largura_pista > abs(delta_x):
+            print("ALINHADO")
             return ANDAR
         elif delta_x > 0:
             return GIRAR_DIREITA
@@ -127,8 +133,14 @@ def checar_alinhamento_pista_v2(objeto_imagem):
             return GIRAR_ESQUERDA
 i=1
 for IMG in IMAGES:
-    checar_alinhamento_pista_v2(IMG)
-    cv2.imwrite( "./finais/"+str(i)+".png", IMG.img)
+    ret = checar_alinhamento_pista_v2(IMG)
+    if ret == GIRAR_DIREITA:
+        print("desalinhado: girar direita")
+    if ret == GIRAR_ESQUERDA:
+        print("desalinhado: girar esquerda")
+    if ret == ANDAR:
+        print("Andando")
+    cv2.imwrite( "/home/Pictures/finais/"+str(i)+".png", IMG.img)
     i+=1
     
 
