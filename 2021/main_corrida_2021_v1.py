@@ -59,7 +59,7 @@ def Loop_corrida():
                 sleep(intervalo_enquanto_gira)
                 estado.Trocar_estado(PARAR, myrio)
                 sleep(tempo_para_parar)
-                estado.Trocar_estado(funcoes.checar_alinhamento_pista(camera, tolerancia_central, tolerancia_para_frente), myrio)
+                estado.Trocar_estado(funcoes.checar_alinhamento_pista_v1(camera, tolerancia_central, tolerancia_para_frente), myrio)
             print("direcao corrigida")
             print(estado.atual)
             t_0 = t_1 = time()

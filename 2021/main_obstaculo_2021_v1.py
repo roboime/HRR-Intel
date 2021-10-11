@@ -1,11 +1,11 @@
 """
-Função principal do projeto Humanoide RoboIME 2021
+Funcao principal do projeto Humanoide RoboIME 2021
 
-Tomada de decisão para transição entre os estados
+Tomada de decisao para transicao entre os estados
 Feita para ser utilizada em Raspberry Pi
 Segunda versao
 
-    OBSERVAÇÕES:
+    OBSERVACOES:
     
 
 Baseado em main_INTEL_humanoid_2020
@@ -54,10 +54,10 @@ def Loop_obstaculo():
         print("Estado padrao")
         estado.Trocar_estado(ANDAR, myrio)  
         print(estado)
-        ########################################### Checando proximidade de obstáculo ##########################################
+        ########################################### Checando proximidade de obstaculo ##########################################
 
         if sensor_distancia.Get_distance() <= distancialimite:
-            print ("obstaculo detectado")
+            print ("obstaculo detectado ", sensor_distancia.atual)
             estado.Trocar_estado(PARAR, myrio)
             print(estado)
             estado.Trocar_estado(funcoes.decisao_desvio(camera), myrio)
@@ -84,7 +84,7 @@ def Loop_obstaculo():
                 estado.Trocar_estado(PARAR, myrio)
                 sleep(tempo_para_parar)
                 estado.Trocar_estado(funcoes.checar_alinhamento_pista(camera, tolerancia_central, tolerancia_para_frente), myrio)
-            print("direçao corrigida")
+            print("direcao corrigida")
             print(estado.atual)
             t_0 = t_1 = time()
         else:

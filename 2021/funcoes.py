@@ -109,7 +109,7 @@ def quando_parar_de_alinhar(tolerancia_centro, tolerancia_para_frente):
 '''Decide para onde virar quando encontra um obstaculo. Recebe somente a camera. Usado apenas no loop de obstaculo.'''
 def decisao_desvio(camera):
     camera.Take_photo()
-    objeto_imagem = classes.Classe_imagem(camera.image_path)
+    objeto_imagem = Classe_imagem(camera.path_atual)
     x, y = ponto_medio_borda_inferior(objeto_imagem)
     lista_esquerda, lista_direita, j = bordas_laterais_v2(objeto_imagem)
     poly_left = [coef_angular(lista_esquerda), coef_linear(lista_esquerda)]
