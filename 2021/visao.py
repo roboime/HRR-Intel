@@ -47,7 +47,7 @@ class Classe_imagem():
 dessa biblioteca: '''
 def coef_angular(lista):
 
-    if lista[X2] != lista[X1]: return (lista[Y2]-lista[Y1]) / (lista[X2]-lista[X1])
+    if lista[X2] != lista[X1] and len(lista) != 0: return (lista[Y2]-lista[Y1]) / (lista[X2]-lista[X1])
     else: return np.Inf
 
 '''tira o coeficiente linear ( y1 - coef_angular *x1 = coef_linear) a partir de uma lista de coordenadas x1 y1 x2 y2. 
@@ -141,7 +141,7 @@ def bordas_laterais_v1(objeto_imagem):
     img = objeto_imagem.img
     largura, altura = objeto_imagem.largura, objeto_imagem.altura
     preto = np.zeros((largura, altura, 3), np.uint8)
-    mask = objeto_imagem.mask("ranges_branco.txt")
+    mask = objeto_imagem.mask("ranges_preto.txt")
 
     _, th = cv2.threshold(mask, 0, 255, cv2.THRESH_BINARY) 
     contours, _ = cv2.findContours(th, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)[-2:]
@@ -267,7 +267,7 @@ def bordas_laterais_v2(objeto_imagem):
     if ha_reta_na_direita == True and ha_reta_na_esquerda == False:
        return [], lista_media_direita, SO_DIREITA
 
-#caruso comenta
+#dado uma imagem e um valor de comparacao, verificar se a reta mais proxima esta dentro do limite ou nao 
 def checar_proximidade(valor_comparar,objeto_imagem):
 
     input_imagem = objeto_imagem.img
