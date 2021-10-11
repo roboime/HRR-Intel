@@ -1,11 +1,11 @@
 """
-Função para subir degrau do projeto Humanoide RoboIME 2021
+Funcao para subir degrau do projeto Humanoide RoboIME 2021
 
-Tomada de decisão para transição entre os estados
+Tomada de decisao para transicao entre os estados
 Feita para ser utilizada em Raspberry Pi
 Segunda versao
 
-    OBSERVAÇÕES:
+    OBSERVACOES:
     
 
 Baseado em main_INTEL_humanoid_2020
@@ -45,7 +45,7 @@ GIRAR_DIREITA="2"
 PARAR="3"                 
 SUBIR= "4"
 DESCER = "5"
-# Configurações iniciais
+# Configuracoes iniciais
 
 estado = classes.Classe_estado()
 myrio = classes.Classe_porta_serial()
@@ -57,7 +57,7 @@ intervalo_alinhamento = 10
 tolerancia_centro = 15
 tolerancia_para_frente = 60
 
-# Anda até a proximidade do degrau desajada e realinha
+# Anda ate a proximidade do degrau desejada e realinha
 def Loop_degrau(Estado, proximidade):
     estado.Trocar_estado(ANDAR, myrio)
     ##ponto em que seria bom parar para tirar a foto                  
