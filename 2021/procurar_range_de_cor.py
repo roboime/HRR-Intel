@@ -13,9 +13,9 @@
 import cv2
 import numpy as np
 
-PATH = "sla.png"
-CORES = ["LARANJA", "VERMELHO", "BRANCO"]
-FILES = ["ranges_laranja.txt", "ranges_vermelho.txt", "ranges_branco.txt"]
+PATH = "./tests/fotos/imagem_0_obs.jpg"
+CORES = ["LARANJA", "VERMELHO", "BRANCO", "PRETO"]
+FILES = ["ranges_laranja.txt", "ranges_vermelho.txt", "ranges_branco.txt", "ranges_preto.txt"]
 
 def empty(a):
     pass
