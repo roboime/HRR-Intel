@@ -46,8 +46,9 @@ class Classe_imagem():
 '''tira o coeficiente angular ( delta y / delta x) a partir de uma lista de coordenadas x1 y1 x2 y2. utilizada em funcoes 
 dessa biblioteca: '''
 def coef_angular(lista):
-
-    if lista[X2] != lista[X1] and len(lista) != 0: return (lista[Y2]-lista[Y1]) / (lista[X2]-lista[X1])
+    if len(lista) != 0:
+        if lista[X2] != lista[X1]: return (lista[Y2]-lista[Y1]) / (lista[X2]-lista[X1])
+        else: return np.Inf
     else: return np.Inf
 
 '''tira o coeficiente linear ( y1 - coef_angular *x1 = coef_linear) a partir de uma lista de coordenadas x1 y1 x2 y2. 
