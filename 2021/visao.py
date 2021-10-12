@@ -227,7 +227,7 @@ def bordas_laterais_v1(objeto_imagem):
  e maximo para considerar como borda. A segunda eh o topo_da_pista, que seleciona apenas as retas que estao abaixo do topo da pista para evitar ruidos. A terceira
   eh o meio_da_pista que divide as retas da borda da esquerda e da borda da direita."""
 
-def bordas_laterais_v3(objeto_imagem):
+def bordas_laterais_v2(objeto_imagem):
     mask = objeto_imagem.mask("ranges_preto.txt")
    # reconhecer_pista(mask, objeto_imagem)
     img = objeto_imagem.img
