@@ -80,7 +80,7 @@ def Loop_obstaculo():
             estado.Trocar_estado(PARAR, myrio)
             sleep(tempo_para_parar)
             estado.Trocar_estado(funcoes.checar_alinhamento_pista_v1(camera, tolerancia_central, tolerancia_para_frente), myrio)  # Frente, GIRAR_ESQUERDA ou GIRAR_DIREITA
-            while estado.Obter_estado_atual() != PARAR or estado.Obter_estado_atual() != ANDAR:
+            while estado.Obter_estado_atual() != PARAR and estado.Obter_estado_atual() != ANDAR:
                 print("desalinhado com a pista")
                 sleep(intervalo_enquanto_gira)
                 estado.Trocar_estado(PARAR, myrio)
