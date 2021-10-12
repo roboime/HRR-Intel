@@ -32,6 +32,7 @@ class Classe_camera():
         self.camera.capture(self.path_atual)
         self.camera.stop_preview()
         self.indice_atual = (self.indice_atual + 1) % 10
+        print("Saindo do Take_photo()")
         return self.path_atual
 
     def parar_fotografar(self, estado, myrio):
@@ -135,10 +136,10 @@ class Classe_estado:
                     DESCER : "DESCER"
                 }
         need = {
-            ANDAR : "Deve estar parado",
-            GIRAR_ESQUERDA : "NAO ha necessidade de correcao",         #Dicionario que associa o indice do estado a necessidade de correcao
-            GIRAR_DIREITA : "Deve estar girando para esquerda",
-            PARAR : "Deve estar girando para direita",
+            ANDAR : "NAO ha necessidade de correcao",   #Dicionario que associa o indice do estado a necessidade de correcao
+            GIRAR_ESQUERDA : "Deve estar girando para esquerda",     
+            GIRAR_DIREITA : "Deve estar girando para direita",
+            PARAR : "Deve estar parado",
             SUBIR : "Deve estar subindo o degrau",
             DESCER : "Deve estar descendo o degrau"
                 }

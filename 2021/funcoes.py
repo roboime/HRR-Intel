@@ -71,6 +71,23 @@ def quando_parar_de_girar(sensor_distancia, vel_ang, largura_robo):
         t_1 = time.time()
  #   print("ANG GIRADO: ", ANG_GIRADO)
     return PARAR
+
+def quando_parar_de_realinhar(vel_ang, sentido_de_giro):
+    global ANG_GIRADO
+    intervalo_realinhamento = ANG_GIRADO/vel_ang
+    intervalo_medicoes = 0.2
+    t_0 = t_1 = time.time()
+    while True:
+        time.sleep(intervalo_medicoes)
+        t_1 = time.sleep()
+        if t_1-t_0 > intervalo_realinhamento: 
+            break
+        if(sentido_de_giro == GIRAR_DIREITA):
+            print("girando para a  DIREITA, faltam ", ANG_GIRADO- vel_ang * (t_1-t_0), "radianos para compensar o angulo girado")
+        else:
+            print("girando para a  ESQUERDA, faltam ", ANG_GIRADO- vel_ang * (t_1-t_0), "radianos para compensar o angulo girado")
+
+    return ANDAR
 '''
 Funcao que seria usada no loop de obstaculo se conseguissemos usar o giroscopio.'''
 def quando_parar_de_andar_giroscopio(giroscopio, s_distancia, velocidade, largura_do_robo):
@@ -114,10 +131,13 @@ def quando_parar_de_alinhar(tolerancia_centro, tolerancia_para_frente):
 
 '''Decide para onde virar quando encontra um obstaculo. Recebe somente a camera. Usado apenas no loop de obstaculo.'''
 def decisao_desvio(camera):
-    camera.Take_photo()
-    objeto_imagem = Classe_imagem(camera.path_atual)
+    path = camera.Take_photo()
+    objeto_imagem = Classe_imagem(path)
+    print("Antes da borda inferior")
     x, y = ponto_medio_borda_inferior(objeto_imagem)
+    print("Antes da bordas_laterais_v2")
     lista_esquerda, lista_direita, j = bordas_laterais_v2(objeto_imagem)
+    print("Antes dos calculos de coef_angular e coef_linear")
     poly_left = [coef_angular(lista_esquerda), coef_linear(lista_esquerda)]
     poly_right = [coef_angular(lista_direita), coef_linear(lista_direita)]
     # j = 1: linha central. j = 2: borda direita. j = 3: borda esquerda. j = 0: nenhuma borda

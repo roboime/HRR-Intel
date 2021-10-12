@@ -18,18 +18,21 @@ RANGE_INCLINACAO = 60 #Em graus
  Possui o metodo mask, que retorna a mascara da imagem, passando o arquivo onde esta salvo os ranges da cor."""
 class Classe_imagem():
     def __init__(self, path):
+        print("Entrando no _init_ do Classe_imagem()")
         img = cv2.imread(path)
         img = np.array(img)
+        img.astype(np.uint8)
         (self.altura, self.largura) = img.shape[:2] 
-        self.centro = (self.largura // 2, self.altura // 2) 
+        self.centro = (self.largura // 2, self.altura // 2)
         M = cv2.getRotationMatrix2D(self.centro, 180, 1.0)  
+        print("Altura: {}  Largura: {}".format(self.altura,self.largura))
         img = cv2.warpAffine(img, M, (self.largura, self.altura))
         self.img = img
-
         self.topo_da_pista = int(0.4*self.altura) #coordenada y do topo da pista
         self.meio_da_pista = 0 # coordenada x do meio da pista
         self.largura_pista = 0 # largura do final da pista na imagem
         self.mult_largura_pista = 0.7 #ate quanto da metade da largura da pista ainda eh atravessavel pelo robo
+        print("Saindo do _init_ do Classe_imagem()")
 
     def mask(self, ranges_file_path):
         hsv = cv2.cvtColor(self.img, cv2.COLOR_BGR2HSV) # converte a cor para hsv
@@ -140,13 +143,14 @@ def ponto_medio_borda_inferior(objeto_imagem):
     #esse fator para baixo serve para procurar segmentos ainda mais abaixo do ponto medio
     fator_para_baixo = 1.3
 
+    print("Pto_Med_Borda_Inf-Num_seg: {} before for".format(numero_segmentos))
     for i in range(numero_segmentos):
         if ((segmentos[i][0][Y1]+segmentos[i][0][Y2])/2 > ymed_bloco_todo*fator_para_baixo):
             x_min = min(x_min, segmentos[i][0][X1], segmentos[i][0][X2])
             x_max = max(x_max, segmentos[i][0][X1], segmentos[i][0][Y2])
             y_max = max(y_max, segmentos[i][0][Y1], segmentos[i][0][Y2])
     x_med = (x_min + x_max) / 2
-
+    print("Pto_Med_Borda_Inf-Num_seg: {} after for".format(numero_segmentos))
     ##feedback
     '''imagem = cv2.circle(imagem, (int(largura//2),int(fator_para_baixo*ymed_bloco_todo)), 50,(0,255,0) , -1)
     imagem = cv2.circle(imagem, (int(x_min),int(y_max)), 50,(0,255,0) , -1)
