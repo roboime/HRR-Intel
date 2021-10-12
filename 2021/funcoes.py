@@ -117,7 +117,7 @@ def decisao_desvio(camera):
     camera.Take_photo()
     objeto_imagem = Classe_imagem(camera.path_atual)
     x, y = ponto_medio_borda_inferior(objeto_imagem)
-    lista_esquerda, lista_direita, j = bordas_laterais_v2(objeto_imagem)
+    lista_esquerda, lista_direita, j = bordas_laterais_v1(objeto_imagem)
     poly_left = [coef_angular(lista_esquerda), coef_linear(lista_esquerda)]
     poly_right = [coef_angular(lista_direita), coef_linear(lista_direita)]
     # j = 1: linha central. j = 2: borda direita. j = 3: borda esquerda. j = 0: nenhuma borda
@@ -270,7 +270,7 @@ def checar_alinhamento_pista_v1(camera, tolerancia_central, tolerancia_para_fren
 def checar_alinhamento_pista_v2(camera):
     path = camera.Take_photo()
     objeto_imagem = Classe_imagem(path)
-    left, right, caso = bordas_laterais_v2(objeto_imagem)
+    left, right, caso = bordas_laterais_v1(objeto_imagem)
     k = objeto_imagem.largura//2
     if caso == SO_DIREITA:
         horizontal = [0, objeto_imagem.topo_da_pista, objeto_imagem.largura, objeto_imagem.topo_da_pista]

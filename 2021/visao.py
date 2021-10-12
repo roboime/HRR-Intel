@@ -54,7 +54,9 @@ def coef_angular(lista):
 '''tira o coeficiente linear ( y1 - coef_angular *x1 = coef_linear) a partir de uma lista de coordenadas x1 y1 x2 y2. 
 utilizada em funcoes dessa biblioteca: '''
 def coef_linear(lista):
-    return lista[Y1] - coef_angular(lista)*lista[X1]
+    if len(lista) != 0:
+        return lista[Y1] - coef_angular(lista)*lista[X1]
+    else:   return 0
 # Essa funcao deve devolver o ponto medio ( (x,y) ) da borda inferior do obstaculo mais proximo
 
 """ recebe a mascara do branco e o objeto_imagem e procura o contorno fechado de maior area (pista). salva o y da pista como topo_da_pista e o x + largura/2
