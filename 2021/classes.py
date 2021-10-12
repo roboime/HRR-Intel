@@ -32,6 +32,7 @@ class Classe_camera():
         self.camera.capture(self.path_atual)
         self.camera.stop_preview()
         self.indice_atual = (self.indice_atual + 1) % 10
+        print("Saindo do Take_photo()")
         return self.path_atual
 
     def parar_fotografar(self, estado, myrio):

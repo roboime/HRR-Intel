@@ -30,6 +30,7 @@ class Classe_imagem():
         self.meio_da_pista = 0 # coordenada x do meio da pista
         self.largura_pista = 0 # largura do final da pista na imagem
         self.mult_largura_pista = 0.7 #ate quanto da metade da largura da pista ainda eh atravessavel pelo robo
+        print("Saindo do _init_ do Classe_imagem()")
 
     def mask(self, ranges_file_path):
         hsv = cv2.cvtColor(self.img, cv2.COLOR_BGR2HSV) # converte a cor para hsv
