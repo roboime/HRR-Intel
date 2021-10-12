@@ -67,14 +67,22 @@ def Loop_obstaculo():
             estado.Trocar_estado(funcoes.decisao_desvio(camera), myrio)
             print(estado)
             
-            if (estado.atual == GIRAR_ESQUERDA or estado.atual == GIRAR_DIREITA):            
+            if (estado.atual == GIRAR_ESQUERDA or estado.atual == GIRAR_DIREITA):
+                direcao_girada  = estado.atual            
                 estado.Trocar_estado(funcoes.quando_parar_de_girar(sensor_distancia, velocidade_angular, largura_do_robo), myrio)    
                 print(estado)
                 estado.Trocar_estado(ANDAR, myrio)
                 print(estado)
                 estado.Trocar_estado(funcoes.quando_parar_de_andar_visaocomp(velocidade), myrio)
                 print(estado)
-                print("obstaculo ultrapassado")
+                print("obstaculo ultrapassado, iniciando compensasao de angulo")
+                if(direcao_girada == GIRAR_ESQUERDA):
+                    estado.Trocar_estado(GIRAR_DIREITA, myrio)
+                    estado.Trocar_estado(funcoes.quando_parar_de_realinhar(velocidade_angular, GIRAR_DIREITA), myrio)
+                if(direcao_girada == GIRAR_DIREITA):
+                    estado.Trocar_estado(GIRAR_ESQUERDA, myrio)
+                    estado.Trocar_estado(funcoes.quando_parar_de_realinhar(velocidade_angular, GIRAR_DIREITA), myrio)
+                print("compensado o angulo girado")
             t_1 = time()
 
         ########################################### Checando alinhamento com a pista ###########################################
