@@ -26,7 +26,7 @@ class Classe_imagem():
         img = cv2.warpAffine(img, M, (self.largura, self.altura))
         self.img = img
 
-        self.topo_da_pista = 0 #coordenada y do topo da pista
+        self.topo_da_pista = int(0.7*self.altura) #coordenada y do topo da pista
         self.meio_da_pista = 0 # coordenada x do meio da pista
         self.largura_pista = 0 # largura do final da pista na imagem
         self.mult_largura_pista = 0.7 #ate quanto da metade da largura da pista ainda eh atravessavel pelo robo
@@ -61,15 +61,33 @@ def coef_linear(lista):
 def reconhecer_pista(mask, objeto_imagem):
     _, th = cv2.threshold(mask, 0, 255, cv2.THRESH_BINARY) 
     contours, _ = cv2.findContours(th, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)[-2:]
-    pista = contours[0]
-    for contour in contours:
-        if cv2.contourArea(contour) > cv2.contourArea(pista): pista = contour 
-    
-    x,y,w,h = cv2.boundingRect(pista)
-    objeto_imagem.topo_da_pista = y
-    objeto_imagem.meio_da_pista = x+w//2
-    objeto_imagem.img = cv2.line(objeto_imagem.img, (objeto_imagem.meio_da_pista, objeto_imagem.topo_da_pista), (objeto_imagem.meio_da_pista, objeto_imagem.altura), (0, 255, 255), 2)
+    if len(contours) != 0 :
+        m2 = m1 = contours[0]
+        
+        for contour in contours:
+            _,y,_,_ = cv2.boundingRect(contour)
+            area = cv2.contourArea(contour)
+            if y > objeto_imagem.altura//2 and area > 50000 and area > cv2.contourArea(m1):
+                m1 = contour
+        for contour in contours:
+            _,y,_,_ = cv2.boundingRect(contour)
+            area = cv2.contourArea(contour)
+            if y > objeto_imagem.altura//2 and area > 50000 and area > cv2.contourArea(m2) and m2 != m1:
+                m2 = contour
+        
+                
+        x1,y1,w1,h1 = cv2.boundingRect(m1)
+        x2,y2,w2,h2 = cv2.boundingRect(m2)
+        objeto_imagem.topo_da_pista = (y1+y2)//2
+        objeto_imagem.meio_da_pista = (x1+x2)//2
+    else:
+        objeto_imagem.topo_da_pista = objeto_imagem.altura//2
+        objeto_imagem.meio_da_pista = objeto_imagem.largura//2
+    cv2.rectangle(objeto_imagem.img, (x1, y1), (x1+w1, y1+h1), (0, 0, 0), thickness=3)
+    cv2.rectangle(objeto_imagem.img, (x2, y2), (x2+w2, y2+h2), (0, 0, 0), thickness=3)
+   # objeto_imagem.img = cv2.line(objeto_imagem.img, (objeto_imagem.meio_da_pista, objeto_imagem.topo_da_pista), (objeto_imagem.meio_da_pista, objeto_imagem.altura), (0, 255, 255), 2)
     objeto_imagem.img = cv2.line(objeto_imagem.img, (0, objeto_imagem.topo_da_pista), (objeto_imagem.largura, objeto_imagem.topo_da_pista), (0, 255, 255), 2)
+
 
 """ recebe duas retas no formato [x1, y1, x2, y2] e retora o ponto de interseccao x, y """
 def interscetion(r1, r2):
@@ -205,12 +223,13 @@ def bordas_laterais_v1(objeto_imagem):
 """ adaptacao da bordas_laterais_v1 que adiciona 3 restricoes para encontrar as retas. A primeira eh a RANGE_INCLINACAO, que seleciona um coeficiente angular minimo
  e maximo para considerar como borda. A segunda eh o topo_da_pista, que seleciona apenas as retas que estao abaixo do topo da pista para evitar ruidos. A terceira
   eh o meio_da_pista que divide as retas da borda da esquerda e da borda da direita."""
-def bordas_laterais_v2(objeto_imagem):
+
+def bordas_laterais_v3(objeto_imagem):
     mask = objeto_imagem.mask("ranges_preto.txt")
-    reconhecer_pista(mask, objeto_imagem)
+   # reconhecer_pista(mask, objeto_imagem)
     img = objeto_imagem.img
     edges = cv2.Canny(mask, 50, 150, apertureSize=3)
-    #cv2.imwrite("edges_mask.png", edges)
+#    cv2.imwrite( path+"../masks/"+str(i)+".png", mask)
 
     lines = cv2.HoughLinesP(edges, 1, np.pi/180, 100, minLineLength=10, maxLineGap=150)
     coordleft = []
@@ -220,19 +239,19 @@ def bordas_laterais_v2(objeto_imagem):
         for line in lines:
             line = line.reshape(4)
             x1,y1,x2,y2 = line
-         #   img = cv2.line(img, (x1,y1), (x2,y2), (0,127,255), 2)
+            img = cv2.line(img, (x1,y1), (x2,y2), (0,127,255), 2)
         
             theta = np.pi/180*RANGE_INCLINACAO
-            if y1>objeto_imagem.topo_da_pista and x1 > objeto_imagem.meio_da_pista or y2>objeto_imagem.topo_da_pista and x2 > objeto_imagem.meio_da_pista:
+            if y1>objeto_imagem.topo_da_pista or y2>objeto_imagem.topo_da_pista:
                 if math.atan(1)-theta/2 < math.atan(coef_angular(line)) < math.atan(1)+theta/2:
                     coordright.append([x1,y1,x2,y2])
                 #    print("angulo : ", 180/np.pi*math.atan(coef_angular(line)))
                   #  print([x1, y1, x2, y2])
-                 #   cv2.line(objeto_imagem.img, (x1,y1), (x2,y2), (0,255,0), 2)
-            if y1>objeto_imagem.topo_da_pista and x1 < objeto_imagem.meio_da_pista or y2>objeto_imagem.topo_da_pista and x2 < objeto_imagem.meio_da_pista:
+                   # cv2.line(objeto_imagem.img, (x1,y1), (x2,y2), (0,255,0), 2)
+            if y1>objeto_imagem.topo_da_pista or y2>objeto_imagem.topo_da_pista:
                 if math.atan(-1)-theta/2 < math.atan(coef_angular(line)) < math.atan(-1)+theta/2:
                     coordleft.append([x1,y1,x2,y2])
-                 #   cv2.line(objeto_imagem.img, (x1,y1), (x2,y2), (0,127,0), 2)
+               #     cv2.line(objeto_imagem.img, (x1,y1), (x2,y2), (0,127,0), 2)
     else: return [],[],NAO_HA_RETA
     ha_reta_na_direita = False
    # cv2.imwrite("todas_as_linhas.png", todas_as_linhas)
@@ -243,7 +262,7 @@ def bordas_laterais_v2(objeto_imagem):
         lista_media_direita = mediaright.tolist()
         mediaright=mediaright.astype(np.int64)
         [x1,y1,x2,y2]=mediaright
-      #  cv2.line(objeto_imagem.img, (x1,y1), (x2,y2), (0,0,255), 2)
+        cv2.line(objeto_imagem.img, (x1,y1), (x2,y2), (0,0,255), 2)
         
     ha_reta_na_esquerda = False
 
@@ -254,9 +273,9 @@ def bordas_laterais_v2(objeto_imagem):
         lista_media_esquerda = medialeft.tolist()
         medialeft=medialeft.astype(np.int64)
         [x1,y1,x2,y2]=medialeft
-      #  cv2.line(objeto_imagem.img, (x1,y1), (x2,y2), (0,0,255), 2)
+        cv2.line(objeto_imagem.img, (x1,y1), (x2,y2), (0,0,255), 2)
         #text= 'y_direita = '+str((y2-y1)/(x2-x1))+' *x + ' +str(y1-(((y2-y1)*x1)/(x2-x1)))
-        #img = cv2.putText(img, text, (int(((x1+x2)/2))-450,int(((y1+y2)/2))), cv2.FONT_HERSHEY_COMPLEX, 1, (255,255,255), 1, cv2.LINE_AA)
+        #img = cv2.putText(objeto_imagem.img, text, (int(((x1+x2)/2))-450,int(((y1+y2)/2))), cv2.FONT_HERSHEY_COMPLEX, 1, (255,255,255), 1, cv2.LINE_AA)
 
     if ha_reta_na_direita == False and ha_reta_na_esquerda == False:
         return [],[],NAO_HA_RETA

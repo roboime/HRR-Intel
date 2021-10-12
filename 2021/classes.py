@@ -14,7 +14,7 @@ PARAR="3"
 SUBIR = "4"
 DESCER = "5"
 
-
+DIST_MAXIMA = 50
 
 class Classe_camera():
     def __init__(self):
@@ -85,8 +85,8 @@ class Classe_distancia():
         self.sensor_distancia.start_ranging(VL53L0X.VL53L0X_BETTER_ACCURACY_MODE)     #configurando alcance e precisao do sensor
         
         #self.Save_config(self)
-        self.anterior = 2000
-        self.atual = 2000
+        self.anterior = DIST_MAXIMA
+        self.atual = DIST_MAXIMA
 
     #ocorre divisao por 10 para passar para cm
     def Get_distance(self):

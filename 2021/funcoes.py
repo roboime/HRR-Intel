@@ -26,49 +26,56 @@ SO_DIREITA = 3
 casos_dic = ["NAO_HA_RETA", "HA_DUAS_RETAS", "SO_ESQUERDA", "SO_DIREITA"]
 
 ANG_GIRADO = 0.0
-ANG_PITCH_CABECA = 0.0
+ANG_PITCH_CABECA = 30.0
 ANG_CABECA_DEGRAU = 0.0
-DIST_MIN_OBST_ATUAL = 46.0
+DIST_MAXIMA = 50
+DIST_MIN_OBST_ATUAL = 50.0
+
 
 '''Gira o robo ate haver uma variacao brusca de distancia, quando eh suposto nao haver mais obstaculo na direcao, acrescido
 de uma margem de segurnca dependente da altura do robo. Usada em Loop Obstaculo'''
+
 def quando_parar_de_girar(sensor_distancia, vel_ang, largura_robo):
     global DIST_MIN_OBST_ATUAL
     global ANG_GIRADO
     
-    intervalo_medicoes = 0.1
-    mult_dist = 1.0
-    mult_largura = 0.75
-    mult_ang_girado = 0.5
-    DIST_MIN_OBST_ATUAL = sensor_distancia.Get_distance()
+    intervalo_medicoes = 0.2
+    mult_dist = 4
+    mult_largura = 0.6
+    mult_ang_girado = 0
+    sensor_distancia.Get_distance()
+    sensor_distancia.atual *= np.cos(ANG_PITCH_CABECA*np.pi/180)
+    DIST_MIN_OBST_ATUAL = sensor_distancia.atual
     
     t_0 = t_1 = time.time()
     while True:
         time.sleep(intervalo_medicoes)
         sensor_distancia.Get_distance()
+        sensor_distancia.atual *= np.cos(ANG_PITCH_CABECA*np.pi/180)
+       # print("Dist: ", sensor_distancia.atual)
         if sensor_distancia.atual < sensor_distancia.anterior:
             DIST_MIN_OBST_ATUAL = sensor_distancia.atual
-            DIST_MIN_OBST_ATUAL *= np.cos(ANG_PITCH_CABECA)
             t_0 = t_1
-        if(abs(sensor_distancia.atual - sensor_distancia.anterior) > mult_dist*sensor_distancia.anterior):    
+      #  print("TEMPO: ", t_1-t_0)
+        if(sensor_distancia.atual > DIST_MAXIMA):    
             t_1 = time.time() - intervalo_medicoes/2
             theta_vel_ang = vel_ang*(t_1 - t_0)
-            theta_trigo = np.arccos(DIST_MIN_OBST_ATUAL/sensor_distancia.anterior)
-            ANG_GIRADO_VEL_ANG = np.arctan2( DIST_MIN_OBST_ATUAL*np.tan(theta_vel_ang) + largura_robo*mult_largura, DIST_MIN_OBST_ATUAL)
-            ANG_GIRADO_TRIGO = np.arctan2( DIST_MIN_OBST_ATUAL*np.tan(theta_trigo) + largura_robo*mult_largura, DIST_MIN_OBST_ATUAL)
+            #theta_trigo = np.arccos(DIST_MIN_OBST_ATUAL/sensor_distancia.anterior)
+            ANG_GIRADO = np.arctan2( DIST_MIN_OBST_ATUAL*np.tan(theta_vel_ang) + largura_robo*mult_largura, DIST_MIN_OBST_ATUAL)
+           # ANG_GIRADO_TRIGO = np.arctan2( DIST_MIN_OBST_ATUAL*np.tan(theta_trigo) + largura_robo*mult_largura, DIST_MIN_OBST_ATUAL)
         #    print("ANG_GIRADO_VEL_ANG: ", ANG_GIRADO_VEL_ANG, "\nANG_GIRADO_TRIGO: ", ANG_GIRADO_TRIGO, "\n")
-            ANG_GIRADO = mult_ang_girado*ANG_GIRADO_TRIGO + (1-mult_ang_girado)*ANG_GIRADO_VEL_ANG
+           # ANG_GIRADO = mult_ang_girado*ANG_GIRADO_TRIGO + (1-mult_ang_girado)*ANG_GIRADO_VEL_ANG
             intervalo_seguranca = ANG_GIRADO/vel_ang - (t_1 - t_0)
             time.sleep(intervalo_seguranca)
             break
-
-  #  print("Saimo familia")
+        t_1 = time.time()
+ #   print("ANG GIRADO: ", ANG_GIRADO)
     return PARAR
 '''
-Funcao que seria usada no loop de obstaculo conseguissemos usar o giroscopio.'''
+Funcao que seria usada no loop de obstaculo se conseguissemos usar o giroscopio.'''
 def quando_parar_de_andar_giroscopio(giroscopio, s_distancia, velocidade, largura_do_robo):
-    projecao_horizontal_trajetoria = s_distancia.anterior *np.cos(ANG_PITCH_CABECA) / np.cos(np.pi/180 * giroscopio.Obter_angulo_yaw()) + largura_do_robo
-    projecao_vertical_trajetoria = s_distancia.anterior *np.cos(ANG_PITCH_CABECA) / np.sin(np.pi/180 * giroscopio.Obter_angulo_yaw())
+    projecao_horizontal_trajetoria = s_distancia.anterior *np.cos(ANG_PITCH_CABECA*np.pi/180) / np.cos(np.pi/180 * giroscopio.Obter_angulo_yaw()) + largura_do_robo
+    projecao_vertical_trajetoria = s_distancia.anterior *np.cos(ANG_PITCH_CABECA*np.pi/180) / np.sin(np.pi/180 * giroscopio.Obter_angulo_yaw())
 
     trajetoria = ( projecao_vertical_trajetoria**2 +projecao_horizontal_trajetoria**2 ) ** (1/2)
     tempo_necessario = trajetoria/velocidade
@@ -85,7 +92,7 @@ def quando_parar_de_andar_giroscopio(giroscopio, s_distancia, velocidade, largur
 def quando_parar_de_andar_visaocomp(velocidade):
     instante_inicial = time.time()
 
-    dist_estimado = (DIST_MIN_OBST_ATUAL*np.cos(ANG_PITCH_CABECA)) / np.cos(ANG_GIRADO)
+    dist_estimado = (DIST_MIN_OBST_ATUAL*np.cos(ANG_PITCH_CABECA*np.pi/180)) / np.cos(ANG_GIRADO)
     tempo_estimado = dist_estimado / velocidade
 
     while (time.time() - instante_inicial < tempo_estimado):
