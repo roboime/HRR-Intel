@@ -31,6 +31,8 @@ tempo_para_parar = 1
 intervalo_enquanto_gira = 1
 tolerancia_central = 15
 tolerancia_para_frente = 60
+velocidade_angular = np.pi/18
+
 
 ANDAR="0"                 
 GIRAR_ESQUERDA="1"        
@@ -66,11 +68,11 @@ def Loop_obstaculo():
             print(estado)
             
             if (estado.atual == GIRAR_ESQUERDA or estado.atual == GIRAR_DIREITA):            
-                estado.Trocar_estado(funcoes.quando_parar_de_girar(sensor_distancia), myrio)    
+                estado.Trocar_estado(funcoes.quando_parar_de_girar(sensor_distancia, velocidade_angular, largura_do_robo), myrio)    
                 print(estado)
                 estado.Trocar_estado(ANDAR, myrio)
                 print(estado)
-                estado.Trocar_estado(funcoes.quando_parar_de_andar_visaocomp(sensor_distancia, velocidade, largura_do_robo), myrio)
+                estado.Trocar_estado(funcoes.quando_parar_de_andar_visaocomp(velocidade), myrio)
                 print(estado)
                 print("obstaculo ultrapassado")
             t_1 = time()
