@@ -12,7 +12,7 @@ Y1 = 1
 X2 = 2
 Y2 = 3
 
-RANGE_INCLINACAO = 70 #Em graus
+RANGE_INCLINACAO = 60 #Em graus
 
 """ Classe relacionada a imagem obtida pela camera. Ao ser chamada, inverte a imagem e salva constantes relacionadas a imagem, como altura, largura e centro.
  Possui o metodo mask, que retorna a mascara da imagem, passando o arquivo onde esta salvo os ranges da cor."""
@@ -26,7 +26,7 @@ class Classe_imagem():
         img = cv2.warpAffine(img, M, (self.largura, self.altura))
         self.img = img
 
-        self.topo_da_pista = int(0.7*self.altura) #coordenada y do topo da pista
+        self.topo_da_pista = int(0.4*self.altura) #coordenada y do topo da pista
         self.meio_da_pista = 0 # coordenada x do meio da pista
         self.largura_pista = 0 # largura do final da pista na imagem
         self.mult_largura_pista = 0.7 #ate quanto da metade da largura da pista ainda eh atravessavel pelo robo
@@ -48,14 +48,14 @@ dessa biblioteca: '''
 def coef_angular(lista):
     if len(lista) != 0:
         if lista[X2] != lista[X1]: return (lista[Y2]-lista[Y1]) / (lista[X2]-lista[X1])
-        else: return np.Inf
-    else: return np.Inf
+        else: return 99999999
+    else: return 999999999
 
 '''tira o coeficiente linear ( y1 - coef_angular *x1 = coef_linear) a partir de uma lista de coordenadas x1 y1 x2 y2. 
 utilizada em funcoes dessa biblioteca: '''
 def coef_linear(lista):
     if len(lista) != 0:
-        return lista[Y1] - coef_angular(lista)*lista[X1]
+        return lista[Y1] - lista[X1]*coef_angular(lista)
     else:   return 0
 # Essa funcao deve devolver o ponto medio ( (x,y) ) da borda inferior do obstaculo mais proximo
 
@@ -98,6 +98,9 @@ def interscetion(r1, r2):
     mr = coef_angular(r2)
     nl = coef_linear(r1)
     nr = coef_linear(r2)
+
+
+
     x = (nr-nl)/(ml-mr)
     y = mr*x+nr
     #IMG = cv2.circle(IMG, (int(x),int(y)), radius=10, color=(0, 255, 255), thickness=-1)
@@ -226,7 +229,6 @@ def bordas_laterais_v1(objeto_imagem):
 """ adaptacao da bordas_laterais_v1 que adiciona 3 restricoes para encontrar as retas. A primeira eh a RANGE_INCLINACAO, que seleciona um coeficiente angular minimo
  e maximo para considerar como borda. A segunda eh o topo_da_pista, que seleciona apenas as retas que estao abaixo do topo da pista para evitar ruidos. A terceira
   eh o meio_da_pista que divide as retas da borda da esquerda e da borda da direita."""
-
 def bordas_laterais_v2(objeto_imagem):
     mask = objeto_imagem.mask("ranges_preto.txt")
    # reconhecer_pista(mask, objeto_imagem)
@@ -235,60 +237,63 @@ def bordas_laterais_v2(objeto_imagem):
 #    cv2.imwrite( path+"../masks/"+str(i)+".png", mask)
 
     lines = cv2.HoughLinesP(edges, 1, np.pi/180, 100, minLineLength=10, maxLineGap=150)
-    coordleft = []
-    coordright =[]
+    left_lines = []
+    right_lines =[]
    # todas_as_linhas = IMG
     if lines is not None:
         for line in lines:
             line = line.reshape(4)
             x1,y1,x2,y2 = line
-            img = cv2.line(img, (x1,y1), (x2,y2), (0,127,255), 2)
+           # img = cv2.line(img, (x1,y1), (x2,y2), (0,127,255), 2)
         
             theta = np.pi/180*RANGE_INCLINACAO
             if y1>objeto_imagem.topo_da_pista or y2>objeto_imagem.topo_da_pista:
                 if math.atan(1)-theta/2 < math.atan(coef_angular(line)) < math.atan(1)+theta/2:
-                    coordright.append([x1,y1,x2,y2])
+                    right_lines.append([x1,y1,x2,y2])
                 #    print("angulo : ", 180/np.pi*math.atan(coef_angular(line)))
                   #  print([x1, y1, x2, y2])
                    # cv2.line(objeto_imagem.img, (x1,y1), (x2,y2), (0,255,0), 2)
             if y1>objeto_imagem.topo_da_pista or y2>objeto_imagem.topo_da_pista:
                 if math.atan(-1)-theta/2 < math.atan(coef_angular(line)) < math.atan(-1)+theta/2:
-                    coordleft.append([x1,y1,x2,y2])
+                    left_lines.append([x1,y1,x2,y2])
                #     cv2.line(objeto_imagem.img, (x1,y1), (x2,y2), (0,127,0), 2)
     else: return [],[],NAO_HA_RETA
-    ha_reta_na_direita = False
    # cv2.imwrite("todas_as_linhas.png", todas_as_linhas)
-    if(len(coordright) != 0):
+
+    ha_reta_na_direita = False
+    if(len(right_lines) != 0):
         ha_reta_na_direita = True
-        coordright=np.array(coordright)
-        mediaright = np.mean(coordright,axis=0)
-        lista_media_direita = mediaright.tolist()
-        mediaright=mediaright.astype(np.int64)
-        [x1,y1,x2,y2]=mediaright
-        cv2.line(objeto_imagem.img, (x1,y1), (x2,y2), (0,0,255), 2)
+        vertical_direita = [objeto_imagem.largura,0,objeto_imagem.largura,objeto_imagem.altura]
+        y_max = 0
+        for line in right_lines:
+            _,y = interscetion(line, vertical_direita)
+            if y > y_max:
+                y_max = y
+                right = line
+        [x1, y1, x2, y2] = right
+       # cv2.line(objeto_imagem.img, (x1,y1), (x2,y2), (0,0,255), 2)
         
     ha_reta_na_esquerda = False
-
-    if(len(coordleft) != 0):
+    if(len(left_lines) != 0):
         ha_reta_na_esquerda = True
-        coordleft=np.array(coordleft)
-        medialeft = np.mean(coordleft,axis=0)
-        lista_media_esquerda = medialeft.tolist()
-        medialeft=medialeft.astype(np.int64)
-        [x1,y1,x2,y2]=medialeft
-        cv2.line(objeto_imagem.img, (x1,y1), (x2,y2), (0,0,255), 2)
-        #text= 'y_direita = '+str((y2-y1)/(x2-x1))+' *x + ' +str(y1-(((y2-y1)*x1)/(x2-x1)))
-        #img = cv2.putText(objeto_imagem.img, text, (int(((x1+x2)/2))-450,int(((y1+y2)/2))), cv2.FONT_HERSHEY_COMPLEX, 1, (255,255,255), 1, cv2.LINE_AA)
-
+        vertical_esquerda = [0,0,0,objeto_imagem.altura]
+        y_max = 0
+        for line in left_lines:
+            _,y = interscetion(line, vertical_esquerda)
+            if y > y_max:
+                y_max = y
+                left = line
+        [x1, y1, x2, y2] = left
+   #     cv2.line(objeto_imagem.img, (x1,y1), (x2,y2), (0,0,255), 2)
+    
     if ha_reta_na_direita == False and ha_reta_na_esquerda == False:
         return [],[],NAO_HA_RETA
     if ha_reta_na_direita == True and ha_reta_na_esquerda == True:
-        return lista_media_esquerda, lista_media_direita, HA_DUAS_RETAS
+        return left, right, HA_DUAS_RETAS
     if ha_reta_na_direita == False and ha_reta_na_esquerda == True:
-       return lista_media_esquerda, [], SO_ESQUERDA
+       return left, [], SO_ESQUERDA
     if ha_reta_na_direita == True and ha_reta_na_esquerda == False:
-       return [], lista_media_direita, SO_DIREITA
-
+       return [], right, SO_DIREITA
 #dado uma imagem e um valor de comparacao, verificar se a reta mais proxima esta dentro do limite ou nao 
 def checar_proximidade(valor_comparar,objeto_imagem):
 
