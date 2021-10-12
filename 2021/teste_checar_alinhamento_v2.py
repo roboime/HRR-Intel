@@ -30,8 +30,8 @@ def bordas_laterais_v3(objeto_imagem):
 #    cv2.imwrite( path+"../masks/"+str(i)+".png", mask)
 
     lines = cv2.HoughLinesP(edges, 1, np.pi/180, 100, minLineLength=10, maxLineGap=150)
-    coordleft = []
-    coordright =[]
+    left_lines = []
+    right_lines =[]
    # todas_as_linhas = IMG
     if lines is not None:
         for line in lines:
@@ -42,47 +42,51 @@ def bordas_laterais_v3(objeto_imagem):
             theta = np.pi/180*RANGE_INCLINACAO
             if y1>objeto_imagem.topo_da_pista or y2>objeto_imagem.topo_da_pista:
                 if math.atan(1)-theta/2 < math.atan(coef_angular(line)) < math.atan(1)+theta/2:
-                    coordright.append([x1,y1,x2,y2])
+                    right_lines.append([x1,y1,x2,y2])
                 #    print("angulo : ", 180/np.pi*math.atan(coef_angular(line)))
                   #  print([x1, y1, x2, y2])
                    # cv2.line(objeto_imagem.img, (x1,y1), (x2,y2), (0,255,0), 2)
             if y1>objeto_imagem.topo_da_pista or y2>objeto_imagem.topo_da_pista:
                 if math.atan(-1)-theta/2 < math.atan(coef_angular(line)) < math.atan(-1)+theta/2:
-                    coordleft.append([x1,y1,x2,y2])
+                    left_lines.append([x1,y1,x2,y2])
                #     cv2.line(objeto_imagem.img, (x1,y1), (x2,y2), (0,127,0), 2)
     else: return [],[],NAO_HA_RETA
-    ha_reta_na_direita = False
    # cv2.imwrite("todas_as_linhas.png", todas_as_linhas)
-    if(len(coordright) != 0):
+
+    ha_reta_na_direita = False
+    if(len(right_lines) != 0):
         ha_reta_na_direita = True
-        coordright=np.array(coordright)
-        mediaright = np.mean(coordright,axis=0)
-        lista_media_direita = mediaright.tolist()
-        mediaright=mediaright.astype(np.int64)
-        [x1,y1,x2,y2]=mediaright
+        vertical_direita = [objeto_imagem.largura,0,objeto_imagem.largura,objeto_imagem.altura]
+        y_max = 0
+        for line in right_lines:
+            _,y = interscetion(line, vertical_direita)
+            if y > y_max:
+                y_max = y
+                right = line
+        [x1, y1, x2, y2] = right
         cv2.line(objeto_imagem.img, (x1,y1), (x2,y2), (0,0,255), 2)
         
     ha_reta_na_esquerda = False
-
-    if(len(coordleft) != 0):
+    if(len(left_lines) != 0):
         ha_reta_na_esquerda = True
-        coordleft=np.array(coordleft)
-        medialeft = np.mean(coordleft,axis=0)
-        lista_media_esquerda = medialeft.tolist()
-        medialeft=medialeft.astype(np.int64)
-        [x1,y1,x2,y2]=medialeft
+        vertical_esquerda = [0,0,0,objeto_imagem.altura]
+        y_max = 0
+        for line in left_lines:
+            _,y = interscetion(line, vertical_esquerda)
+            if y > y_max:
+                y_max = y
+                left = line
+        [x1, y1, x2, y2] = left
         cv2.line(objeto_imagem.img, (x1,y1), (x2,y2), (0,0,255), 2)
-        #text= 'y_direita = '+str((y2-y1)/(x2-x1))+' *x + ' +str(y1-(((y2-y1)*x1)/(x2-x1)))
-        #img = cv2.putText(objeto_imagem.img, text, (int(((x1+x2)/2))-450,int(((y1+y2)/2))), cv2.FONT_HERSHEY_COMPLEX, 1, (255,255,255), 1, cv2.LINE_AA)
-
+    
     if ha_reta_na_direita == False and ha_reta_na_esquerda == False:
         return [],[],NAO_HA_RETA
     if ha_reta_na_direita == True and ha_reta_na_esquerda == True:
-        return lista_media_esquerda, lista_media_direita, HA_DUAS_RETAS
+        return left, right, HA_DUAS_RETAS
     if ha_reta_na_direita == False and ha_reta_na_esquerda == True:
-       return lista_media_esquerda, [], SO_ESQUERDA
+       return left, [], SO_ESQUERDA
     if ha_reta_na_direita == True and ha_reta_na_esquerda == False:
-       return [], lista_media_direita, SO_DIREITA
+       return [], right, SO_DIREITA
 
 def checar_alinhamento_pista_v2(objeto_imagem):
     left, right, caso = bordas_laterais_v3(objeto_imagem)
@@ -145,5 +149,3 @@ for IMG in IMAGES:
     ret = checar_alinhamento_pista_v2(IMG)
     cv2.imwrite( path+"../finais2/"+str(i)+".png", IMG.img)
     i+=1
-    
-
