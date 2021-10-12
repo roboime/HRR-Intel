@@ -137,13 +137,14 @@ def ponto_medio_borda_inferior(objeto_imagem):
     #esse fator para baixo serve para procurar segmentos ainda mais abaixo do ponto medio
     fator_para_baixo = 1.3
 
+    print("Pto_Med_Borda_Inf-Num_seg: {} before for".format(numero_segmentos))
     for i in range(numero_segmentos):
         if ((segmentos[i][0][Y1]+segmentos[i][0][Y2])/2 > ymed_bloco_todo*fator_para_baixo):
             x_min = min(x_min, segmentos[i][0][X1], segmentos[i][0][X2])
             x_max = max(x_max, segmentos[i][0][X1], segmentos[i][0][Y2])
             y_max = max(y_max, segmentos[i][0][Y1], segmentos[i][0][Y2])
     x_med = (x_min + x_max) / 2
-
+    print("Pto_Med_Borda_Inf-Num_seg: {} after for".format(numero_segmentos))
     ##feedback
     '''imagem = cv2.circle(imagem, (int(largura//2),int(fator_para_baixo*ymed_bloco_todo)), 50,(0,255,0) , -1)
     imagem = cv2.circle(imagem, (int(x_min),int(y_max)), 50,(0,255,0) , -1)

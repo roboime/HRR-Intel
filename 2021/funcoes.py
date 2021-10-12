@@ -116,8 +116,11 @@ def quando_parar_de_alinhar(tolerancia_centro, tolerancia_para_frente):
 def decisao_desvio(camera):
     camera.Take_photo()
     objeto_imagem = Classe_imagem(camera.path_atual)
+    print("Antes da borda inferior")
     x, y = ponto_medio_borda_inferior(objeto_imagem)
+    print("Antes da bordas_laterais_v2")
     lista_esquerda, lista_direita, j = bordas_laterais_v2(objeto_imagem)
+    print("Antes dos calculos de coef_angular e coef_linear")
     poly_left = [coef_angular(lista_esquerda), coef_linear(lista_esquerda)]
     poly_right = [coef_angular(lista_direita), coef_linear(lista_direita)]
     # j = 1: linha central. j = 2: borda direita. j = 3: borda esquerda. j = 0: nenhuma borda
