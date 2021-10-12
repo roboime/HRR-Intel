@@ -56,6 +56,8 @@ def Loop_obstaculo():
         print(estado)
         ########################################### Checando proximidade de obstaculo ##########################################
 
+        print("Medida do sensor de distancia: {}\n".format(sensor_distancia.Get_distance()))
+
         if sensor_distancia.Get_distance() <= distancialimite:
             print ("obstaculo detectado ", sensor_distancia.atual)
             estado.Trocar_estado(PARAR, myrio)
@@ -88,6 +90,7 @@ def Loop_obstaculo():
             print(estado.atual)
             t_0 = t_1 = time()
         else:
+            print("alinhado com a pista")
             t_1 = time()
 
 if __name__ == "__main__":

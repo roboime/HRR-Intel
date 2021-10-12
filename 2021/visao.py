@@ -26,7 +26,7 @@ class Classe_imagem():
         img = cv2.warpAffine(img, M, (self.largura, self.altura))
         self.img = img
 
-        self.topo_da_pista = int(0.7*self.altura) #coordenada y do topo da pista
+        self.topo_da_pista = int(0.4*self.altura) #coordenada y do topo da pista
         self.meio_da_pista = 0 # coordenada x do meio da pista
         self.largura_pista = 0 # largura do final da pista na imagem
         self.mult_largura_pista = 0.7 #ate quanto da metade da largura da pista ainda eh atravessavel pelo robo
