@@ -12,7 +12,7 @@ Y1 = 1
 X2 = 2
 Y2 = 3
 
-RANGE_INCLINACAO = 60 #Em graus
+RANGE_INCLINACAO = 85 #Em graus
 
 """ Classe relacionada a imagem obtida pela camera. Ao ser chamada, inverte a imagem e salva constantes relacionadas a imagem, como altura, largura e centro.
  Possui o metodo mask, que retorna a mascara da imagem, passando o arquivo onde esta salvo os ranges da cor."""
@@ -41,7 +41,7 @@ class Classe_imagem():
 
         print("SAIMO DO WARPAFFINE")
         self.img = img
-        self.topo_da_pista = int(0.4*self.altura) #coordenada y do topo da pista
+        self.topo_da_pista = int(0.3*self.altura) #coordenada y do topo da pista
         self.meio_da_pista = 0 # coordenada x do meio da pista
         self.largura_pista = 0 # largura do final da pista na imagem
         self.mult_largura_pista = 0.7 #ate quanto da metade da largura da pista ainda eh atravessavel pelo robo
@@ -125,45 +125,70 @@ def interscetion(r1, r2):
 
 ''' identifica a borda laranja mais baixa e traca o ponto medio dela, retornando-o. Usada na decisao desvio'''
 def ponto_medio_borda_inferior(objeto_imagem):
-    
+    print("Entrou na ponto medio borda inferior")
     orangemask = objeto_imagem.mask("ranges_laranja.txt")
+    cv2.imwrite( path+"../masks/"+str(ind)+".png", orangemask)
     largura = objeto_imagem.largura
     # Usamos "Canny" para pegar os contornos
+    
+    #_, th = cv2.threshold(orangemask, 0, 255, cv2.THRESH_BINARY) 
+  #  contours, _ = cv2.findContours(th, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)[-2:]
+  #  
+   # if len(contours) == 0: return 0,0, 0
+   # mais_proximo = contours[0]
+  #  for contour in contours:
+  #      x, y, w, h = cv2.boundingRect(contour)
+
     lista_bordas = cv2.Canny(orangemask, 100, 300, apertureSize=3)
 
     minLineLength = 90  # Parametro da HoughLines
-
+    
     # Utlizar HoughLinesP para retornar (x1,y1) (x2,y2)
     segmentos = cv2.HoughLinesP(lista_bordas, rho=1, theta=np.pi/180, threshold=100,
-                            lines=np.array([]), minLineLength=minLineLength, maxLineGap=200)
-
+                            lines=np.array([]), minLineLength=minLineLength, maxLineGap=10)
+    if segmentos is None: return 0,0, 0
+    numero_segmentos, _, _ = segmentos.shape
+    if numero_segmentos == 0: return 0,0, 0
     
     #se quisermos visualizar
     '''for segmento in segmentos:
         x1,y1,x2,y2= segmento[0]
         cv2.line(imagem, (x1,y1), (x2,y2), (0,255,0), 2)'''
 
-    numero_segmentos, _, _ = segmentos.shape
+    """y_med_max = 0
+    borda_inferior = segmentos[0]
+    for segmento in segmentos:
+        segmento = segmento.reshape(4)
+        x1, y1, x2, y2 = segmento
+        y_med = (y1+y2)//2
+        if y_med > y_med_max:
+            y_med_max = y_med
+            borda_inferior = segmento
+    x1, y1, x2, y2 = borda_inferior
+    x_med = (x1 + x2)//2
+    cv2.line(objeto_imagem.img, (x1,y1), (x2,y2), (0,0,255), 2)
+    objeto_imagem.img = cv2.circle(objeto_imagem.img, (x_med, y_med_max), radius=10, color=(0, 255, 255), thickness=-1)
+    return x_med , y_med_max"""
 
     ymed_bloco_todo = 0
     for i in range(numero_segmentos):
         ymed_bloco_todo+=segmentos[i][0][1] + segmentos[i][0][3]
-    ymed_bloco_todo/=2*numero_segmentos
-
+    ymed_bloco_todo//=2*numero_segmentos
     y_max = -1
     x_min = largura
     x_max = 0
     #esse fator para baixo serve para procurar segmentos ainda mais abaixo do ponto medio
     fator_para_baixo = 1.3
+    cv2.line(objeto_imagem.img, (0,int(ymed_bloco_todo*fator_para_baixo)), (objeto_imagem.largura,int(ymed_bloco_todo*fator_para_baixo)), (255,0,0), 2)
 
-    print("Pto_Med_Borda_Inf-Num_seg: {} before for".format(numero_segmentos))
     for i in range(numero_segmentos):
-        if ((segmentos[i][0][Y1]+segmentos[i][0][Y2])/2 > ymed_bloco_todo*fator_para_baixo):
+        x1, y1, x2, y2 = segmentos[i].reshape(4)
+   #     cv2.line(objeto_imagem.img, (x1,y1), (x2,y2), (255,0,255), 2)
+        if (segmentos[i][0][Y1] > ymed_bloco_todo*fator_para_baixo or segmentos[i][0][Y2] > ymed_bloco_todo*fator_para_baixo):
             x_min = min(x_min, segmentos[i][0][X1], segmentos[i][0][X2])
-            x_max = max(x_max, segmentos[i][0][X1], segmentos[i][0][Y2])
+            x_max = max(x_max, segmentos[i][0][X1], segmentos[i][0][X2])
             y_max = max(y_max, segmentos[i][0][Y1], segmentos[i][0][Y2])
-    x_med = (x_min + x_max) / 2
-    print("Pto_Med_Borda_Inf-Num_seg: {} after for".format(numero_segmentos))
+    x_med = (x_min + x_max) // 2
     ##feedback
     '''imagem = cv2.circle(imagem, (int(largura//2),int(fator_para_baixo*ymed_bloco_todo)), 50,(0,255,0) , -1)
     imagem = cv2.circle(imagem, (int(x_min),int(y_max)), 50,(0,255,0) , -1)
@@ -172,7 +197,10 @@ def ponto_medio_borda_inferior(objeto_imagem):
     little = cv2.resize(imagem, (960, 540)) 
     cv2.imshow("com o ponto medio", little)
     cv2.waitKey()'''
-    return x_med, y_max
+    cv2.line(objeto_imagem.img, (x_min,y_max), (x_max,y_max), (0,0,255), 2)
+    objeto_imagem.img = cv2.circle(objeto_imagem.img, (x_med, y_max), radius=10, color=(0, 255, 255), thickness=-1)
+    print("Saindo ponto medio borda inferior")
+    return x_min, x_max, y_max
 
 '''Recebe apenas a imagem. Retorna o x1 y1 x2 y2 das bordas laterais e uma variavel auxiliar que inidica se
 foram encontrada, duas retas, zero retas ou uma reta ( e qual eh ela). Versao do fernandes que utiliza uma mascara branca

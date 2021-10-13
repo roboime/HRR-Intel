@@ -130,31 +130,36 @@ def quando_parar_de_alinhar(tolerancia_centro, tolerancia_para_frente):
 
 
 '''Decide para onde virar quando encontra um obstaculo. Recebe somente a camera. Usado apenas no loop de obstaculo.'''
-def decisao_desvio(camera):
+def decisao_desvio(objeto_imagem):
+    print("Entrando decisao desvio")
     path = camera.Take_photo()
+    print("Tirou foto")
     objeto_imagem = Classe_imagem(path)
-    print("Antes da borda inferior")
-    x, y = ponto_medio_borda_inferior(objeto_imagem)
-    print("Antes da bordas_laterais_v2")
-    lista_esquerda, lista_direita, caso = bordas_laterais_v2(objeto_imagem)
-    print("Antes dos calculos de coef_angular e coef_linear")
+    print("Fez o objeto_imagem")
+    x_min, x_max, y = ponto_medio_borda_inferior(objeto_imagem)
+    x = (x_min+x_max)//2
+    print("Entrou no bordas laterais")
+    lista_esquerda, lista_direita, j = bordas_laterais_v2(objeto_imagem)
+    print("Saiu do bordas laterais")
     poly_left = [coef_angular(lista_esquerda), coef_linear(lista_esquerda)]
     poly_right = [coef_angular(lista_direita), coef_linear(lista_direita)]
-    # caso = 1: linha central. caso = 2: borda direita. caso = 3: borda esquerda. caso = 0: nenhuma borda
+    # j = 1: linha central. j = 2: borda direita. j = 3: borda esquerda. j = 0: nenhuma borda
     pixel_scale = 20.4
     d_min = 40
     x_robot = 0
     if x == 0 and y == 0:
         # Nao detectou obstaculo
+      #  cv2.putText(objeto_imagem.img,'NAO HA RETA', bottomLeftCornerOfText, font, fontScale, fontColor, lineType)
+        print("NAO HA OBSTACULO: ANDAR")
         return ANDAR
     else:
-        if caso == HA_DUAS_RETAS:
+        if j == HA_DUAS_RETAS:
             poly_inv_left = [1/poly_left[0], -poly_left[1]/poly_left[0]]
             x_linha_left = poly_inv_left[1] + poly_inv_left[0]*y
             poly_inv_right = [1/poly_right[0], -poly_right[1]/poly_right[0]]
             x_linha_right = poly_inv_right[1] + poly_inv_right[0]*y
-            d_left = abs(x - x_linha_left)/pixel_scale
-            d_right = abs(x - x_linha_right)/pixel_scale
+            d_left = abs(x_min - x_linha_left)/pixel_scale
+            d_right = abs(x_max - x_linha_right)/pixel_scale
             ang_left = np.arctan(poly_left[0])*(180/np.pi)
             ang_right = np.arctan(poly_right[0])*(180/np.pi)
             # 1 para esquerda, 2 direita, 3 centro
@@ -169,44 +174,74 @@ def decisao_desvio(camera):
                 if d_left > d_min and d_right > d_min:
                     d = max(d_left, d_right)
                     if d == d_left:
+                        #cv2.putText(objeto_imagem.img,'2 RETAS: GIRAR ESQUERDA', bottomLeftCornerOfText, font, fontScale, fontColor, lineType)
+                        print("HA DUAS RETAS: GIRAR ESQUERDA")
                         return GIRAR_ESQUERDA
                     else:
+                  #      cv2.putText(objeto_imagem.img,'2 RETAS: GIRAR DIREITA', bottomLeftCornerOfText, font, fontScale, fontColor, lineType)
+                        print("HA DUAS RETAS: GIRAR DIREITA")
                         return GIRAR_DIREITA
                 elif d_left > d_min and d_right <= d_min:
+                #    cv2.putText(objeto_imagem.img,'2 RETAS: GIRAR ESQUERDA', bottomLeftCornerOfText, font, fontScale, fontColor, lineType)
+                    print("HA DUAS RETAS: GIRAR ESQUERDA")
                     return GIRAR_ESQUERDA
                 elif d_left <= d_min and d_right > d_min:
+                  #  cv2.putText(objeto_imagem.img,'2 RETAS: GIRAR DIREITA', bottomLeftCornerOfText, font, fontScale, fontColor, lineType)
+                    print("HA DUAS RETAS: GIRAR DIREITA")
                     return GIRAR_DIREITA
                 else:
                     d = max(d_left, d_right)
                     if d == d_left:
+                   #     cv2.putText(objeto_imagem.img,'2 RETAS: GIRAR ESQUERDA', bottomLeftCornerOfText, font, fontScale, fontColor, lineType)
+                        print("HA DUAS RETAS: GIRAR ESQUERDA")
                         return GIRAR_ESQUERDA
                     else:
+                    #    cv2.putText(objeto_imagem.img,'2 RETAS: GIRAR DIREITA', bottomLeftCornerOfText, font, fontScale, fontColor, lineType)
+                        print("HA DUAS RETAS: GIRAR DIREITA")
                         return GIRAR_DIREITA
             if x_robot == 1:
                 if d_left < d_min:
+                 #   cv2.putText(objeto_imagem.img,'2 RETAS: GIRAR DIREITA', bottomLeftCornerOfText, font, fontScale, fontColor, lineType)
+                    print("HA DUAS RETAS: GIRAR DIREITA")
                     return GIRAR_DIREITA
                 else:
+                 #   cv2.putText(objeto_imagem.img,'2 RETAS: GIRAR ESQUERDA', bottomLeftCornerOfText, font, fontScale, fontColor, lineType)
+                    print("HA DUAS RETAS: GIRAR ESQUERDA")
                     return GIRAR_ESQUERDA
             if x_robot == 2:
                 if d_right < d_min:
+                 #   cv2.putText(objeto_imagem.img,'2 RETAS: GIRAR ESQUERDA', bottomLeftCornerOfText, font, fontScale, fontColor, lineType)
+                    print("HA DUAS RETAS: GIRAR ESQUERDA")
                     return GIRAR_ESQUERDA
                 else:
+                #    cv2.putText(objeto_imagem.img,'2 RETAS: GIRAR DIREITA', bottomLeftCornerOfText, font, fontScale, fontColor, lineType)
+                    print("HA DUAS RETAS: GIRAR DIREITA")
                     return GIRAR_DIREITA
-        if caso == SO_DIREITA:
+        if j == SO_DIREITA:
             poly_inv = [1/poly_right[0], -poly_right[1]/poly_right[0]]
             x_linha = poly_inv[1] + poly_inv[0]*y
-            if abs(x - x_linha) > d_min*pixel_scale:
+           # print("imagem: ", ind, "Dist: ", abs(x_max - x_linha)/pixel_scale )
+            if abs(x_max - x_linha) > d_min*pixel_scale:
+            #    cv2.putText(objeto_imagem.img,'SO DIREITA: GIRAR DIREITA', bottomLeftCornerOfText, font, fontScale, fontColor, lineType)
+                print("SO DIREITA: GIRAR DIREITA")
                 return GIRAR_DIREITA
             else:
+            #    cv2.putText(objeto_imagem.img,'SO DIREITA: GIRAR ESQUERDA', bottomLeftCornerOfText, font, fontScale, fontColor, lineType)
+                print("SO DIREITA: GIRAR ESQUERDA")
                 return GIRAR_ESQUERDA
-        if caso == SO_ESQUERDA:
+        if j == SO_ESQUERDA:
             poly_inv = [1/poly_left[0], -poly_left[1]/poly_left[0]]
             x_linha = poly_inv[1] + poly_inv[0]*y
-            if abs(x - x_linha) > d_min*pixel_scale:
+            #print("imagem: ", ind, "Dist: ", abs(x_min - x_linha)/pixel_scale )
+            if abs(x_min - x_linha) > d_min*pixel_scale:
+             #   cv2.putText(objeto_imagem.img,'SO ESQUERDA: GIRAR ESQUERDA', bottomLeftCornerOfText, font, fontScale, fontColor, lineType)
+                print("SO ESQUERDA: GIRAR ESQUERDA")
                 return GIRAR_ESQUERDA
             else:
+              #  cv2.putText(objeto_imagem.img,'SO ESQUERDA: GIRAR DIREITA', bottomLeftCornerOfText, font, fontScale, fontColor, lineType)
+                print("SO ESQUERDA: GIRAR DIREITA")
                 return GIRAR_DIREITA
-        if caso == NAO_HA_RETA: return ANDAR
+        if j == NAO_HA_RETA: return ANDAR
 
 casos_dic = ["NAO_HA_RETA", "HA_DUAS_RETAS", "SO_ESQUERDA", "SO_DIREITA"]
 
