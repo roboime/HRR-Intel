@@ -40,10 +40,10 @@ tolerancia_central = 15
 tolerancia_para_frente = 60
 velocidade_ang_em_graus = [0,0,0]
 velocidade_angular = [0,0,0]
-velocidade_ang_em_graus[GIRAR_ESQUERDA] = 10
-velocidade_ang_em_graus[GIRAR_DIREITA] = 10
-velocidade_angular[GIRAR_ESQUERDA] = velocidade_ang_em_graus[GIRAR_ESQUERDA]*np.pi/180
-velocidade_angular[GIRAR_DIREITA] = velocidade_ang_em_graus[GIRAR_DIREITA]*np.pi/180
+velocidade_ang_em_graus[int(GIRAR_ESQUERDA)] = 10
+velocidade_ang_em_graus[int(GIRAR_DIREITA)] = 10
+velocidade_angular[int(GIRAR_ESQUERDA)] = velocidade_ang_em_graus[GIRAR_ESQUERDA]*np.pi/180
+velocidade_angular[int(GIRAR_DIREITA)] = velocidade_ang_em_graus[GIRAR_DIREITA]*np.pi/180
 
 myrio = classes.Classe_porta_serial()
 sensor_distancia = classes.Classe_distancia()
