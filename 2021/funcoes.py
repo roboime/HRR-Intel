@@ -132,7 +132,7 @@ def quando_parar_de_alinhar(tolerancia_centro, tolerancia_para_frente):
 '''Decide para onde virar quando encontra um obstaculo. Recebe somente a camera. Usado apenas no loop de obstaculo.'''
 def decisao_desvio(camera):
     path = camera.Take_photo()
-    objeto_imagem = Classe_imagem(path)
+    objeto_imagem = classes.Classe_imagem(path)
     print("Antes da borda inferior")
     x, y = ponto_medio_borda_inferior(objeto_imagem)
     print("Antes da bordas_laterais_v2")
@@ -215,7 +215,7 @@ andar sem encontrar uma borda lateral para retornar uma direcao de giro ou entao
 Usada em todos os loops'''
 def checar_alinhamento_pista_v1(camera, tolerancia_central, tolerancia_para_frente):
     path = camera.Take_photo()
-    objeto_imagem = Classe_imagem(path)
+    objeto_imagem = classes.Classe_imagem(path)
     reta_esquerda, reta_direita, caso = bordas_laterais_v2(objeto_imagem)
     largura, altura = objeto_imagem.largura, objeto_imagem.altura
 
@@ -285,7 +285,7 @@ def checar_alinhamento_pista_v1(camera, tolerancia_central, tolerancia_para_fren
 '''
 def checar_alinhamento_pista_v2(camera):
     path = camera.Take_photo()
-    objeto_imagem = Classe_imagem(path)
+    objeto_imagem = classes.Classe_imagem(path)
     left, right, caso = bordas_laterais_v2(objeto_imagem)
     k = objeto_imagem.largura//2
     if caso == SO_DIREITA:
