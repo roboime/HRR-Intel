@@ -64,16 +64,16 @@ class Classe_imagem():
 dessa biblioteca: '''
 def coef_angular(lista):
     if len(lista) != 0:
-        if lista[X2] != lista[X1]: return (lista[Y2]-lista[Y1]) / (lista[X2]-lista[X1])
-        else: return 999
-    else: return 999
+        if lista[X2] != lista[X1]: return float(float(lista[Y2]-lista[Y1]) / float(lista[X2]-lista[X1]))
+        else: return 999.9
+    else: return 999.9
 
 
 '''tira o coeficiente linear ( y1 - coef_angular *x1 = coef_linear) a partir de uma lista de coordenadas x1 y1 x2 y2. 
 utilizada em funcoes dessa biblioteca: '''
 def coef_linear(lista):
     if len(lista) != 0:
-        return lista[Y1] - lista[X1]*coef_angular(lista)
+        return float(float(lista[Y1]) - float(lista[X1])*coef_angular(lista))
     else:   return 0
 # Essa funcao deve devolver o ponto medio ( (x,y) ) da borda inferior do obstaculo mais proximo
 
@@ -343,7 +343,7 @@ def bordas_laterais_v2(objeto_imagem):
                 left = line
         [x1, y1, x2, y2] = left
         cv2.line(objeto_imagem.img, (x1,y1), (x2,y2), (0,0,255), 2)
-        
+
     cv2.imwrite("./tests/bordas_laterais.jpg", objeto_imagem.img)
     if ha_reta_na_direita == False and ha_reta_na_esquerda == False:
         return [],[],NAO_HA_RETA
