@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 import math
-#import classes
+import classes
 
 NAO_HA_RETA = 0
 HA_DUAS_RETAS = 1
@@ -13,7 +13,7 @@ Y1 = 1
 X2 = 2
 Y2 = 3
 
-RANGE_INCLINACAO = 70 #Em graus
+RANGE_INCLINACAO = 85 #Em graus
 
 """ Classe relacionada a imagem obtida pela camera. Ao ser chamada, inverte a imagem e salva constantes relacionadas a imagem, como altura, largura e centro.
  Possui o metodo mask, que retorna a mascara da imagem, passando o arquivo onde esta salvo os ranges da cor."""
@@ -65,8 +65,8 @@ dessa biblioteca: '''
 def coef_angular(lista):
     if len(lista) != 0:
         if lista[X2] != lista[X1]: return (lista[Y2]-lista[Y1]) / (lista[X2]-lista[X1])
-        else: return 999
-    else: return 999
+        else: return 99999999
+    else: return 999999999
 
 
 '''tira o coeficiente linear ( y1 - coef_angular *x1 = coef_linear) a partir de uma lista de coordenadas x1 y1 x2 y2. 
@@ -128,7 +128,7 @@ def interscetion(r1, r2):
 def ponto_medio_borda_inferior(objeto_imagem):
     print("Entrou na ponto medio borda inferior")
     orangemask = objeto_imagem.mask("ranges_laranja.txt")
-  #  cv2.imwrite( path+"../masks/"+str(ind)+".png", orangemask)
+    cv2.imwrite( path+"../masks/"+str(ind)+".png", orangemask)
     largura = objeto_imagem.largura
     # Usamos "Canny" para pegar os contornos
     
@@ -233,13 +233,13 @@ def bordas_laterais_v1(objeto_imagem):
     if lines is not None:
         for line in lines:
             x1,y1,x2,y2= line[0]
-            if ( y1>altura/4 or y2>altura/4) and np.tan(math.radians(2))<abs(((y2-y1)/(x2-x1))) and abs(((y2-y1)/(x2-x1)))*np.tan(math.radians(88)):
+            if ( y1>altura/2 or y2>altura/2) and 0.09<abs(((y2-y1)/(x2-x1))) and abs(((y2-y1)/(x2-x1)))<10:
                 if ((y2-y1)/(x2-x1)) > 0:
                     coordright.append([x1,y1,x2,y2])
-                    cv2.line(img, (x1,y1), (x2,y2), (255,255,255), 2)
+                    #cv2.line(img, (x1,y1), (x2,y2), (255,255,255), 2)
                 else:
                     coordleft.append([x1,y1,x2,y2])
-                    cv2.line(img, (x1,y1), (x2,y2), (0,255,0), 2)
+                    #cv2.line(img, (x1,y1), (x2,y2), (0,255,0), 2)
     else: return [],[],NAO_HA_RETA
     ha_reta_na_direita = False
 
@@ -250,7 +250,7 @@ def bordas_laterais_v1(objeto_imagem):
         lista_media_direita = mediaright.tolist()
         mediaright=mediaright.astype(np.int64)
         [x1,y1,x2,y2]=mediaright
-        cv2.line(img, (x1,y1), (x2,y2), (0,0,255), 2)
+        #cv2.line(img, (x1,y1), (x2,y2), (0,0,255), 2)
         
     ha_reta_na_esquerda = False
 
@@ -261,11 +261,10 @@ def bordas_laterais_v1(objeto_imagem):
         lista_media_esquerda = medialeft.tolist()
         medialeft=medialeft.astype(np.int64)
         [x1,y1,x2,y2]=medialeft
-        cv2.line(img, (x1,y1), (x2,y2), (0,0,255), 2)
+        #cv2.line(img, (x1,y1), (x2,y2), (0,0,255), 2)
         #text= 'y_direita = '+str((y2-y1)/(x2-x1))+' *x + ' +str(y1-(((y2-y1)*x1)/(x2-x1)))
         #img = cv2.putText(img, text, (int(((x1+x2)/2))-450,int(((y1+y2)/2))), cv2.FONT_HERSHEY_COMPLEX, 1, (255,255,255), 1, cv2.LINE_AA)
 
-    cv2.imwrite("./tests/bordas_v2.jpg", img)
     if ha_reta_na_direita == False and ha_reta_na_esquerda == False:
         return [],[],NAO_HA_RETA
     if ha_reta_na_direita == True and ha_reta_na_esquerda == True:
@@ -294,25 +293,19 @@ def bordas_laterais_v2(objeto_imagem):
             line = line.reshape(4)
             x1,y1,x2,y2 = line
             img = cv2.line(img, (x1,y1), (x2,y2), (0,127,255), 2)
-        	
+        
             theta = np.pi/180*RANGE_INCLINACAO
-            print("topo da imagem", objeto_imagem.topo_da_pista)
-            print("range inclinacao", RANGE_INCLINACAO)
-            print("pontos: ", line)
-            print("coef_angular: ", coef_angular(line))
-            print("angulo: ", 180/np.pi*math.atan(coef_angular(line)))
             if y1>objeto_imagem.topo_da_pista or y2>objeto_imagem.topo_da_pista:
                 if math.atan(1)-theta/2 < math.atan(coef_angular(line)) < math.atan(1)+theta/2:
                     right_lines.append([x1,y1,x2,y2])
                 #    print("angulo : ", 180/np.pi*math.atan(coef_angular(line)))
                   #  print([x1, y1, x2, y2])
                     cv2.line(objeto_imagem.img, (x1,y1), (x2,y2), (0,255,0), 2)
+            if y1>objeto_imagem.topo_da_pista or y2>objeto_imagem.topo_da_pista:
                 if math.atan(-1)-theta/2 < math.atan(coef_angular(line)) < math.atan(-1)+theta/2:
                     left_lines.append([x1,y1,x2,y2])
                     cv2.line(objeto_imagem.img, (x1,y1), (x2,y2), (0,127,0), 2)
-    else:
-        print("NAO DETECTOU RETA NENHUMA")
-	return [],[],NAO_HA_RETA
+    else: return [],[],NAO_HA_RETA
    # cv2.imwrite("todas_as_linhas.png", todas_as_linhas)
 
     ha_reta_na_direita = False
@@ -342,7 +335,7 @@ def bordas_laterais_v2(objeto_imagem):
                 left = line
         [x1, y1, x2, y2] = left
         cv2.line(objeto_imagem.img, (x1,y1), (x2,y2), (0,0,255), 2)
-    cv2.imwrite("./tests/bordas_laterais.jpg", objeto_imagem.img)
+    cv2.imwrite("./bordas_printadas.jpg", objeto_imagem.img)
     if ha_reta_na_direita == False and ha_reta_na_esquerda == False:
         return [],[],NAO_HA_RETA
     if ha_reta_na_direita == True and ha_reta_na_esquerda == True:
@@ -353,13 +346,12 @@ def bordas_laterais_v2(objeto_imagem):
        return [], right, SO_DIREITA
 
 
-
 #dado uma imagem e um valor de comparacao, verificar se a reta mais proxima esta dentro do limite ou nao 
 def checar_proximidade(valor_comparar, imagem_path):
 
     #objeto_imagem = camera.Take_photo()
     #input_imagem = imagem_path + ".img"
-    objeto_imagem = Classe_imagem(imagem_path)
+    objeto_imagem = classes.Classe_imagem(imagem_path)
     #img = objeto_imagem.copy() #funcao para pegar a imagem e armazena-la
     #cv2.imwrite("imagem original.png", img)
     
