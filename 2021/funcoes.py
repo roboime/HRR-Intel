@@ -136,11 +136,11 @@ def decisao_desvio(camera):
     print("Antes da borda inferior")
     x, y = ponto_medio_borda_inferior(objeto_imagem)
     print("Antes da bordas_laterais_v2")
-    lista_esquerda, lista_direita, caso = bordas_laterais_v2(objeto_imagem)
+    lista_esquerda, lista_direita, j = bordas_laterais_v2(objeto_imagem)
     print("Antes dos calculos de coef_angular e coef_linear")
     poly_left = [coef_angular(lista_esquerda), coef_linear(lista_esquerda)]
     poly_right = [coef_angular(lista_direita), coef_linear(lista_direita)]
-    # caso = 1: linha central. caso = 2: borda direita. caso = 3: borda esquerda. caso = 0: nenhuma borda
+    # j = 1: linha central. j = 2: borda direita. j = 3: borda esquerda. j = 0: nenhuma borda
     pixel_scale = 20.4
     d_min = 40
     x_robot = 0
@@ -148,7 +148,7 @@ def decisao_desvio(camera):
         # Nao detectou obstaculo
         return ANDAR
     else:
-        if caso == HA_DUAS_RETAS:
+        if j == 1:
             poly_inv_left = [1/poly_left[0], -poly_left[1]/poly_left[0]]
             x_linha_left = poly_inv_left[1] + poly_inv_left[0]*y
             poly_inv_right = [1/poly_right[0], -poly_right[1]/poly_right[0]]
@@ -192,22 +192,26 @@ def decisao_desvio(camera):
                     return GIRAR_ESQUERDA
                 else:
                     return GIRAR_DIREITA
-        if caso == SO_DIREITA:
+        if j == 2:
             poly_inv = [1/poly_right[0], -poly_right[1]/poly_right[0]]
             x_linha = poly_inv[1] + poly_inv[0]*y
             if abs(x - x_linha) > d_min*pixel_scale:
                 return GIRAR_DIREITA
             else:
                 return GIRAR_ESQUERDA
-        if caso == SO_ESQUERDA:
+        if j == 3:
             poly_inv = [1/poly_left[0], -poly_left[1]/poly_left[0]]
             x_linha = poly_inv[1] + poly_inv[0]*y
             if abs(x - x_linha) > d_min*pixel_scale:
                 return GIRAR_ESQUERDA
             else:
                 return GIRAR_DIREITA
-        if caso == NAO_HA_RETA: return ANDAR
+        if j == 0: return ANDAR
 
+NAO_HA_RETA = 0
+HA_DUAS_RETAS = 1
+SO_ESQUERDA = 2
+SO_DIREITA = 3
 casos_dic = ["NAO_HA_RETA", "HA_DUAS_RETAS", "SO_ESQUERDA", "SO_DIREITA"]
 
 '''Recebe o sensor camera, uma tolerancia em relacao ao centro da imagem, e uma tolerancia em relacao ao quanto eh possivel

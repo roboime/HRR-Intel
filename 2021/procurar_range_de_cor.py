@@ -13,7 +13,7 @@
 import cv2
 import numpy as np
 
-PATH = "./tests/fotos2/imagem_teste_checar_alinhamento_00.jpg"
+PATH = "./tests/fotos/imagem_teste_checar_alinhamento_1.jpg"
 CORES = ["LARANJA", "VERMELHO", "BRANCO", "PRETO"]
 FILES = ["ranges_laranja.txt", "ranges_vermelho.txt", "ranges_branco.txt", "ranges_preto.txt"]
 
