@@ -16,7 +16,7 @@ PARAR="3"
 SUBIR = "4"
 DESCER = "5"
 
-DIST_MAXIMA = 50
+DIST_MAXIMA = 80
 
 class Classe_camera():
     def __init__(self):

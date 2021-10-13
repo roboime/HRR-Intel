@@ -5,7 +5,7 @@ from os.path import  join
 from visao import *
 import copy
 
-path = "./tests/fotos2/"
+path = "./tests/fotos3/"
 
 IMAGES = [Classe_imagem(join(path, f)) for f in listdir(join(path))]
 
@@ -23,21 +23,20 @@ fontScale              = 1
 fontColor              = (255,255,255)
 lineType               = 2
 
-def ponto_medio_borda_inferior(objeto_imagem):
+def ponto_medio_borda_inferior2(objeto_imagem):
     
     orangemask = objeto_imagem.mask("ranges_laranja.txt")
     cv2.imwrite( path+"../masks/"+str(ind)+".png", orangemask)
     largura = objeto_imagem.largura
     # Usamos "Canny" para pegar os contornos
     
-    _, th = cv2.threshold(orangemask, 0, 255, cv2.THRESH_BINARY) 
-    contours, _ = cv2.findContours(th, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)[-2:]
-    
-    if len(contours) == 0: return 0,0
-    mais_proximo = contours[0]
-    for contour in contours:
-        x, y, w, h = cv2.boundingRect(contour)
-
+    #_, th = cv2.threshold(orangemask, 0, 255, cv2.THRESH_BINARY) 
+  #  contours, _ = cv2.findContours(th, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)[-2:]
+  #  
+   # if len(contours) == 0: return 0,0, 0
+   # mais_proximo = contours[0]
+  #  for contour in contours:
+  #      x, y, w, h = cv2.boundingRect(contour)
 
     lista_bordas = cv2.Canny(orangemask, 100, 300, apertureSize=3)
 
@@ -46,9 +45,9 @@ def ponto_medio_borda_inferior(objeto_imagem):
     # Utlizar HoughLinesP para retornar (x1,y1) (x2,y2)
     segmentos = cv2.HoughLinesP(lista_bordas, rho=1, theta=np.pi/180, threshold=100,
                             lines=np.array([]), minLineLength=minLineLength, maxLineGap=10)
-    if segmentos is None: return 0,0
+    if segmentos is None: return 0,0, 0
     numero_segmentos, _, _ = segmentos.shape
-    if numero_segmentos == 0: return 0,0
+    if numero_segmentos == 0: return 0,0, 0
     
     #se quisermos visualizar
     '''for segmento in segmentos:
@@ -84,7 +83,7 @@ def ponto_medio_borda_inferior(objeto_imagem):
     print("Pto_Med_Borda_Inf-Num_seg: {} before for".format(numero_segmentos))
     for i in range(numero_segmentos):
         x1, y1, x2, y2 = segmentos[i].reshape(4)
-        cv2.line(objeto_imagem.img, (x1,y1), (x2,y2), (255,0,255), 2)
+   #     cv2.line(objeto_imagem.img, (x1,y1), (x2,y2), (255,0,255), 2)
         if (segmentos[i][0][Y1] > ymed_bloco_todo*fator_para_baixo or segmentos[i][0][Y2] > ymed_bloco_todo*fator_para_baixo):
             x_min = min(x_min, segmentos[i][0][X1], segmentos[i][0][X2])
             x_max = max(x_max, segmentos[i][0][X1], segmentos[i][0][X2])
@@ -101,7 +100,7 @@ def ponto_medio_borda_inferior(objeto_imagem):
     cv2.waitKey()'''
     cv2.line(objeto_imagem.img, (x_min,y_max), (x_max,y_max), (0,0,255), 2)
     objeto_imagem.img = cv2.circle(objeto_imagem.img, (x_med, y_max), radius=10, color=(0, 255, 255), thickness=-1)
-    return x_med, y_max
+    return x_min, x_max, y_max
 
 def bordas_laterais_v3(objeto_imagem):
     mask = objeto_imagem.mask("ranges_preto.txt")
@@ -126,11 +125,11 @@ def bordas_laterais_v3(objeto_imagem):
                     right_lines.append([x1,y1,x2,y2])
                 #    print("angulo : ", 180/np.pi*math.atan(coef_angular(line)))
                   #  print([x1, y1, x2, y2])
-                   # cv2.line(objeto_imagem.img, (x1,y1), (x2,y2), (0,255,0), 2)
+                    cv2.line(objeto_imagem.img, (x1,y1), (x2,y2), (0,255,0), 2)
             if y1>objeto_imagem.topo_da_pista or y2>objeto_imagem.topo_da_pista:
                 if math.atan(-1)-theta/2 < math.atan(coef_angular(line)) < math.atan(-1)+theta/2:
                     left_lines.append([x1,y1,x2,y2])
-               #     cv2.line(objeto_imagem.img, (x1,y1), (x2,y2), (0,127,0), 2)
+                    cv2.line(objeto_imagem.img, (x1,y1), (x2,y2), (0,127,0), 2)
     else: return [],[],NAO_HA_RETA
    # cv2.imwrite("todas_as_linhas.png", todas_as_linhas)
 
@@ -172,7 +171,8 @@ def bordas_laterais_v3(objeto_imagem):
 def decisao_desvio2(objeto_imagem):
   #  path = camera.Take_photo()
     #objeto_imagem = Classe_imagem(path)
-    x, y = ponto_medio_borda_inferior(objeto_imagem)
+    x_min, x_max, y = ponto_medio_borda_inferior2(objeto_imagem)
+    x = (x_min+x_max)//2
     lista_esquerda, lista_direita, j = bordas_laterais_v3(objeto_imagem)
     poly_left = [coef_angular(lista_esquerda), coef_linear(lista_esquerda)]
     poly_right = [coef_angular(lista_direita), coef_linear(lista_direita)]
@@ -190,8 +190,8 @@ def decisao_desvio2(objeto_imagem):
             x_linha_left = poly_inv_left[1] + poly_inv_left[0]*y
             poly_inv_right = [1/poly_right[0], -poly_right[1]/poly_right[0]]
             x_linha_right = poly_inv_right[1] + poly_inv_right[0]*y
-            d_left = abs(x - x_linha_left)/pixel_scale
-            d_right = abs(x - x_linha_right)/pixel_scale
+            d_left = abs(x_min - x_linha_left)/pixel_scale
+            d_right = abs(x_max - x_linha_right)/pixel_scale
             ang_left = np.arctan(poly_left[0])*(180/np.pi)
             ang_right = np.arctan(poly_right[0])*(180/np.pi)
             # 1 para esquerda, 2 direita, 3 centro
@@ -242,8 +242,8 @@ def decisao_desvio2(objeto_imagem):
         if j == SO_DIREITA:
             poly_inv = [1/poly_right[0], -poly_right[1]/poly_right[0]]
             x_linha = poly_inv[1] + poly_inv[0]*y
-            print("Dist: ", abs(x - x_linha)/pixel_scale )
-            if abs(x - x_linha) > d_min*pixel_scale:
+            print("imagem: ", ind, "Dist: ", abs(x_max - x_linha)/pixel_scale )
+            if abs(x_max - x_linha) > d_min*pixel_scale:
                 cv2.putText(objeto_imagem.img,'SO DIREITA: GIRAR DIREITA', bottomLeftCornerOfText, font, fontScale, fontColor, lineType)
                 return GIRAR_DIREITA
             else:
@@ -252,8 +252,8 @@ def decisao_desvio2(objeto_imagem):
         if j == SO_ESQUERDA:
             poly_inv = [1/poly_left[0], -poly_left[1]/poly_left[0]]
             x_linha = poly_inv[1] + poly_inv[0]*y
-            print("Dist: ", abs(x - x_linha)/pixel_scale )
-            if abs(x - x_linha) > d_min*pixel_scale:
+            print("imagem: ", ind, "Dist: ", abs(x_min - x_linha)/pixel_scale )
+            if abs(x_min - x_linha) > d_min*pixel_scale:
                 cv2.putText(objeto_imagem.img,'SO ESQUERDA: GIRAR ESQUERDA', bottomLeftCornerOfText, font, fontScale, fontColor, lineType)
                 return GIRAR_ESQUERDA
             else:

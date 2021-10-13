@@ -30,7 +30,7 @@ DESCER = "5"
 
 #Variaveis auxiliares, a velocidade esta em cm/seg
 velocidade = 5             
-distancialimite = 30.0
+distancialimite = 50.0
 angulo_limite = 10.0
 intervalo_alinhamento = 5
 largura_do_robo = 25.0
