@@ -13,7 +13,7 @@ Y1 = 1
 X2 = 2
 Y2 = 3
 
-RANGE_INCLINACAO = 85 #Em graus
+RANGE_INCLINACAO = 70 #Em graus
 
 """ Classe relacionada a imagem obtida pela camera. Ao ser chamada, inverte a imagem e salva constantes relacionadas a imagem, como altura, largura e centro.
  Possui o metodo mask, que retorna a mascara da imagem, passando o arquivo onde esta salvo os ranges da cor."""
@@ -301,7 +301,7 @@ def bordas_laterais_v2(objeto_imagem):
                 #    print("angulo : ", 180/np.pi*math.atan(coef_angular(line)))
                   #  print([x1, y1, x2, y2])
                     cv2.line(objeto_imagem.img, (x1,y1), (x2,y2), (0,255,0), 2)
-            if y1>objeto_imagem.topo_da_pista or y2>objeto_imagem.topo_da_pista:
+
                 if math.atan(-1)-theta/2 < math.atan(coef_angular(line)) < math.atan(-1)+theta/2:
                     left_lines.append([x1,y1,x2,y2])
                     cv2.line(objeto_imagem.img, (x1,y1), (x2,y2), (0,127,0), 2)
@@ -335,7 +335,7 @@ def bordas_laterais_v2(objeto_imagem):
                 left = line
         [x1, y1, x2, y2] = left
         cv2.line(objeto_imagem.img, (x1,y1), (x2,y2), (0,0,255), 2)
-    
+    cv2.imwrite("./bordas_printadas.jpg", objeto_imagem.img)
     if ha_reta_na_direita == False and ha_reta_na_esquerda == False:
         return [],[],NAO_HA_RETA
     if ha_reta_na_direita == True and ha_reta_na_esquerda == True:
