@@ -328,16 +328,19 @@ def checar_proximidade(valor_comparar, imagem_path):
         for i in range(0,100):
             coefienete_angular = abs((lines[i][0][y2]-lines[i][0][y1])/(lines[i][0][x1]-lines[i][0][x2]))
             if coefienete_angular < 1:#eliminar retas muito inclinadas pq queremos retas horizontais
-                cv2.line(img,(lines[i][0][x1],lines[i][0][y1]),(lines[i][0][x2],lines[i][0][y2]),(255,0,0),9)
+                #cv2.line(img,(lines[i][0][x1],lines[i][0][y1]),(lines[i][0][x2],lines[i][0][y2]),(255,0,0),9)
                 if(((lines[i][0][y1]+lines[i][0][y2])/2)>maximo):  #encontrar a reta mais proxima do robo, por meio da coordenada y
                     maximo = lines[i][0][y1]
 
     except:#quando ele nao encontrar mais nenhuma reta no vetor line, ele vai dar erro e vir para essa parte do codigo. 
         porcentagem = (maximo/altura)*100
         #print(maximo)
+        print("A porcentagem eh: {}".format(porcentagem))
         if(porcentagem>valor_comparar):
+            print("checar_proximidade deu True")
             #cv2.imwrite("imagem com linhas.png", img)
             return True
         else:
+            print("checar_proximidade deu False")
             #cv2.imwrite("imagem com linhas.png", img)
             return False
