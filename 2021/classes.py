@@ -141,10 +141,13 @@ class Classe_distancia():
 
     #ocorre divisao por 10 para passar para cm
     def Get_distance(self):
-        self.anterior = self.atual
-        self.atual = self.sensor_distancia.get_distance()/10
-        return self.atual                             # retorna a distancia ate o obstaculo em cm
-
+        try:
+            self.anterior = self.atual
+            self.atual = self.sensor_distancia.get_distance()/10
+            return self.atual                             # retorna a distancia ate o obstaculo em cm
+        except KeyboardInterrupt:
+            print("ctrl c detectado, saindo do get distance")
+            
 
 
 class Classe_porta_serial():
