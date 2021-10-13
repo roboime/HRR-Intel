@@ -136,7 +136,7 @@ def quando_parar_de_alinhar(tolerancia_centro, tolerancia_para_frente):
 
 
 '''Decide para onde virar quando encontra um obstaculo. Recebe somente a camera. Usado apenas no loop de obstaculo.'''
-def decisao_desvio(objeto_imagem):
+def decisao_desvio(camera):
     print("Entrando decisao desvio")
     path = camera.Take_photo()
     print("Tirou foto")
