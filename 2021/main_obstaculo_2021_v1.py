@@ -23,7 +23,7 @@ import funcoes
 
 #Variaveis auxiliares, a velocidade esta em cm/seg
 velocidade = 5             
-distancialimite = 46.0
+distancialimite = 30.0
 angulo_limite = 10.0
 intervalo_alinhamento = 5
 largura_do_robo = 25.0
@@ -81,7 +81,7 @@ def Loop_obstaculo():
                     estado.Trocar_estado(funcoes.quando_parar_de_realinhar(velocidade_angular, GIRAR_DIREITA), myrio)
                 if(direcao_girada == GIRAR_DIREITA):
                     estado.Trocar_estado(GIRAR_ESQUERDA, myrio)
-                    estado.Trocar_estado(funcoes.quando_parar_de_realinhar(velocidade_angular, GIRAR_DIREITA), myrio)
+                    estado.Trocar_estado(funcoes.quando_parar_de_realinhar(velocidade_angular, GIRAR_ESQUERDA), myrio)
                 print("compensado o angulo girado")
             t_1 = time()
 

@@ -79,7 +79,7 @@ def quando_parar_de_realinhar(vel_ang, sentido_de_giro):
     t_0 = t_1 = time.time()
     while True:
         time.sleep(intervalo_medicoes)
-        t_1 = time.sleep()
+        t_1 = time.time()
         if t_1-t_0 > intervalo_realinhamento: 
             break
         if(sentido_de_giro == GIRAR_DIREITA):
