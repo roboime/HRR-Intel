@@ -145,7 +145,7 @@ def ponto_medio_borda_inferior(objeto_imagem):
     minLineLength = 90  # Parametro da HoughLines
     
     # Utlizar HoughLinesP para retornar (x1,y1) (x2,y2)
-    segmentos = cv2.HoughLinesP(lista_bordas, rho=1, theta=np.pi/180, threshold=100,
+    segmentos = cv2.HoughLinesP(lista_bordas, rho=1, desvio_maximo=np.pi/180, threshold=100,
                             lines=np.array([]), minLineLength=minLineLength, maxLineGap=10)
     if segmentos is None: return 0,0, 0
     numero_segmentos, _, _ = segmentos.shape
@@ -295,24 +295,25 @@ def bordas_laterais_v2(objeto_imagem):
             x1,y1,x2,y2 = line
             img = cv2.line(img, (x1,y1), (x2,y2), (0,127,255), 2)
         	
-            theta = np.pi/180*RANGE_INCLINACAO
+            desvio_maximo = np.pi/180*RANGE_INCLINACAO
             print("topo da imagem", objeto_imagem.topo_da_pista)
             print("range inclinacao", RANGE_INCLINACAO)
             print("pontos: ", line)
             print("coef_angular: ", coef_angular(line))
             print("angulo: ", 180/np.pi*math.atan(coef_angular(line)))
             if y1>objeto_imagem.topo_da_pista or y2>objeto_imagem.topo_da_pista:
-                if math.atan(1)-theta/2 < math.atan(coef_angular(line)) < math.atan(1)+theta/2:
+                if math.atan(1)-desvio_maximo/2 < math.atan(coef_angular(line)) < math.atan(1)+desvio_maximo/2:
                     right_lines.append([x1,y1,x2,y2])
                 #    print("angulo : ", 180/np.pi*math.atan(coef_angular(line)))
                   #  print([x1, y1, x2, y2])
                     cv2.line(objeto_imagem.img, (x1,y1), (x2,y2), (0,255,0), 2)
-                if math.atan(-1)-theta/2 < math.atan(coef_angular(line)) < math.atan(-1)+theta/2:
+                if math.atan(-1)-desvio_maximo/2 < math.atan(coef_angular(line)) < math.atan(-1)+desvio_maximo/2:
                     left_lines.append([x1,y1,x2,y2])
                     cv2.line(objeto_imagem.img, (x1,y1), (x2,y2), (0,127,0), 2)
     else:
         print("NAO DETECTOU RETA NENHUMA")
-	return [],[],NAO_HA_RETA
+        return [],[],NAO_HA_RETA
+
    # cv2.imwrite("todas_as_linhas.png", todas_as_linhas)
 
     ha_reta_na_direita = False
@@ -342,15 +343,16 @@ def bordas_laterais_v2(objeto_imagem):
                 left = line
         [x1, y1, x2, y2] = left
         cv2.line(objeto_imagem.img, (x1,y1), (x2,y2), (0,0,255), 2)
+        
     cv2.imwrite("./tests/bordas_laterais.jpg", objeto_imagem.img)
     if ha_reta_na_direita == False and ha_reta_na_esquerda == False:
         return [],[],NAO_HA_RETA
     if ha_reta_na_direita == True and ha_reta_na_esquerda == True:
         return left, right, HA_DUAS_RETAS
     if ha_reta_na_direita == False and ha_reta_na_esquerda == True:
-       return left, [], SO_ESQUERDA
+        return left, [], SO_ESQUERDA
     if ha_reta_na_direita == True and ha_reta_na_esquerda == False:
-       return [], right, SO_DIREITA
+        return [], right, SO_DIREITA
 
 
 
