@@ -3,6 +3,7 @@
 from os import listdir
 from os.path import  join
 from visao import *
+import copy
 
 path = "./tests/fotos2/"
 
@@ -88,6 +89,78 @@ def bordas_laterais_v3(objeto_imagem):
     if ha_reta_na_direita == True and ha_reta_na_esquerda == False:
        return [], right, SO_DIREITA
 
+def checar_alinhamento_pista_v1(objeto_imagem, tolerancia_central, tolerancia_para_frente):
+ #   path = camera.Take_photo()
+  #  objeto_imagem = Classe_imagem(path)
+    reta_esquerda, reta_direita, caso = bordas_laterais_v2(objeto_imagem)
+    largura, altura = objeto_imagem.largura, objeto_imagem.altura
+
+    print("Estamos no seguinte caso:", caso)
+    if(caso == HA_DUAS_RETAS):
+        x_intersecao = (coef_linear(reta_direita)-coef_linear(reta_esquerda))/(coef_angular(reta_esquerda)-coef_angular(reta_direita)) 
+        '''cv2.circle(img, (int(x_intersecao) , int(coef_angular(reta_direita)*x_intersecao+coef_linear(reta_direita))) , 10,(100,100) , -1)
+        cv2.line(img, (reta_direita[X1], reta_direita[Y1]), (reta_direita[X2], reta_direita[Y2]), (0,0,255), 2)
+        cv2.line(img, (reta_esquerda[X1], reta_esquerda[Y1]), (reta_esquerda[X2], reta_esquerda[Y2]), (0,0,255), 2)    
+        cv2.imshow("na main as DUAS e o PONTO", img)
+        cv2.waitKey(0)'''
+        proximidade_do_meio = abs((x_intersecao - (largura/2))*100/largura)
+        print(proximidade_do_meio)
+        if(proximidade_do_meio < tolerancia_central):
+            cv2.putText(objeto_imagem.img,'2 RETAS: ALINHADO', bottomLeftCornerOfText, font, fontScale, fontColor, lineType)
+            return(ANDAR)
+        elif x_intersecao < (largura/2):
+            cv2.putText(objeto_imagem.img,'2 RETAS: GIRAR ESQUERDA', bottomLeftCornerOfText, font, fontScale, fontColor, lineType)
+            return(GIRAR_ESQUERDA)
+        else:
+            print("2 RETAS: GIRAR_DIREITA")
+            return(GIRAR_DIREITA)
+
+    elif(caso == SO_DIREITA):
+        
+        #cv2.circle(img, (largura//2 , altura) , 50,(100,100) , -1)
+        projecao_na_reta = coef_angular(reta_direita)*(largura/2) + coef_linear(reta_direita)
+        '''cv2.line(img, (reta_direita[X1], reta_direita[Y1]), (reta_direita[X2], reta_direita[Y2]), (0,0,255), 2)
+        cv2.circle(img, (largura//2 , int(projecao_na_reta)) , 10,(100,100) , -1)
+        cv2.imshow("so direita", img)
+        cv2.waitKey(0)'''
+        if ((altura-projecao_na_reta)*100 / altura) > tolerancia_para_frente:
+            cv2.putText(objeto_imagem.img,'SO DIREITA: ALINHADO', bottomLeftCornerOfText, font, fontScale, fontColor, lineType)
+            return(ANDAR)
+        else:
+            cv2.putText(objeto_imagem.img,'SO DIREITA: GIRAR ESQUERDA', bottomLeftCornerOfText, font, fontScale, fontColor, lineType)
+            return(GIRAR_ESQUERDA)
+
+    elif(caso == SO_ESQUERDA):
+        #cv2.circle(img, (largura//2 , altura) , 50,(100,100) , -1)
+        projecao_na_reta = coef_angular(reta_esquerda)*(largura/2) + coef_linear(reta_esquerda)
+        '''cv2.line(img, (reta_esquerda[X1], reta_esquerda[Y1]), (reta_esquerda[X2], reta_esquerda[Y2]), (0,0,255), 2)
+        cv2.circle(img, (largura//2 , int(projecao_na_reta)) , 10,(100,100) , -1)
+        cv2.imshow("so esquerda", img)
+        cv2.waitKey(0)'''
+        if ((altura-projecao_na_reta)*100 / altura) > tolerancia_para_frente:
+            cv2.putText(objeto_imagem.img,'SO ESQUERDA: ALINHADO', bottomLeftCornerOfText, font, fontScale, fontColor, lineType)
+            return(ANDAR)
+        else:
+            cv2.putText(objeto_imagem.img,'SO ESQUERDA: GIRAR DIREITA', bottomLeftCornerOfText, font, fontScale, fontColor, lineType)
+            return(GIRAR_DIREITA)
+
+    else:
+        cv2.putText(objeto_imagem.img,'NAO HA RETA', bottomLeftCornerOfText, font, fontScale, fontColor, lineType)
+        return(ANDAR)
+
+'''
+    Funcao que retorna ANDAR, caso o robo esteja alinhado com a pista, e GIRAR_ESQUERDA ou GIRAR_DIREITA, caso contrario.
+    Recebe objeto relativo a Classe_camera(), tira a foto e obtem dela as bordas laterais.
+    Em seuida analisa-se os casos:
+    NAO_HA_RETA - Acontecera quando o robo estiver muito proximo da linha de chegada, entao retorna ANDAR.
+    SO_DIREITA ou SO_ESQUERDA - Calcula-se a interseccao (x, y) da borda com o topo_da_pista. Se a borda nao cortar o meio da imagem
+    e (x - largura)//2  for maior que min_largura, que calculado eh usando a geometria da imagem, entao a direcao esta certa. Senao,
+    retornara para girar.
+    HA_DUAS_RETAS - Neste caso, calcula-se a interseccao das duas bordas com o topo da pista. Se o meio da imagem estiver entre os 2 pontos
+    e numa folga relativa a largura do robo, entao o robo esta na direcao certa. Senao, retornara para girar.
+'''
+
+
 def checar_alinhamento_pista_v2(objeto_imagem):
     left, right, caso = bordas_laterais_v3(objeto_imagem)
     k = objeto_imagem.largura//2
@@ -100,10 +173,10 @@ def checar_alinhamento_pista_v2(objeto_imagem):
         objeto_imagem.img = cv2.line(objeto_imagem.img, (objeto_imagem.largura//2 + min_largura, 0), (objeto_imagem.largura//2 + min_largura, objeto_imagem.altura), (127, 127, 0), 2)
         objeto_imagem.img = cv2.line(objeto_imagem.img, (objeto_imagem.largura//2, 0), (objeto_imagem.largura//2, objeto_imagem.altura), (255, 0, 0), 2)
         if delta_x > min_largura and delta_x > 0:
-            cv2.putText(objeto_imagem.img,'ALINHADO', bottomLeftCornerOfText, font, fontScale, fontColor, lineType)
+            cv2.putText(objeto_imagem.img,'SO DIREITA: ALINHADO', bottomLeftCornerOfText, font, fontScale, fontColor, lineType)
             return ANDAR
         else:
-            cv2.putText(objeto_imagem.img,'DESALINHADO: GIRAR ESQUERDA', bottomLeftCornerOfText, font, fontScale, fontColor, lineType)
+            cv2.putText(objeto_imagem.img,'SO DIREITA: GIRAR ESQUERDA', bottomLeftCornerOfText, font, fontScale, fontColor, lineType)
             return GIRAR_ESQUERDA
     elif caso == SO_ESQUERDA:
         horizontal = [0, objeto_imagem.topo_da_pista, objeto_imagem.largura, objeto_imagem.topo_da_pista]
@@ -114,10 +187,10 @@ def checar_alinhamento_pista_v2(objeto_imagem):
         objeto_imagem.img = cv2.line(objeto_imagem.img, (objeto_imagem.largura//2 - min_largura, 0), (objeto_imagem.largura//2 - min_largura, objeto_imagem.altura), (127, 127, 0), 2)
         objeto_imagem.img = cv2.line(objeto_imagem.img, (objeto_imagem.largura//2, 0), (objeto_imagem.largura//2, objeto_imagem.altura), (255, 0, 0), 2)
         if delta_x > min_largura and delta_x > 0:
-            cv2.putText(objeto_imagem.img,'ALINHADO', bottomLeftCornerOfText, font, fontScale, fontColor, lineType)
+            cv2.putText(objeto_imagem.img,'SO ESQUERDA: ALINHADO', bottomLeftCornerOfText, font, fontScale, fontColor, lineType)
             return ANDAR
         else:
-            cv2.putText(objeto_imagem.img,'DESALINHADO: GIRAR DIREITA', bottomLeftCornerOfText, font, fontScale, fontColor, lineType)
+            cv2.putText(objeto_imagem.img,'SO ESQUERDA: GIRAR DIREITA', bottomLeftCornerOfText, font, fontScale, fontColor, lineType)
             return GIRAR_DIREITA
     elif caso == NAO_HA_RETA:
         cv2.putText(objeto_imagem.img,'NAO HA RETA', bottomLeftCornerOfText, font, fontScale, fontColor, lineType)
@@ -136,16 +209,20 @@ def checar_alinhamento_pista_v2(objeto_imagem):
         objeto_imagem.img = cv2.circle(objeto_imagem.img, (x2, objeto_imagem.topo_da_pista), radius=10, color=(0, 255, 255), thickness=-1)
         objeto_imagem.img = cv2.circle(objeto_imagem.img, ((x1+x2)//2, objeto_imagem.topo_da_pista), radius=10, color=(0, 0, 255), thickness=-1)
         if objeto_imagem.largura_pista//2*objeto_imagem.mult_largura_pista > abs(delta_x):
-            cv2.putText(objeto_imagem.img,'ALINHADO', bottomLeftCornerOfText, font, fontScale, fontColor, lineType)
+            cv2.putText(objeto_imagem.img,'2 RETAS: ALINHADO', bottomLeftCornerOfText, font, fontScale, fontColor, lineType)
             return ANDAR
         elif delta_x > 0:
-            cv2.putText(objeto_imagem.img,'DESALINHADO: GIRAR DIREITA', bottomLeftCornerOfText, font, fontScale, fontColor, lineType)
+            cv2.putText(objeto_imagem.img,'2 RETAS: GIRAR DIREITA', bottomLeftCornerOfText, font, fontScale, fontColor, lineType)
             return GIRAR_DIREITA
         else:
-            cv2.putText(objeto_imagem.img,'DESALINHADO: GIRAR ESQUERDA', bottomLeftCornerOfText, font, fontScale, fontColor, lineType)
+            cv2.putText(objeto_imagem.img,'2 RETAS: GIRAR ESQUERDA', bottomLeftCornerOfText, font, fontScale, fontColor, lineType)
             return GIRAR_ESQUERDA
 i=1
 for IMG in IMAGES:
-    ret = checar_alinhamento_pista_v2(IMG)
+    i1 = copy.copy(IMG)
+    i2 = copy.copy(IMG)
+    ret = checar_alinhamento_pista_v1(i1, 15, 60)
     cv2.imwrite( path+"../finais2/"+str(i)+".png", IMG.img)
+    ret = checar_alinhamento_pista_v2(i2)
+    cv2.imwrite( path+"../finais/"+str(i)+".png", IMG.img)
     i+=1

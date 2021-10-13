@@ -123,14 +123,15 @@ def ponto_medio_borda_inferior(objeto_imagem):
     # Utlizar HoughLinesP para retornar (x1,y1) (x2,y2)
     segmentos = cv2.HoughLinesP(lista_bordas, rho=1, theta=np.pi/180, threshold=100,
                             lines=np.array([]), minLineLength=minLineLength, maxLineGap=200)
-
+    if segmentos is None: return 0,0
+    numero_segmentos, _, _ = segmentos.shape
+    if numero_segmentos == 0: return 0,0
     
     #se quisermos visualizar
     '''for segmento in segmentos:
         x1,y1,x2,y2= segmento[0]
         cv2.line(imagem, (x1,y1), (x2,y2), (0,255,0), 2)'''
 
-    numero_segmentos, _, _ = segmentos.shape
 
     ymed_bloco_todo = 0
     for i in range(numero_segmentos):
@@ -147,9 +148,9 @@ def ponto_medio_borda_inferior(objeto_imagem):
     for i in range(numero_segmentos):
         if ((segmentos[i][0][Y1]+segmentos[i][0][Y2])/2 > ymed_bloco_todo*fator_para_baixo):
             x_min = min(x_min, segmentos[i][0][X1], segmentos[i][0][X2])
-            x_max = max(x_max, segmentos[i][0][X1], segmentos[i][0][Y2])
+            x_max = max(x_max, segmentos[i][0][X1], segmentos[i][0][X2])
             y_max = max(y_max, segmentos[i][0][Y1], segmentos[i][0][Y2])
-    x_med = (x_min + x_max) / 2
+    x_med = (x_min + x_max) // 2
     print("Pto_Med_Borda_Inf-Num_seg: {} after for".format(numero_segmentos))
     ##feedback
     '''imagem = cv2.circle(imagem, (int(largura//2),int(fator_para_baixo*ymed_bloco_todo)), 50,(0,255,0) , -1)
@@ -159,6 +160,7 @@ def ponto_medio_borda_inferior(objeto_imagem):
     little = cv2.resize(imagem, (960, 540)) 
     cv2.imshow("com o ponto medio", little)
     cv2.waitKey()'''
+    #objeto_imagem.img = cv2.circle(objeto_imagem.img, (x_med, y_max), radius=10, color=(0, 255, 255), thickness=-1)
     return x_med, y_max
 
 '''Recebe apenas a imagem. Retorna o x1 y1 x2 y2 das bordas laterais e uma variavel auxiliar que inidica se
