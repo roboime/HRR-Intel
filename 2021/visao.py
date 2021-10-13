@@ -233,13 +233,13 @@ def bordas_laterais_v1(objeto_imagem):
     if lines is not None:
         for line in lines:
             x1,y1,x2,y2= line[0]
-            if ( y1>altura/2 or y2>altura/2) and 0.09<abs(((y2-y1)/(x2-x1))) and abs(((y2-y1)/(x2-x1)))<10:
+            if ( y1>altura/4 or y2>altura/4) and np.tan(math.radians(2))<abs(((y2-y1)/(x2-x1))) and abs(((y2-y1)/(x2-x1)))*np.tan(math.radians(88)):
                 if ((y2-y1)/(x2-x1)) > 0:
                     coordright.append([x1,y1,x2,y2])
-                    #cv2.line(img, (x1,y1), (x2,y2), (255,255,255), 2)
+                    cv2.line(img, (x1,y1), (x2,y2), (255,255,255), 2)
                 else:
                     coordleft.append([x1,y1,x2,y2])
-                    #cv2.line(img, (x1,y1), (x2,y2), (0,255,0), 2)
+                    cv2.line(img, (x1,y1), (x2,y2), (0,255,0), 2)
     else: return [],[],NAO_HA_RETA
     ha_reta_na_direita = False
 
@@ -250,7 +250,7 @@ def bordas_laterais_v1(objeto_imagem):
         lista_media_direita = mediaright.tolist()
         mediaright=mediaright.astype(np.int64)
         [x1,y1,x2,y2]=mediaright
-        #cv2.line(img, (x1,y1), (x2,y2), (0,0,255), 2)
+        cv2.line(img, (x1,y1), (x2,y2), (0,0,255), 2)
         
     ha_reta_na_esquerda = False
 
@@ -261,7 +261,7 @@ def bordas_laterais_v1(objeto_imagem):
         lista_media_esquerda = medialeft.tolist()
         medialeft=medialeft.astype(np.int64)
         [x1,y1,x2,y2]=medialeft
-        #cv2.line(img, (x1,y1), (x2,y2), (0,0,255), 2)
+        cv2.line(img, (x1,y1), (x2,y2), (0,0,255), 2)
         #text= 'y_direita = '+str((y2-y1)/(x2-x1))+' *x + ' +str(y1-(((y2-y1)*x1)/(x2-x1)))
         #img = cv2.putText(img, text, (int(((x1+x2)/2))-450,int(((y1+y2)/2))), cv2.FONT_HERSHEY_COMPLEX, 1, (255,255,255), 1, cv2.LINE_AA)
 
