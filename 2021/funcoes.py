@@ -35,7 +35,7 @@ DIST_MIN_OBST_ATUAL = 50.0
 '''Gira o robo ate haver uma variacao brusca de distancia, quando eh suposto nao haver mais obstaculo na direcao, acrescido
 de uma margem de segurnca dependente da altura do robo. Usada em Loop Obstaculo'''
 
-def quando_parar_de_girar(sensor_distancia, vel_ang, largura_robo):
+def quando_parar_de_girar(sensor_distancia, vel_ang, largura_robo, sentido):
     global DIST_MIN_OBST_ATUAL
     global ANG_GIRADO
     
@@ -59,13 +59,19 @@ def quando_parar_de_girar(sensor_distancia, vel_ang, largura_robo):
       #  print("TEMPO: ", t_1-t_0)
         if(sensor_distancia.atual > DIST_MAXIMA):    
             t_1 = time.time() - intervalo_medicoes/2
-            theta_vel_ang = vel_ang*(t_1 - t_0)
+            if(sentido == GIRAR_DIREITA ):
+                theta_vel_ang = vel_ang[GIRAR_DIREITA]*(t_1 - t_0)
+            if(sentido == GIRAR_ESQUERDA ):
+                theta_vel_ang = vel_ang[GIRAR_DIREITA]*(t_1 - t_0)
             #theta_trigo = np.arccos(DIST_MIN_OBST_ATUAL/sensor_distancia.anterior)
             ANG_GIRADO = np.arctan2( DIST_MIN_OBST_ATUAL*np.tan(theta_vel_ang) + largura_robo*mult_largura, DIST_MIN_OBST_ATUAL)
            # ANG_GIRADO_TRIGO = np.arctan2( DIST_MIN_OBST_ATUAL*np.tan(theta_trigo) + largura_robo*mult_largura, DIST_MIN_OBST_ATUAL)
         #    print("ANG_GIRADO_VEL_ANG: ", ANG_GIRADO_VEL_ANG, "\nANG_GIRADO_TRIGO: ", ANG_GIRADO_TRIGO, "\n")
            # ANG_GIRADO = mult_ang_girado*ANG_GIRADO_TRIGO + (1-mult_ang_girado)*ANG_GIRADO_VEL_ANG
-            intervalo_seguranca = ANG_GIRADO/vel_ang - (t_1 - t_0)
+            if(sentido == GIRAR_DIREITA):
+                intervalo_seguranca = ANG_GIRADO/vel_ang[GIRAR_DIREITA] - (t_1 - t_0)
+            if(sentido == GIRAR_ESQUERDA):
+                intervalo_seguranca = ANG_GIRADO/vel_ang[GIRAR_ESQUERDA] - (t_1 - t_0)
             time.sleep(intervalo_seguranca)
             break
         t_1 = time.time()
@@ -74,7 +80,7 @@ def quando_parar_de_girar(sensor_distancia, vel_ang, largura_robo):
 
 def quando_parar_de_realinhar(vel_ang, sentido_de_giro):
     global ANG_GIRADO
-    intervalo_realinhamento = ANG_GIRADO/vel_ang
+    intervalo_realinhamento = ANG_GIRADO/vel_ang[sentido_de_giro]
     intervalo_medicoes = 0.2
     t_0 = t_1 = time.time()
     while True:
@@ -83,9 +89,9 @@ def quando_parar_de_realinhar(vel_ang, sentido_de_giro):
         if t_1-t_0 > intervalo_realinhamento: 
             break
         if(sentido_de_giro == GIRAR_DIREITA):
-            print("girando para a  DIREITA, faltam ", ANG_GIRADO- vel_ang * (t_1-t_0), "radianos para compensar o angulo girado")
+            print("girando para a  DIREITA, faltam ", ANG_GIRADO- vel_ang[sentido_de_giro] * (t_1-t_0), "radianos para compensar o angulo girado")
         else:
-            print("girando para a  ESQUERDA, faltam ", ANG_GIRADO- vel_ang * (t_1-t_0), "radianos para compensar o angulo girado")
+            print("girando para a  ESQUERDA, faltam ", ANG_GIRADO- vel_ang[sentido_de_giro] * (t_1-t_0), "radianos para compensar o angulo girado")
 
     return ANDAR
 '''
