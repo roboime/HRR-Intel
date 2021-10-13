@@ -278,14 +278,17 @@ def bordas_laterais_v2(objeto_imagem):
 def checar_proximidade(valor_comparar, imagem_path):
 
     #objeto_imagem = camera.Take_photo()
-    input_imagem = imagem_path.img
-    objeto_imagem = classes.Classe_imagem()
-    altura = objeto_imagem.altura
-    img = input_imagem.copy() #funcao para pegar a imagem e armazena-la
+    #input_imagem = imagem_path + ".img"
+    objeto_imagem = classes.Classe_imagem(imagem_path)
+    #img = objeto_imagem.copy() #funcao para pegar a imagem e armazena-la
     #cv2.imwrite("imagem original.png", img)
     
-    preto = input_imagem.copy() #criar uma imagem reserva
-    preto = cv2.circle(preto, (0,0), 4000,(0,0) , -1) ##cria imagem toda preta do mesmo tamanho
+    #preto = objeto_imagem.copy() #criar uma imagem reserva
+
+    largura, altura = objeto_imagem.largura, objeto_imagem.altura
+    preto = np.zeros((largura, altura, 3), np.uint8)
+
+    #preto = cv2.circle(objeto_imagem, (0,0), 4000,(0,0) , -1) ##cria imagem toda preta do mesmo tamanho
     
     mask = objeto_imagem.mask("ranges_vermelho.txt")
     #cv2.imwrite("criado a mask.png", mask)
