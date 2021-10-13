@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 import math
+import classes
 
 NAO_HA_RETA = 0
 HA_DUAS_RETAS = 1
@@ -14,50 +15,6 @@ Y2 = 3
 
 RANGE_INCLINACAO = 60 #Em graus
 
-""" Classe relacionada a imagem obtida pela camera. Ao ser chamada, inverte a imagem e salva constantes relacionadas a imagem, como altura, largura e centro.
- Possui o metodo mask, que retorna a mascara da imagem, passando o arquivo onde esta salvo os ranges da cor."""
-class Classe_imagem():
-    def __init__(self, path):
-        print("Entrando no _init_ do Classe_imagem()")
-        img = cv2.imread(path)
-        #img = np.array(img)
-
-        img = cv2.rotate(img, cv2.ROTATE_180)
-        cv2.imwrite("/home/pi/Pictures/imagem_girada.jpg", img)
-
-        img.astype(np.uint8)
-
-        (self.altura, self.largura) = img.shape[:2] 
-        self.centro = ( (self.largura)/2, (self.altura)/2 )
-
-
-        #M = cv2.getRotationMatrix2D(self.centro, 180, 1)
-
-        print("Altura: {}  Largura: {}".format(self.altura,self.largura))
-
-        #img = cv2.warpAffine(img, M, (self.largura, self.altura))
-
-        
-
-        print("SAIMO DO WARPAFFINE")
-        self.img = img
-        self.topo_da_pista = int(0.4*self.altura) #coordenada y do topo da pista
-        self.meio_da_pista = 0 # coordenada x do meio da pista
-        self.largura_pista = 0 # largura do final da pista na imagem
-        self.mult_largura_pista = 0.7 #ate quanto da metade da largura da pista ainda eh atravessavel pelo robo
-        print("Saindo do _init_ do Classe_imagem()")
-
-    def mask(self, ranges_file_path):
-        hsv = cv2.cvtColor(self.img, cv2.COLOR_BGR2HSV) # converte a cor para hsv
-        with open(ranges_file_path, "r") as f:
-            lines = f.readlines()
-            range = lines[0].split(",")
-            lower = np.array([int(range[0]),int(range[1]),int(range[2])])  #range de cores em hsv para reconhecer as bordas
-            upper = np.array([int(range[3]),int(range[4]),int(range[5])])
-        mask = cv2.inRange(hsv, lower, upper)
-        kernel = np.ones((5,5), np.uint8) 
-        mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel, iterations=2)
-        return mask
 
 '''tira o coeficiente angular ( delta y / delta x) a partir de uma lista de coordenadas x1 y1 x2 y2. utilizada em funcoes 
 dessa biblioteca: '''
@@ -67,6 +24,7 @@ def coef_angular(lista):
         else: return 99999999
     else: return 999999999
 
+
 '''tira o coeficiente linear ( y1 - coef_angular *x1 = coef_linear) a partir de uma lista de coordenadas x1 y1 x2 y2. 
 utilizada em funcoes dessa biblioteca: '''
 def coef_linear(lista):
@@ -74,6 +32,7 @@ def coef_linear(lista):
         return lista[Y1] - lista[X1]*coef_angular(lista)
     else:   return 0
 # Essa funcao deve devolver o ponto medio ( (x,y) ) da borda inferior do obstaculo mais proximo
+
 
 """ recebe a mascara do branco e o objeto_imagem e procura o contorno fechado de maior area (pista). salva o y da pista como topo_da_pista e o x + largura/2
  como o meio_da_pista no objeto_imagem"""
@@ -115,8 +74,6 @@ def interscetion(r1, r2):
     nl = coef_linear(r1)
     nr = coef_linear(r2)
 
-
-
     x = (nr-nl)/(ml-mr)
     y = mr*x+nr
     #IMG = cv2.circle(IMG, (int(x),int(y)), radius=10, color=(0, 255, 255), thickness=-1)
@@ -136,15 +93,14 @@ def ponto_medio_borda_inferior(objeto_imagem):
     # Utlizar HoughLinesP para retornar (x1,y1) (x2,y2)
     segmentos = cv2.HoughLinesP(lista_bordas, rho=1, theta=np.pi/180, threshold=100,
                             lines=np.array([]), minLineLength=minLineLength, maxLineGap=200)
-    if segmentos is None: return 0,0
-    numero_segmentos, _, _ = segmentos.shape
-    if numero_segmentos == 0: return 0,0
+
     
     #se quisermos visualizar
     '''for segmento in segmentos:
         x1,y1,x2,y2= segmento[0]
         cv2.line(imagem, (x1,y1), (x2,y2), (0,255,0), 2)'''
 
+    numero_segmentos, _, _ = segmentos.shape
 
     ymed_bloco_todo = 0
     for i in range(numero_segmentos):
@@ -161,9 +117,9 @@ def ponto_medio_borda_inferior(objeto_imagem):
     for i in range(numero_segmentos):
         if ((segmentos[i][0][Y1]+segmentos[i][0][Y2])/2 > ymed_bloco_todo*fator_para_baixo):
             x_min = min(x_min, segmentos[i][0][X1], segmentos[i][0][X2])
-            x_max = max(x_max, segmentos[i][0][X1], segmentos[i][0][X2])
+            x_max = max(x_max, segmentos[i][0][X1], segmentos[i][0][Y2])
             y_max = max(y_max, segmentos[i][0][Y1], segmentos[i][0][Y2])
-    x_med = (x_min + x_max) // 2
+    x_med = (x_min + x_max) / 2
     print("Pto_Med_Borda_Inf-Num_seg: {} after for".format(numero_segmentos))
     ##feedback
     '''imagem = cv2.circle(imagem, (int(largura//2),int(fator_para_baixo*ymed_bloco_todo)), 50,(0,255,0) , -1)
@@ -173,8 +129,8 @@ def ponto_medio_borda_inferior(objeto_imagem):
     little = cv2.resize(imagem, (960, 540)) 
     cv2.imshow("com o ponto medio", little)
     cv2.waitKey()'''
-    #objeto_imagem.img = cv2.circle(objeto_imagem.img, (x_med, y_max), radius=10, color=(0, 255, 255), thickness=-1)
     return x_med, y_max
+
 
 '''Recebe apenas a imagem. Retorna o x1 y1 x2 y2 das bordas laterais e uma variavel auxiliar que inidica se
 foram encontrada, duas retas, zero retas ou uma reta ( e qual eh ela). Versao do fernandes que utiliza uma mascara branca
@@ -244,6 +200,7 @@ def bordas_laterais_v1(objeto_imagem):
     if ha_reta_na_direita == False and ha_reta_na_esquerda == True:
        return lista_media_esquerda, [], SO_ESQUERDA
     return [], lista_media_direita,SO_DIREITA
+
 
 """ adaptacao da bordas_laterais_v1 que adiciona 3 restricoes para encontrar as retas. A primeira eh a RANGE_INCLINACAO, que seleciona um coeficiente angular minimo
  e maximo para considerar como borda. A segunda eh o topo_da_pista, que seleciona apenas as retas que estao abaixo do topo da pista para evitar ruidos. A terceira
@@ -318,10 +275,11 @@ def bordas_laterais_v2(objeto_imagem):
 
 
 #dado uma imagem e um valor de comparacao, verificar se a reta mais proxima esta dentro do limite ou nao 
-def checar_proximidade(valor_comparar, objeto_imagem):
+def checar_proximidade(valor_comparar, imagem_path):
 
     #objeto_imagem = camera.Take_photo()
-    input_imagem = objeto_imagem.img
+    input_imagem = imagem_path.img
+    objeto_imagem = classes.Classe_imagem()
     altura = objeto_imagem.altura
     img = input_imagem.copy() #funcao para pegar a imagem e armazena-la
     #cv2.imwrite("imagem original.png", img)
