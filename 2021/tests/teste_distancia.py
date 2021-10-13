@@ -9,6 +9,7 @@ DIST_MIN_OBST_ATUAL = 52
 DIST_MAXIMA = 50
 # teste conflito v2
 # conflito proposital
+# teste v3
 class Classe_distancia():
     def __init__(self):
         self.sensor_distancia = VL53L0X.VL53L0X()                                 # Criando o objeto associado ao sensor VL53L0X
