@@ -145,7 +145,8 @@ def decisao_desvio(camera):
     x_min, x_max, y = ponto_medio_borda_inferior(objeto_imagem)
     x = (x_min+x_max)//2
     print("Entrou no bordas laterais")
-    lista_esquerda, lista_direita, j = bordas_laterais_v2(objeto_imagem)
+    #lista_esquerda, lista_direita, j = bordas_laterais_v2(objeto_imagem)
+    lista_esquerda, lista_direita, j = bordas_laterais_v1(objeto_imagem)
     print("Saiu do bordas laterais")
     poly_left = [coef_angular(lista_esquerda), coef_linear(lista_esquerda)]
     poly_right = [coef_angular(lista_direita), coef_linear(lista_direita)]
@@ -257,7 +258,8 @@ Usada em todos os loops'''
 def checar_alinhamento_pista_v1(camera, tolerancia_central, tolerancia_para_frente):
     path = camera.Take_photo()
     objeto_imagem = classes.Classe_imagem(path)
-    reta_esquerda, reta_direita, caso = bordas_laterais_v2(objeto_imagem)
+    #reta_esquerda, reta_direita, caso = bordas_laterais_v2(objeto_imagem)
+    reta_esquerda, reta_direita, caso = bordas_laterais_v1(objeto_imagem)
     largura, altura = objeto_imagem.largura, objeto_imagem.altura
 
     print("Estamos no seguinte caso:", casos_dic[caso])
@@ -328,6 +330,7 @@ def checar_alinhamento_pista_v2(camera):
     path = camera.Take_photo()
     objeto_imagem = classes.Classe_imagem(path)
     left, right, caso = bordas_laterais_v2(objeto_imagem)
+    reta_esquerda, reta_direita, caso = bordas_laterais_v2(objeto_imagem)
     k = objeto_imagem.largura//2
     if caso == SO_DIREITA:
         horizontal = [0, objeto_imagem.topo_da_pista, objeto_imagem.largura, objeto_imagem.topo_da_pista]

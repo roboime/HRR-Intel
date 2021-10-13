@@ -54,7 +54,7 @@ estado = classes.Classe_estado(myrio)
 
 def Loop_obstaculo():
     t_0 = time()
-    t_1 = t_0
+    t_1 = t_0 + intervalo_alinhamento
     while True:
         print("Estado padrao")
         estado.Trocar_estado(ANDAR, myrio)  

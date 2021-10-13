@@ -31,7 +31,7 @@ class Classe_camera():
         self.camera.start_preview()
         time.sleep(self.intervalo_foto)
         try:
-            self.path_atual = "/home/pi/Pictures/imagem_main" + str(self.indice_atual) + ".jpg"
+            self.path_atual = "./tests/fotos_main/imagem_main" + str(self.indice_atual) + ".jpg"
             print(" foto tirada em " + self.path_atual)
             self.camera.capture(self.path_atual)
             self.camera.stop_preview()
@@ -141,10 +141,13 @@ class Classe_distancia():
 
     #ocorre divisao por 10 para passar para cm
     def Get_distance(self):
-        self.anterior = self.atual
-        self.atual = self.sensor_distancia.get_distance()/10
-        return self.atual                             # retorna a distancia ate o obstaculo em cm
-
+        try:
+            self.anterior = self.atual
+            self.atual = self.sensor_distancia.get_distance()/10
+            return self.atual                             # retorna a distancia ate o obstaculo em cm
+        except KeyboardInterrupt:
+            print("ctrl c detectado, saindo do get distance")
+            
 
 
 class Classe_porta_serial():

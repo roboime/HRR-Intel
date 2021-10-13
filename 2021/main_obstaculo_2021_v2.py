@@ -17,17 +17,27 @@ import math
 import classes
 import funcoes
 
-
-#Variaveis auxiliares, a velocidade esta em cm/seg
 ANDAR="0"                 
 GIRAR_ESQUERDA="1"        
 GIRAR_DIREITA="2"         
 PARAR="3"
 SUBIR = "4"
 DESCER = "5"
+#Variaveis auxiliares, a velocidade esta em cm/seg
+<<<<<<< HEAD
+ANDAR="0"                 
+GIRAR_ESQUERDA="1"        
+GIRAR_DIREITA="2"         
+PARAR="3"
+SUBIR = "4"
+DESCER = "5"
+=======
+
+>>>>>>> 0b0bb8ef7b380c20e45055e08d757c7f3152eba1
 velocidade = 5             
 distancialimite = 50.0
-distanciaMinimia = 35.0
+distanciaMedia = 35.0
+distanciaMinimia = 20.0
 angulo_limite = 10.0
 intervalo_alinhamento = 5
 largura_do_robo = 25.0
@@ -62,7 +72,7 @@ def Loop_obstaculo():
 
         print("Medida do sensor de distancia: {}\n".format(sensor_distancia.Get_distance()))
 
-        if sensor_distancia.Get_distance() <= distancialimite and sensor_distancia.Get_distance() >= distanciaMinimia:
+        if sensor_distancia.Get_distance() <= distancialimite and sensor_distancia.Get_distance() >= distanciaMedia:
             print ("obstaculo detectado ", sensor_distancia.atual)
             estado.Trocar_estado(PARAR, myrio)
             print(estado)
@@ -87,7 +97,7 @@ def Loop_obstaculo():
                     estado.Trocar_estado(funcoes.quando_parar_de_realinhar(velocidade_angular, GIRAR_ESQUERDA), myrio)
                 print("compensado o angulo girado")
             t_1 = time()
-        elif sensor_distancia.Get_distance()<distanciaMinimia:
+        elif sensor_distancia.Get_distance()<=distanciaMedia and sensor_distancia.Get_distance() >distanciaMinimia:
             print("obstaculo muito proximo")
             if EstadoDesvio == GIRAR_DIREITA:
                 estado.atual = GIRAR_ESQUERDA
@@ -99,7 +109,53 @@ def Loop_obstaculo():
              
             if (estado.atual == GIRAR_ESQUERDA or estado.atual == GIRAR_DIREITA):
                 direcao_girada  = estado.atual            
+                estado.Trocar_estado(funcoes.quando_parar_de_girar(sensor_distancia, velocidade_angular, largura_do_robo,direcao_girada), myrio)    
+                print(estado)
+                estado.Trocar_estado(ANDAR, myrio)
+                print(estado)
+                estado.Trocar_estado(funcoes.quando_parar_de_andar_visaocomp(velocidade), myrio)
+                print(estado)
+                print("obstaculo ultrapassado, iniciando compensasao de angulo")
+                if(direcao_girada == GIRAR_ESQUERDA):
+                    estado.Trocar_estado(GIRAR_DIREITA, myrio)
+                    estado.Trocar_estado(funcoes.quando_parar_de_realinhar(velocidade_angular, GIRAR_DIREITA), myrio)
+                if(direcao_girada == GIRAR_DIREITA):
+                    estado.Trocar_estado(GIRAR_ESQUERDA, myrio)
+                    estado.Trocar_estado(funcoes.quando_parar_de_realinhar(velocidade_angular, GIRAR_ESQUERDA), myrio)
+                print("compensado o angulo girado")
+            t_1 = time()
+            if (estado.atual == GIRAR_ESQUERDA or estado.atual == GIRAR_DIREITA):
+                direcao_girada  = estado.atual            
                 estado.Trocar_estado(funcoes.quando_parar_de_girar(sensor_distancia, velocidade_angular, largura_do_robo), myrio)    
+                print(estado)
+                estado.Trocar_estado(ANDAR, myrio)
+                print(estado)
+                estado.Trocar_estado(funcoes.quando_parar_de_andar_visaocomp(velocidade), myrio)
+                print(estado)
+                print("obstaculo ultrapassado, iniciando compensasao de angulo")
+                if(direcao_girada == GIRAR_ESQUERDA):
+                    estado.Trocar_estado(GIRAR_DIREITA, myrio)
+                    estado.Trocar_estado(funcoes.quando_parar_de_realinhar(velocidade_angular, GIRAR_DIREITA), myrio)
+                if(direcao_girada == GIRAR_DIREITA):
+                    estado.Trocar_estado(GIRAR_ESQUERDA, myrio)
+                    estado.Trocar_estado(funcoes.quando_parar_de_realinhar(velocidade_angular, GIRAR_ESQUERDA), myrio)
+                print("compensado o angulo girado")
+            t_1 = time()
+
+
+        elif sensor_distancia.Get_distance()< distanciaMinimia:
+            print("obstaculo muito proximo")
+            if EstadoDesvio == GIRAR_DIREITA:
+                estado.atual = GIRAR_DIREITA
+                EstadoDesvio = GIRAR_DIREITA
+            else:
+                estado.atual = GIRAR_ESQUERDA
+                EstadoDesvio = GIRAR_ESQUERDA
+            print(estado)
+             
+            if (estado.atual == GIRAR_ESQUERDA or estado.atual == GIRAR_DIREITA):
+                direcao_girada  = estado.atual            
+                estado.Trocar_estado(funcoes.quando_parar_de_girar(sensor_distancia, velocidade_angular, largura_do_robo,direcao_girada), myrio)    
                 print(estado)
                 estado.Trocar_estado(ANDAR, myrio)
                 print(estado)
@@ -132,6 +188,7 @@ def Loop_obstaculo():
                 print("compensado o angulo girado")
             t_1 = time()
             
+    
 
         ########################################### Checando alinhamento com a pista ###########################################
         if t_1 - t_0 > intervalo_alinhamento:
