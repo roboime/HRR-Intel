@@ -47,7 +47,7 @@ def Loop_corrida():
     t_0 = time()
     t_1 = intervalo_alinhamento + t_0
     while True:
-        print("Estado padrao")
+        #print("Estado padrao")
         estado.Trocar_estado(ANDAR, myrio)
         ########################################### Checando alinhamento com a pista ###########################################
         if t_1 - t_0 > intervalo_alinhamento:

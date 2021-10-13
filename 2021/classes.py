@@ -172,10 +172,6 @@ class Classe_estado:
 
     def Obter_estado_atual(self):
         return self.atual
-
-    def Trocar_estado(self, state, serial_obj):
-        self.atual = state
-        serial_obj.Escrever_estado(state)
     
     def __str__(self):          #string associada ao objeto de "Classe_estado". Sera mostrada ao printar um objeto desse tipo
         name = {    ANDAR : "ANDAR",
@@ -195,3 +191,8 @@ class Classe_estado:
                 }
         atual = self.Obter_estado_atual()
         return "Estado atual: " + name[atual] + ".\nindice: " + str(atual) + ".\nCorrecao: " + need[atual] + ".\n\n"
+        
+    def Trocar_estado(self, state, serial_obj):
+        self.atual = state
+        serial_obj.Escrever_estado(state)
+        print(self.__str__())
