@@ -1,7 +1,7 @@
 import time
 import numpy as np
 import VL53L0X
-
+#Teste de Fetch
 class Classe_distancia():
     def __init__(self):
         self.sensor_distancia = VL53L0X.VL53L0X()                                 # Criando o objeto associado ao sensor VL53L0X
