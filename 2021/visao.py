@@ -13,7 +13,7 @@ Y1 = 1
 X2 = 2
 Y2 = 3
 
-RANGE_INCLINACAO = 85 #Em graus
+RANGE_INCLINACAO = 70 #Em graus
 
 """ Classe relacionada a imagem obtida pela camera. Ao ser chamada, inverte a imagem e salva constantes relacionadas a imagem, como altura, largura e centro.
  Possui o metodo mask, que retorna a mascara da imagem, passando o arquivo onde esta salvo os ranges da cor."""
@@ -292,7 +292,7 @@ def bordas_laterais_v2(objeto_imagem):
         for line in lines:
             line = line.reshape(4)
             x1,y1,x2,y2 = line
-           # img = cv2.line(img, (x1,y1), (x2,y2), (0,127,255), 2)
+            img = cv2.line(img, (x1,y1), (x2,y2), (0,127,255), 2)
         
             theta = np.pi/180*RANGE_INCLINACAO
             if y1>objeto_imagem.topo_da_pista or y2>objeto_imagem.topo_da_pista:
@@ -300,11 +300,11 @@ def bordas_laterais_v2(objeto_imagem):
                     right_lines.append([x1,y1,x2,y2])
                 #    print("angulo : ", 180/np.pi*math.atan(coef_angular(line)))
                   #  print([x1, y1, x2, y2])
-                   # cv2.line(objeto_imagem.img, (x1,y1), (x2,y2), (0,255,0), 2)
-            if y1>objeto_imagem.topo_da_pista or y2>objeto_imagem.topo_da_pista:
+                    cv2.line(objeto_imagem.img, (x1,y1), (x2,y2), (0,255,0), 2)
+
                 if math.atan(-1)-theta/2 < math.atan(coef_angular(line)) < math.atan(-1)+theta/2:
                     left_lines.append([x1,y1,x2,y2])
-               #     cv2.line(objeto_imagem.img, (x1,y1), (x2,y2), (0,127,0), 2)
+                    cv2.line(objeto_imagem.img, (x1,y1), (x2,y2), (0,127,0), 2)
     else: return [],[],NAO_HA_RETA
    # cv2.imwrite("todas_as_linhas.png", todas_as_linhas)
 
@@ -320,7 +320,7 @@ def bordas_laterais_v2(objeto_imagem):
                 y_max = y
                 right = line
         [x1, y1, x2, y2] = right
-       # cv2.line(objeto_imagem.img, (x1,y1), (x2,y2), (0,0,255), 2)
+        cv2.line(objeto_imagem.img, (x1,y1), (x2,y2), (0,0,255), 2)
         
     ha_reta_na_esquerda = False
     if(len(left_lines) != 0):
@@ -334,8 +334,8 @@ def bordas_laterais_v2(objeto_imagem):
                 y_max = y
                 left = line
         [x1, y1, x2, y2] = left
-   #     cv2.line(objeto_imagem.img, (x1,y1), (x2,y2), (0,0,255), 2)
-    
+        cv2.line(objeto_imagem.img, (x1,y1), (x2,y2), (0,0,255), 2)
+    cv2.imwrite("./bordas_printadas.jpg", objeto_imagem.img)
     if ha_reta_na_direita == False and ha_reta_na_esquerda == False:
         return [],[],NAO_HA_RETA
     if ha_reta_na_direita == True and ha_reta_na_esquerda == True:
