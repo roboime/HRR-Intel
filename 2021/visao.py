@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 import math
+import classes
 
 NAO_HA_RETA = 0
 HA_DUAS_RETAS = 1
@@ -67,6 +68,7 @@ def coef_angular(lista):
         else: return 99999999
     else: return 999999999
 
+
 '''tira o coeficiente linear ( y1 - coef_angular *x1 = coef_linear) a partir de uma lista de coordenadas x1 y1 x2 y2. 
 utilizada em funcoes dessa biblioteca: '''
 def coef_linear(lista):
@@ -74,6 +76,7 @@ def coef_linear(lista):
         return lista[Y1] - lista[X1]*coef_angular(lista)
     else:   return 0
 # Essa funcao deve devolver o ponto medio ( (x,y) ) da borda inferior do obstaculo mais proximo
+
 
 """ recebe a mascara do branco e o objeto_imagem e procura o contorno fechado de maior area (pista). salva o y da pista como topo_da_pista e o x + largura/2
  como o meio_da_pista no objeto_imagem"""
@@ -114,8 +117,6 @@ def interscetion(r1, r2):
     mr = coef_angular(r2)
     nl = coef_linear(r1)
     nr = coef_linear(r2)
-
-
 
     x = (nr-nl)/(ml-mr)
     y = mr*x+nr
@@ -202,6 +203,7 @@ def ponto_medio_borda_inferior(objeto_imagem):
     print("Saindo ponto medio borda inferior")
     return x_min, x_max, y_max
 
+
 '''Recebe apenas a imagem. Retorna o x1 y1 x2 y2 das bordas laterais e uma variavel auxiliar que inidica se
 foram encontrada, duas retas, zero retas ou uma reta ( e qual eh ela). Versao do fernandes que utiliza uma mascara branca
 e uma area branca nao tao grande para tentar pegar a parte mais externa das bordas pretas, alem de filtrar as muito
@@ -270,6 +272,7 @@ def bordas_laterais_v1(objeto_imagem):
     if ha_reta_na_direita == False and ha_reta_na_esquerda == True:
        return lista_media_esquerda, [], SO_ESQUERDA
     return [], lista_media_direita,SO_DIREITA
+
 
 """ adaptacao da bordas_laterais_v1 que adiciona 3 restricoes para encontrar as retas. A primeira eh a RANGE_INCLINACAO, que seleciona um coeficiente angular minimo
  e maximo para considerar como borda. A segunda eh o topo_da_pista, que seleciona apenas as retas que estao abaixo do topo da pista para evitar ruidos. A terceira
@@ -344,16 +347,20 @@ def bordas_laterais_v2(objeto_imagem):
 
 
 #dado uma imagem e um valor de comparacao, verificar se a reta mais proxima esta dentro do limite ou nao 
-def checar_proximidade(valor_comparar, camera):
+def checar_proximidade(valor_comparar, imagem_path):
 
-    objeto_imagem = camera.Take_photo()
-    input_imagem = objeto_imagem.img
-    altura = objeto_imagem.altura
-    img = input_imagem.copy() #funcao para pegar a imagem e armazena-la
+    #objeto_imagem = camera.Take_photo()
+    #input_imagem = imagem_path + ".img"
+    objeto_imagem = classes.Classe_imagem(imagem_path)
+    #img = objeto_imagem.copy() #funcao para pegar a imagem e armazena-la
     #cv2.imwrite("imagem original.png", img)
     
-    preto = input_imagem.copy() #criar uma imagem reserva
-    preto = cv2.circle(preto, (0,0), 4000,(0,0) , -1) ##cria imagem toda preta do mesmo tamanho
+    #preto = objeto_imagem.copy() #criar uma imagem reserva
+
+    largura, altura = objeto_imagem.largura, objeto_imagem.altura
+    preto = np.zeros((largura, altura, 3), np.uint8)
+
+    #preto = cv2.circle(objeto_imagem, (0,0), 4000,(0,0) , -1) ##cria imagem toda preta do mesmo tamanho
     
     mask = objeto_imagem.mask("ranges_vermelho.txt")
     #cv2.imwrite("criado a mask.png", mask)
@@ -393,16 +400,19 @@ def checar_proximidade(valor_comparar, camera):
         for i in range(0,100):
             coefienete_angular = abs((lines[i][0][y2]-lines[i][0][y1])/(lines[i][0][x1]-lines[i][0][x2]))
             if coefienete_angular < 1:#eliminar retas muito inclinadas pq queremos retas horizontais
-                cv2.line(img,(lines[i][0][x1],lines[i][0][y1]),(lines[i][0][x2],lines[i][0][y2]),(255,0,0),9)
+                #cv2.line(img,(lines[i][0][x1],lines[i][0][y1]),(lines[i][0][x2],lines[i][0][y2]),(255,0,0),9)
                 if(((lines[i][0][y1]+lines[i][0][y2])/2)>maximo):  #encontrar a reta mais proxima do robo, por meio da coordenada y
                     maximo = lines[i][0][y1]
 
     except:#quando ele nao encontrar mais nenhuma reta no vetor line, ele vai dar erro e vir para essa parte do codigo. 
         porcentagem = (maximo/altura)*100
         #print(maximo)
+        print("A porcentagem eh: {}".format(porcentagem))
         if(porcentagem>valor_comparar):
+            print("checar_proximidade deu True")
             #cv2.imwrite("imagem com linhas.png", img)
             return True
         else:
+            print("checar_proximidade deu False")
             #cv2.imwrite("imagem com linhas.png", img)
             return False

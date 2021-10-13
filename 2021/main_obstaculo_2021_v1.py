@@ -20,6 +20,13 @@ import math
 import classes
 import funcoes
 
+ANDAR="0"                 
+GIRAR_ESQUERDA="1"        
+GIRAR_DIREITA="2"         
+PARAR="3"
+SUBIR = "4"
+DESCER = "5"
+# Configuracoes iniciais
 
 #Variaveis auxiliares, a velocidade esta em cm/seg
 velocidade = 5             
@@ -31,16 +38,12 @@ tempo_para_parar = 1
 intervalo_enquanto_gira = 1
 tolerancia_central = 15
 tolerancia_para_frente = 60
-velocidade_angular = np.pi/18
-
-
-ANDAR="0"                 
-GIRAR_ESQUERDA="1"        
-GIRAR_DIREITA="2"         
-PARAR="3"
-SUBIR = "4"
-DESCER = "5"
-# Configuracoes iniciais
+velocidade_ang_em_graus = [0,0,0]
+velocidade_angular = [0,0,0]
+velocidade_ang_em_graus[int(GIRAR_ESQUERDA)] = 10
+velocidade_ang_em_graus[int(GIRAR_DIREITA)] = 10
+velocidade_angular[int(GIRAR_ESQUERDA)] = velocidade_ang_em_graus[GIRAR_ESQUERDA]*np.pi/180
+velocidade_angular[int(GIRAR_DIREITA)] = velocidade_ang_em_graus[GIRAR_DIREITA]*np.pi/180
 
 myrio = classes.Classe_porta_serial()
 sensor_distancia = classes.Classe_distancia()
@@ -69,7 +72,7 @@ def Loop_obstaculo():
             
             if (estado.atual == GIRAR_ESQUERDA or estado.atual == GIRAR_DIREITA):
                 direcao_girada  = estado.atual            
-                estado.Trocar_estado(funcoes.quando_parar_de_girar(sensor_distancia, velocidade_angular, largura_do_robo), myrio)    
+                estado.Trocar_estado(funcoes.quando_parar_de_girar(sensor_distancia, velocidade_angular, largura_do_robo, direcao_girada), myrio)    
                 print(estado)
                 estado.Trocar_estado(ANDAR, myrio)
                 print(estado)
