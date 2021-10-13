@@ -27,13 +27,16 @@ class Classe_camera():
     def Take_photo(self):
         self.camera.start_preview()
         time.sleep(self.intervalo_foto)
-        self.path_atual = "/home/pi/Pictures/imagem_main" + str(self.indice_atual) + ".jpg"
-        print(" foto tirada em " + self.path_atual)
-        self.camera.capture(self.path_atual)
-        self.camera.stop_preview()
-        self.indice_atual = (self.indice_atual + 1) % 10
-        print("Saindo do Take_photo()")
-        return self.path_atual
+        try:
+            self.path_atual = "/home/pi/Pictures/imagem_main" + str(self.indice_atual) + ".jpg"
+            print(" foto tirada em " + self.path_atual)
+            self.camera.capture(self.path_atual)
+            self.camera.stop_preview()
+            self.indice_atual = (self.indice_atual + 1) % 10
+            print("Saindo do Take_photo()")
+            return self.path_atual
+        except KeyboardInterrupt: self.camera.stop_preview()
+
 
     def parar_fotografar(self, estado, myrio):
         atual = estado.Obter_estado_atual()

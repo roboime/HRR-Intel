@@ -20,13 +20,26 @@ class Classe_imagem():
     def __init__(self, path):
         print("Entrando no _init_ do Classe_imagem()")
         img = cv2.imread(path)
-        img = np.array(img)
+        #img = np.array(img)
+
+        img = cv2.rotate(img, cv2.ROTATE_180)
+        cv2.imwrite("/home/pi/Pictures/imagem_girada.jpg", img)
+
         img.astype(np.uint8)
+
         (self.altura, self.largura) = img.shape[:2] 
-        self.centro = (self.largura // 2, self.altura // 2)
-        M = cv2.getRotationMatrix2D(self.centro, 180, 1.0)  
+        self.centro = ( (self.largura)/2, (self.altura)/2 )
+
+
+        #M = cv2.getRotationMatrix2D(self.centro, 180, 1)
+
         print("Altura: {}  Largura: {}".format(self.altura,self.largura))
-        img = cv2.warpAffine(img, M, (self.largura, self.altura))
+
+        #img = cv2.warpAffine(img, M, (self.largura, self.altura))
+
+        
+
+        print("SAIMO DO WARPAFFINE")
         self.img = img
         self.topo_da_pista = int(0.4*self.altura) #coordenada y do topo da pista
         self.meio_da_pista = 0 # coordenada x do meio da pista
@@ -271,6 +284,7 @@ def bordas_laterais_v2(objeto_imagem):
         ha_reta_na_direita = True
         vertical_direita = [objeto_imagem.largura,0,objeto_imagem.largura,objeto_imagem.altura]
         y_max = 0
+        right = right_lines[0]
         for line in right_lines:
             _,y = interscetion(line, vertical_direita)
             if y > y_max:
@@ -284,6 +298,7 @@ def bordas_laterais_v2(objeto_imagem):
         ha_reta_na_esquerda = True
         vertical_esquerda = [0,0,0,objeto_imagem.altura]
         y_max = 0
+        left = left_lines[0]
         for line in left_lines:
             _,y = interscetion(line, vertical_esquerda)
             if y > y_max:
