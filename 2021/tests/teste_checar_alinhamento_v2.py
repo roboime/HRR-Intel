@@ -3,8 +3,9 @@
 from os import listdir
 from os.path import  join
 from visao import *
+import copy
 
-path = "./tests/fotos/"
+path = "./tests/fotos2/"
 
 IMAGES = [Classe_imagem(join(path, f)) for f in listdir(join(path))]
 
@@ -218,6 +219,10 @@ def checar_alinhamento_pista_v2(objeto_imagem):
             return GIRAR_ESQUERDA
 i=1
 for IMG in IMAGES:
-    ret = checar_alinhamento_pista_v2(IMG)
+    i1 = copy.copy(IMG)
+    i2 = copy.copy(IMG)
+    ret = checar_alinhamento_pista_v1(i1, 15, 60)
+    cv2.imwrite( path+"../finais2/"+str(i)+".png", IMG.img)
+    ret = checar_alinhamento_pista_v2(i2)
     cv2.imwrite( path+"../finais/"+str(i)+".png", IMG.img)
     i+=1

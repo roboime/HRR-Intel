@@ -42,8 +42,8 @@ velocidade_ang_em_graus = [0,0,0]
 velocidade_angular = [0,0,0]
 velocidade_ang_em_graus[int(GIRAR_ESQUERDA)] = 10
 velocidade_ang_em_graus[int(GIRAR_DIREITA)] = 10
-velocidade_angular[int(GIRAR_ESQUERDA)] = velocidade_ang_em_graus[GIRAR_ESQUERDA]*np.pi/180
-velocidade_angular[int(GIRAR_DIREITA)] = velocidade_ang_em_graus[GIRAR_DIREITA]*np.pi/180
+velocidade_angular[int(GIRAR_ESQUERDA)] = velocidade_ang_em_graus[int(GIRAR_ESQUERDA)]*np.pi/180
+velocidade_angular[int(GIRAR_DIREITA)] = velocidade_ang_em_graus[int(GIRAR_DIREITA)]*np.pi/180
 
 myrio = classes.Classe_porta_serial()
 sensor_distancia = classes.Classe_distancia()
@@ -54,7 +54,7 @@ estado = classes.Classe_estado(myrio)
 
 def Loop_obstaculo():
     t_0 = time()
-    t_1 = t_0
+    t_1 = t_0 + intervalo_alinhamento
     while True:
         print("Estado padrao")
         estado.Trocar_estado(ANDAR, myrio)  

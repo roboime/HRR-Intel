@@ -1,7 +1,7 @@
 import serial
 import RPi.GPIO as GPIO
-import RTIMU
-import VL53L0X
+#import RTIMU
+#import VL53L0X
 import time
 import math
 import picamera
@@ -31,7 +31,7 @@ class Classe_camera():
         self.camera.start_preview()
         time.sleep(self.intervalo_foto)
         try:
-            self.path_atual = "./tests/fotos_main/imagem_main" + str(self.indice_atual) + ".jpg"
+            self.path_atual = "/home/pi/Pictures/imagem_main" + str(self.indice_atual) + ".jpg"
             print(" foto tirada em " + self.path_atual)
             self.camera.capture(self.path_atual)
             self.camera.stop_preview()
@@ -74,7 +74,7 @@ class Classe_imagem():
 
         print("SAIMO DO WARPAFFINE")
         self.img = img
-        self.topo_da_pista = int(0.4*self.altura) #coordenada y do topo da pista
+        self.topo_da_pista = int(0.3*self.altura) #coordenada y do topo da pista
         self.meio_da_pista = 0 # coordenada x do meio da pista
         self.largura_pista = 0 # largura do final da pista na imagem
         self.mult_largura_pista = 0.7 #ate quanto da metade da largura da pista ainda eh atravessavel pelo robo
