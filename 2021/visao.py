@@ -313,9 +313,12 @@ def bordas_laterais_v2(objeto_imagem):
        return left, [], SO_ESQUERDA
     if ha_reta_na_direita == True and ha_reta_na_esquerda == False:
        return [], right, SO_DIREITA
-#dado uma imagem e um valor de comparacao, verificar se a reta mais proxima esta dentro do limite ou nao 
-def checar_proximidade(valor_comparar,objeto_imagem):
 
+
+#dado uma imagem e um valor de comparacao, verificar se a reta mais proxima esta dentro do limite ou nao 
+def checar_proximidade(valor_comparar, objeto_imagem):
+
+    #objeto_imagem = camera.Take_photo()
     input_imagem = objeto_imagem.img
     altura = objeto_imagem.altura
     img = input_imagem.copy() #funcao para pegar a imagem e armazena-la

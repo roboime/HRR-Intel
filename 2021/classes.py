@@ -18,6 +18,7 @@ DIST_MAXIMA = 50
 
 class Classe_camera():
     def __init__(self):
+        print("Entra no _init_ da Classe_camera")
         self.camera = picamera.PiCamera()
         self.intervalo_foto = 2.5
         self.indice_atual = 0

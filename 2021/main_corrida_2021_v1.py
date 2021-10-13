@@ -66,6 +66,9 @@ def Loop_corrida():
         else:
             t_1 = time()
 
+def get_camera():
+    return camera
+
 if __name__ == "__main__":
     try:
         print("Programa rodando... pode ser interrompido usando CTRL+C")
