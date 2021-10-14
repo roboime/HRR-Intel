@@ -5,7 +5,7 @@ from os.path import  join
 from visao import *
 import copy
 
-path = "./tests/fotos/"
+path = "./tests/teste_contraste"
 
 IMAGES = [Classe_imagem(join(path, f)) for f in listdir(join(path))]
 
