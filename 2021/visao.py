@@ -145,9 +145,9 @@ def ponto_medio_borda_inferior(objeto_imagem):
     minLineLength = 90  # Parametro da HoughLines
     
     # Utlizar HoughLinesP para retornar (x1,y1) (x2,y2)
-    segmentos = cv2.HoughLinesP(lista_bordas, rho=1, desvio_maximo=np.pi/180, threshold=100,
-                            lines=np.array([]), minLineLength=minLineLength, maxLineGap=10)
-    if segmentos is None: return 0,0, 0
+    #segmentos = cv2.HoughLinesP(lista_bordas, rho=1, desvio_maximo=np.pi/180, threshold=100, lines=np.array([]), minLineLength=minLineLength, maxLineGap=10)
+    segmentos = cv2.HoughLinesP(lista_bordas, 1, np.pi/180, 100, minLineLength=50, maxLineGap=100)
+    if segmentos is None: return 0,0,0
     numero_segmentos, _, _ = segmentos.shape
     if numero_segmentos == 0: return 0,0, 0
     
