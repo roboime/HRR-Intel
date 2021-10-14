@@ -59,7 +59,7 @@ velocidade_angular[int(GIRAR_DIREITA)] = velocidade_ang_em_graus[int(GIRAR_DIREI
 
 # CONSTANTES DE VISAO
 
-camera_constraste = 90
+constraste_da_camera = 90
 tolerancia_central = 15
 tolerancia_para_frente = 60
 
