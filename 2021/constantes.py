@@ -37,7 +37,7 @@ tempo_do_passo = {
 }
 
 intervalo_alinhamento = 10
-intervalo_caminhada = 2
+intervalo_caminhada = 2     # Tentar maximizar intervalo_caminhada quando for botar o robô para andar
 intervalo_enquanto_gira = 3
 tempo_para_parar = 1
 
