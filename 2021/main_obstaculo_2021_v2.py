@@ -160,7 +160,7 @@ def Loop_obstaculo():
     
 
         ########################################### Checando alinhamento com a pista ###########################################
-        if t_1 - t_0 > intervalo_alinhamento:
+        if t_1 - t_0 >= intervalo_alinhamento:
             estado.Trocar_estado(PARAR)
             sleep(tempo_para_parar)
             estado.Trocar_estado(funcoes.checar_alinhamento_pista_v1(camera, tolerancia_central, tolerancia_para_frente))  # Frente, GIRAR_ESQUERDA ou GIRAR_DIREITA
