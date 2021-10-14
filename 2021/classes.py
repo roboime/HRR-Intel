@@ -22,7 +22,7 @@ class Classe_camera():
     def __init__(self):
         print("Entra no _init_ da Classe_camera")
         self.camera = picamera.PiCamera()
-        self.intervalo_foto = 2.5
+        self.intervalo_foto = 2
         self.indice_atual = 0
         self.path_pasta = os.path.dirname(os.path.abspath(__file__))
         self.path_atual = self.path_pasta + "1.jpg"
@@ -169,22 +169,24 @@ class Classe_porta_serial():
         self.serial_output.write(state)
 
 class Classe_estado:
-    def __init__(self, myrio):
+    def __init__(self, myrio, lista_tempos):
+        self.lista_tempos = lista_tempos
         self.atual = PARAR
         self.serial_obj = myrio
-        self.Trocar_estado(PARAR)
-
-    def Obter_estado_atual(self):
-        return self.atual
-    
-    def __str__(self):          #string associada ao objeto de "Classe_estado". Sera mostrada ao printar um objeto desse tipo
-        name = {    ANDAR : "ANDAR",
+        self.name = {    ANDAR : "ANDAR",
                     GIRAR_ESQUERDA : "GIRAR PARA A ESQUERDA",                      #Dicionario que associa o indice do estado ao nome
                     GIRAR_DIREITA : "GIRAR PARA A DIREITA",
                     PARAR : "PARAR",
                     SUBIR : "SUBIR",
                     DESCER : "DESCER"
                 }
+        self.Trocar_estado(PARAR)
+
+    def Obter_estado_atual(self):
+        return self.atual
+    
+    def __str__(self):          #string associada ao objeto de "Classe_estado". Sera mostrada ao printar um objeto desse tipo
+        
         need = {
             ANDAR : "NAO ha necessidade de correcao",   #Dicionario que associa o indice do estado a necessidade de correcao
             GIRAR_ESQUERDA : "Deve estar girando para esquerda",     
@@ -194,9 +196,17 @@ class Classe_estado:
             DESCER : "Deve estar descendo o degrau"
                 }
         atual = self.Obter_estado_atual()
-        return "Estado atual: " + name[atual] + ".\nindice: " + str(atual) + ".\nCorrecao: " + need[atual] + ".\n\n"
+        return "Estado atual: " + self.name[atual] + ".\nCorrecao: " + need[atual] + ".\n\n"
         
-    def Trocar_estado(self, state):
-        self.atual = state
-        self.serial_obj.Escrever_estado(state)
-        print(self.__str__())
+    def Trocar_estado(self, next_state):
+        if next_state != self.atual:
+            if next_state != PARAR:
+                self.atual = PARAR
+                self.serial_obj.Escrever_estado(PARAR)
+                time.sleep(self.lista_tempos[int(PARAR)])
+            self.atual = next_state
+            self.serial_obj.Escrever_estado(next_state)
+            time.sleep(self.lista_tempos[int(next_state)])
+            print(self.__str__())
+        else:
+            print("Mantive o estado :" , self.name[self.atual])
