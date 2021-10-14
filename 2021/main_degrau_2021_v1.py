@@ -38,7 +38,7 @@ proximidade_subida = 10
 proximidade_descida = 10
 tempo_para_parar = 1
 tempo_enquanto_gira = 0.5
-
+intervalo_caminhada = 0.4
 
 ANDAR="0"                 
 GIRAR_ESQUERDA="1"        
@@ -59,13 +59,17 @@ intervalo_alinhamento = 10
 tolerancia_centro = 15
 tolerancia_para_frente = 60
 
+
 # Anda ate a proximidade do degrau desejada e realinha
-def Loop_degrau(Estado, proximidade):
+def Loop_degrau(Estado, proximidade,numero_de_passos):
     estado.Trocar_estado(ANDAR)
     print("Dentro do Loop_degrau")
     ##ponto em que seria bom parar para tirar a foto                  
     while visao.checar_proximidade(proximidade, camera.Take_photo()):
         print("Andando em frente")
+    sleep(intervalo_caminhada*numero_de_passos)
+    
+        
     estado.Trocar_estado(PARAR)
 
     situacao = funcoes.checar_alinhamento_pista_v1(camera, tolerancia_centro, tolerancia_para_frente)
@@ -83,10 +87,12 @@ def Loop_degrau(Estado, proximidade):
 #Funcao main
         
 if __name__ == "__main__":
+    numero_de_passos_subida = int(input("entre com o numero de passos antes de subir"))
+    numero_de_passos_descida = int(input("entre com o numero de passos antes de descer"))
     try:
         print("Programa rodando... pode ser interrompido usando CTRL+C")
-        Loop_degrau(SUBIR, proximidade_subida)
-        Loop_degrau(DESCER, proximidade_descida)
+        Loop_degrau(SUBIR, proximidade_subida,numero_de_passos_subida)
+        Loop_degrau(DESCER, proximidade_descida,numero_de_passos_descida)
         main_corrida_2021_v1.Loop_corrida()
 
     except KeyboardInterrupt:
