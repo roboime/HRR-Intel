@@ -24,13 +24,13 @@ PARAR="3"
 SUBIR = "4"
 DESCER = "5"
 #Variaveis auxiliares, a velocidade esta em cm/seg
-
 velocidade = 5             
 distancialimite = 50.0
 distanciaMedia = 35.0
 distanciaMinimia = 20.0
 angulo_limite = 10.0
 intervalo_alinhamento = 5
+intervalo_caminhada = 0.4
 largura_do_robo = 25.0
 tempo_para_parar = 1
 intervalo_enquanto_gira = 1
@@ -57,7 +57,8 @@ def Loop_obstaculo():
     t_1 = t_0
     while True:
         print("Estado padrao")
-        estado.Trocar_estado(ANDAR, myrio)  
+        estado.Trocar_estado(ANDAR, myrio)
+        sleep(intervalo_caminhada)  
         print(estado)
         ########################################### Checando proximidade de obstaculo ##########################################
 

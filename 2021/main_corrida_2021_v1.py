@@ -24,6 +24,7 @@ import funcoes
 #Variaveis auxiliares, a velocidade esta em cm/seg
 
 intervalo_alinhamento = 2
+intervalo_caminhada = 0.4
 intervalo_enquanto_gira = 0.5
 tolerancia_central = 10
 tolerancia_para_frente = 15
@@ -47,10 +48,12 @@ def Loop_corrida():
     t_0 = time()
     t_1 = intervalo_alinhamento + t_0
     while True:
-        #print("Estado padrao")
+        print("Andando em frente")
         estado.Trocar_estado(ANDAR, myrio)
+        sleep(intervalo_caminhada)
         ########################################### Checando alinhamento com a pista ###########################################
         if t_1 - t_0 > intervalo_alinhamento:
+            print("hora de alinhar")
             estado.Trocar_estado(PARAR, myrio)
             sleep(tempo_para_parar)
             estado.Trocar_estado(funcoes.checar_alinhamento_pista_v1(camera, tolerancia_central, tolerancia_para_frente), myrio)  # Frente, GIRAR_ESQUERDA ou GIRAR_DIREITA

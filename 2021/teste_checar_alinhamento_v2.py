@@ -3,9 +3,8 @@
 from os import listdir
 from os.path import  join
 from visao import *
-import copy
 
-path = "./tests/fotos2/"
+path = "./tests/fotos/"
 
 IMAGES = [Classe_imagem(join(path, f)) for f in listdir(join(path))]
 
@@ -47,6 +46,7 @@ def bordas_laterais_v3(objeto_imagem):
                 #    print("angulo : ", 180/np.pi*math.atan(coef_angular(line)))
                   #  print([x1, y1, x2, y2])
                    # cv2.line(objeto_imagem.img, (x1,y1), (x2,y2), (0,255,0), 2)
+            if y1>objeto_imagem.topo_da_pista or y2>objeto_imagem.topo_da_pista:
                 if math.atan(-1)-theta/2 < math.atan(coef_angular(line)) < math.atan(-1)+theta/2:
                     left_lines.append([x1,y1,x2,y2])
                #     cv2.line(objeto_imagem.img, (x1,y1), (x2,y2), (0,127,0), 2)
@@ -218,10 +218,6 @@ def checar_alinhamento_pista_v2(objeto_imagem):
             return GIRAR_ESQUERDA
 i=1
 for IMG in IMAGES:
-    i1 = copy.copy(IMG)
-    i2 = copy.copy(IMG)
-    ret = checar_alinhamento_pista_v1(i1, 15, 60)
-    cv2.imwrite( path+"../finais2/"+str(i)+".png", IMG.img)
-    #ret = checar_alinhamento_pista_v2(i2)
-    #cv2.imwrite( path+"../finais/"+str(i)+".png", IMG.img)
+    ret = checar_alinhamento_pista_v2(IMG)
+    cv2.imwrite( path+"../finais/"+str(i)+".png", IMG.img)
     i+=1

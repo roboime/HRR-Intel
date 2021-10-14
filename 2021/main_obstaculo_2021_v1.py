@@ -33,6 +33,7 @@ velocidade = 5
 distancialimite = 50.0
 angulo_limite = 10.0
 intervalo_alinhamento = 5
+intervalo_caminhada = 0.4
 largura_do_robo = 25.0
 tempo_para_parar = 1
 intervalo_enquanto_gira = 1
@@ -59,6 +60,7 @@ def Loop_obstaculo():
         print("Estado padrao")
         estado.Trocar_estado(ANDAR, myrio)  
         print(estado)
+        sleep(0.4)
         ########################################### Checando proximidade de obstaculo ##########################################
 
         print("Medida do sensor de distancia: {}\n".format(sensor_distancia.Get_distance()))
@@ -90,6 +92,7 @@ def Loop_obstaculo():
 
         ########################################### Checando alinhamento com a pista ###########################################
         if t_1 - t_0 > intervalo_alinhamento:
+            print("hora de verificar alinhamento")
             estado.Trocar_estado(PARAR, myrio)
             sleep(tempo_para_parar)
             estado.Trocar_estado(funcoes.checar_alinhamento_pista_v1(camera, tolerancia_central, tolerancia_para_frente), myrio)  # Frente, GIRAR_ESQUERDA ou GIRAR_DIREITA
@@ -99,7 +102,7 @@ def Loop_obstaculo():
                 estado.Trocar_estado(PARAR, myrio)
                 sleep(tempo_para_parar)
                 estado.Trocar_estado(funcoes.checar_alinhamento_pista_v1(camera, tolerancia_central, tolerancia_para_frente), myrio)
-            print("direcao corrigida")
+            print("esta alinhado")
             print(estado.atual)
             t_0 = t_1 = time()
         else:

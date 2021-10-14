@@ -64,16 +64,16 @@ class Classe_imagem():
 dessa biblioteca: '''
 def coef_angular(lista):
     if len(lista) != 0:
-        if lista[X2] != lista[X1]: return (lista[Y2]-lista[Y1]) / (lista[X2]-lista[X1])
-        else: return 999
-    else: return 999
+        if lista[X2] != lista[X1]: return float(float(lista[Y2]-lista[Y1]) / float(lista[X2]-lista[X1]))
+        else: return 999.9
+    else: return 999.9
 
 
 '''tira o coeficiente linear ( y1 - coef_angular *x1 = coef_linear) a partir de uma lista de coordenadas x1 y1 x2 y2. 
 utilizada em funcoes dessa biblioteca: '''
 def coef_linear(lista):
     if len(lista) != 0:
-        return lista[Y1] - lista[X1]*coef_angular(lista)
+        return float(float(lista[Y1]) - float(lista[X1])*coef_angular(lista))
     else:   return 0
 # Essa funcao deve devolver o ponto medio ( (x,y) ) da borda inferior do obstaculo mais proximo
 
@@ -145,9 +145,9 @@ def ponto_medio_borda_inferior(objeto_imagem):
     minLineLength = 90  # Parametro da HoughLines
     
     # Utlizar HoughLinesP para retornar (x1,y1) (x2,y2)
-    segmentos = cv2.HoughLinesP(lista_bordas, rho=1, theta=np.pi/180, threshold=100,
-                            lines=np.array([]), minLineLength=minLineLength, maxLineGap=10)
-    if segmentos is None: return 0,0, 0
+    #segmentos = cv2.HoughLinesP(lista_bordas, rho=1, desvio_maximo=np.pi/180, threshold=100, lines=np.array([]), minLineLength=minLineLength, maxLineGap=10)
+    segmentos = cv2.HoughLinesP(lista_bordas, 1, np.pi/180, 100, minLineLength=50, maxLineGap=100)
+    if segmentos is None: return 0,0,0
     numero_segmentos, _, _ = segmentos.shape
     if numero_segmentos == 0: return 0,0, 0
     
@@ -295,19 +295,19 @@ def bordas_laterais_v2(objeto_imagem):
             x1,y1,x2,y2 = line
             img = cv2.line(img, (x1,y1), (x2,y2), (0,127,255), 2)
         	
-            theta = np.pi/180*RANGE_INCLINACAO
+            desvio_maximo = np.pi/180*RANGE_INCLINACAO
             print("topo da imagem", objeto_imagem.topo_da_pista)
             print("range inclinacao", RANGE_INCLINACAO)
             print("pontos: ", line)
             print("coef_angular: ", coef_angular(line))
             print("angulo: ", 180/np.pi*math.atan(coef_angular(line)))
             if y1>objeto_imagem.topo_da_pista or y2>objeto_imagem.topo_da_pista:
-                if math.atan(1)-theta/2 < math.atan(coef_angular(line)) < math.atan(1)+theta/2:
+                if math.atan(1)-desvio_maximo/2 < math.atan(coef_angular(line)) < math.atan(1)+desvio_maximo/2:
                     right_lines.append([x1,y1,x2,y2])
                 #    print("angulo : ", 180/np.pi*math.atan(coef_angular(line)))
                   #  print([x1, y1, x2, y2])
                     cv2.line(objeto_imagem.img, (x1,y1), (x2,y2), (0,255,0), 2)
-                if math.atan(-1)-theta/2 < math.atan(coef_angular(line)) < math.atan(-1)+theta/2:
+                if math.atan(-1)-desvio_maximo/2 < math.atan(coef_angular(line)) < math.atan(-1)+desvio_maximo/2:
                     left_lines.append([x1,y1,x2,y2])
                     cv2.line(objeto_imagem.img, (x1,y1), (x2,y2), (0,127,0), 2)
     else: return [],[],NAO_HA_RETA
@@ -340,15 +340,16 @@ def bordas_laterais_v2(objeto_imagem):
                 left = line
         [x1, y1, x2, y2] = left
         cv2.line(objeto_imagem.img, (x1,y1), (x2,y2), (0,0,255), 2)
+
     cv2.imwrite("./tests/bordas_laterais.jpg", objeto_imagem.img)
     if ha_reta_na_direita == False and ha_reta_na_esquerda == False:
         return [],[],NAO_HA_RETA
     if ha_reta_na_direita == True and ha_reta_na_esquerda == True:
         return left, right, HA_DUAS_RETAS
     if ha_reta_na_direita == False and ha_reta_na_esquerda == True:
-       return left, [], SO_ESQUERDA
+        return left, [], SO_ESQUERDA
     if ha_reta_na_direita == True and ha_reta_na_esquerda == False:
-       return [], right, SO_DIREITA
+        return [], right, SO_DIREITA
 
 
 
