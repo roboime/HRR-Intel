@@ -49,21 +49,21 @@ def Loop_corrida():
     t_1 = intervalo_alinhamento + t_0
     while True:
         print("Andando em frente")
-        estado.Trocar_estado(ANDAR, myrio)
+        estado.Trocar_estado(ANDAR)
         sleep(intervalo_caminhada)
         ########################################### Checando alinhamento com a pista ###########################################
         if t_1 - t_0 > intervalo_alinhamento:
             print("hora de alinhar")
-            estado.Trocar_estado(PARAR, myrio)
+            estado.Trocar_estado(PARAR)
             sleep(tempo_para_parar)
-            estado.Trocar_estado(funcoes.checar_alinhamento_pista_v1(camera, tolerancia_central, tolerancia_para_frente), myrio)  # Frente, GIRAR_ESQUERDA ou GIRAR_DIREITA
+            estado.Trocar_estado(funcoes.checar_alinhamento_pista_v1(camera, tolerancia_central, tolerancia_para_frente))  # Frente, GIRAR_ESQUERDA ou GIRAR_DIREITA
             numero_de_giradas = 1
             while estado.Obter_estado_atual() == GIRAR_DIREITA or estado.Obter_estado_atual() == GIRAR_ESQUERDA:
                 print("desalinhado com a pista, iniciando a ",numero_de_giradas, "a girada")
                 sleep(intervalo_enquanto_gira)
-                estado.Trocar_estado(PARAR, myrio)
+                estado.Trocar_estado(PARAR)
                 sleep(tempo_para_parar)
-                estado.Trocar_estado(funcoes.checar_alinhamento_pista_v1(camera, tolerancia_central, tolerancia_para_frente), myrio)
+                estado.Trocar_estado(funcoes.checar_alinhamento_pista_v1(camera, tolerancia_central, tolerancia_para_frente))
                 numero_de_giradas+=1
             print("direcao corrigida")
             numero_de_giradas = 1
@@ -81,5 +81,5 @@ if __name__ == "__main__":
         Loop_corrida()
     except KeyboardInterrupt:
         print(" CTRL+C detectado. O loop foi interrompido.")
-    estado.Trocar_estado(PARAR, myrio)
+    estado.Trocar_estado(PARAR)
     print(estado)

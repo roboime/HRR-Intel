@@ -3,14 +3,10 @@ import time
 import numpy as np
 import cv2
 from visao import *
-import picamera
-import classes
+#from classes import Classe_camera
 
 
-X1 = 0
-Y1 = 1
-X2 = 2
-Y2 = 3
+
 
 ANDAR = "0"                 
 GIRAR_ESQUERDA = "1"        
@@ -19,10 +15,6 @@ PARAR = "3"
 SUBIR = "4"
 DESCER = "5"
 
-NAO_HA_RETA = 0
-HA_DUAS_RETAS = 1
-SO_ESQUERDA = 2
-SO_DIREITA = 3
 casos_dic = ["NAO_HA_RETA", "HA_DUAS_RETAS", "SO_ESQUERDA", "SO_DIREITA"]
 
 ANG_GIRADO = 0.0
@@ -126,13 +118,12 @@ def quando_parar_de_andar_visaocomp(velocidade):
 
 
 # No momento nao utilizada em funcao de poder ser feita apenas com whiles dentro do loop
-def quando_parar_de_alinhar(tolerancia_centro, tolerancia_para_frente):
-    camera = picamera.PiCamera()
-    
+"""def quando_parar_de_alinhar(tolerancia_centro, tolerancia_para_frente):
+    camera = Classe_camera()
     while (checar_alinhamento_pista_v1(camera, tolerancia_centro, tolerancia_para_frente) != ANDAR):
         continue
 
-    return PARAR
+    return PARAR"""
 
 
 '''Decide para onde virar quando encontra um obstaculo. Recebe somente a camera. Usado apenas no loop de obstaculo.'''
@@ -257,7 +248,7 @@ andar sem encontrar uma borda lateral para retornar uma direcao de giro ou entao
 Usada em todos os loops'''
 def checar_alinhamento_pista_v1(camera, tolerancia_central, tolerancia_para_frente):
     path = camera.Take_photo()
-    objeto_imagem = classes.Classe_imagem(path)
+    objeto_imagem = Classe_imagem(path)
     #reta_esquerda, reta_direita, caso = bordas_laterais_v2(objeto_imagem)
     reta_esquerda, reta_direita, caso = bordas_laterais_v2(objeto_imagem)
     largura, altura = objeto_imagem.largura, objeto_imagem.altura
@@ -328,7 +319,7 @@ def checar_alinhamento_pista_v1(camera, tolerancia_central, tolerancia_para_fren
 '''
 def checar_alinhamento_pista_v2(camera):
     path = camera.Take_photo()
-    objeto_imagem = classes.Classe_imagem(path)
+    objeto_imagem = Classe_imagem(path)
     left, right, caso = bordas_laterais_v2(objeto_imagem)
     reta_esquerda, reta_direita, caso = bordas_laterais_v2(objeto_imagem)
     k = objeto_imagem.largura//2

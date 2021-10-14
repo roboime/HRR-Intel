@@ -172,6 +172,7 @@ class Classe_estado:
     def __init__(self, myrio):
         self.atual = PARAR
         self.Trocar_estado(PARAR, myrio)
+        self.serial_obj = myrio
 
     def Obter_estado_atual(self):
         return self.atual
@@ -195,7 +196,7 @@ class Classe_estado:
         atual = self.Obter_estado_atual()
         return "Estado atual: " + name[atual] + ".\nindice: " + str(atual) + ".\nCorrecao: " + need[atual] + ".\n\n"
         
-    def Trocar_estado(self, state, serial_obj):
+    def Trocar_estado(self, state):
         self.atual = state
-        serial_obj.Escrever_estado(state)
+        self.serial_obj.Escrever_estado(state)
         print(self.__str__())
