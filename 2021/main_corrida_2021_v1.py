@@ -58,7 +58,7 @@ def Loop_corrida():
             sleep(tempo_para_parar)
             estado.Trocar_estado(funcoes.checar_alinhamento_pista_v1(camera, tolerancia_central, tolerancia_para_frente), myrio)  # Frente, GIRAR_ESQUERDA ou GIRAR_DIREITA
             numero_de_giradas = 1
-            while estado.Obter_estado_atual() != PARAR or estado.Obter_estado_atual() != ANDAR:
+            while estado.Obter_estado_atual() == GIRAR_DIREITA or estado.Obter_estado_atual() == GIRAR_ESQUERDA:
                 print("desalinhado com a pista, iniciando a ",numero_de_giradas, "a girada")
                 sleep(intervalo_enquanto_gira)
                 estado.Trocar_estado(PARAR, myrio)
