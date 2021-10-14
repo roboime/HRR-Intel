@@ -27,6 +27,7 @@ class Classe_camera():
 
     def Take_photo(self):
         self.camera.start_preview()
+        self.camera.contrast = constraste_da_camera
         time.sleep(self.intervalo_foto)
         try:
             self.path_atual = "./tests/fotos_main/imagem_main" + str(self.indice_atual) + ".jpg"

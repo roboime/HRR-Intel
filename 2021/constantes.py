@@ -36,8 +36,8 @@ tempo_do_passo = {
     PARAR : 1
 }
 
-intervalo_alinhamento = 20
-intervalo_caminhada = 0.4
+intervalo_alinhamento = 10
+intervalo_caminhada = 2     # Tentar maximizar intervalo_caminhada quando for botar o robo para andar
 intervalo_enquanto_gira = 3
 tempo_para_parar = 1
 
@@ -59,6 +59,7 @@ velocidade_angular[int(GIRAR_DIREITA)] = velocidade_ang_em_graus[int(GIRAR_DIREI
 
 # CONSTANTES DE VISAO
 
+camera_constraste = 90
 tolerancia_central = 15
 tolerancia_para_frente = 60
 

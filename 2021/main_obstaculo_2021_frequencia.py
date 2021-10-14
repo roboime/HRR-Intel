@@ -26,7 +26,7 @@ from constantes import *
 myrio = classes.Classe_porta_serial()
 sensor_distancia = classes.Classe_distancia()
 camera = classes.Classe_camera()
-estado = classes.Classe_estado(myrio)
+estado = classes.Classe_estado(myrio, tempo_do_passo)
 
 #Funcao main
 
@@ -68,7 +68,7 @@ def Loop_obstaculo():
             t_1 = time()
 
         ########################################### Checando alinhamento com a pista ###########################################
-        if t_1 - t_0 > intervalo_alinhamento:
+        if t_1 - t_0 >= intervalo_alinhamento:
             print("hora de verificar alinhamento")
             estado.Trocar_estado(PARAR)
             sleep(tempo_para_parar)
