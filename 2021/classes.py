@@ -13,9 +13,8 @@ ANDAR="0"
 GIRAR_ESQUERDA="1"        
 GIRAR_DIREITA="2"         
 PARAR="3"
-SUBIR = "6"
-DESCER = "7"
-tempo_para_parar = 0.4
+SUBIR = "4"
+DESCER = "5"
 
 DIST_MAXIMA = 80
 
@@ -42,11 +41,11 @@ class Classe_camera():
         except KeyboardInterrupt: self.camera.stop_preview()
 
 
-    def parar_fotografar(self, estado, myrio):
+    def parar_fotografar(self, estado):
         atual = estado.Obter_estado_atual()
-        estado.Trocar_estado(PARAR, myrio)
+        estado.Trocar_estado(PARAR)
         img = self.Take_photo()
-        estado.Trocar_estado(atual, myrio)
+        estado.Trocar_estado(atual)
         return img
 
 """ Classe relacionada a imagem obtida pela camera. Ao ser chamada, inverte a imagem e salva constantes relacionadas a imagem, como altura, largura e centro.
@@ -198,10 +197,6 @@ class Classe_estado:
         return "Estado atual: " + name[atual] + ".\nindice: " + str(atual) + ".\nCorrecao: " + need[atual] + ".\n\n"
         
     def Trocar_estado(self, state):
-        if(self.atual != PARAR and state != PARAR):
-            self.atual = PARAR
-            self.serial_obj.Escrever_estado(PARAR)
-            time.sleep(tempo_para_parar)
         self.atual = state
         self.serial_obj.Escrever_estado(state)
         print(self.__str__())

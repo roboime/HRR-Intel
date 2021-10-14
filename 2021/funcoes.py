@@ -20,9 +20,98 @@ casos_dic = ["NAO_HA_RETA", "HA_DUAS_RETAS", "SO_ESQUERDA", "SO_DIREITA"]
 ANG_GIRADO = 0.0
 ANG_PITCH_CABECA = 30.0
 ANG_CABECA_DEGRAU = 0.0
-DIST_MAXIMA = 50
+DIST_MAXIMA = 80
 DIST_MIN_OBST_ATUAL = 50.0
 
+
+DIST_MAXIMA = 80
+DIST_MIN_OBST_ATUAL = 80
+
+def quando_parar_de_girar_quantizado(sensor_distancia, lista_tempo_de_giro, lista_ang_por_passo, largura_robo, sentido):
+    global DIST_MIN_OBST_ATUAL
+    global ANG_GIRADO
+    
+    if(sentido == GIRAR_DIREITA ):
+        ang_por_passo = lista_ang_por_passo[int(GIRAR_DIREITA)]
+        tempo_de_giro = lista_tempo_de_giro[int(GIRAR_DIREITA)]
+    if(sentido == GIRAR_ESQUERDA ):
+        ang_por_passo = lista_ang_por_passo[int(GIRAR_ESQUERDA)]
+        tempo_de_giro = lista_tempo_de_giro[int(GIRAR_ESQUERDA)]
+
+    passos_girados = 0
+    mult_dist = 4
+    mult_largura = 0.6
+    mult_ang_girado = 0
+    sensor_distancia.Get_distance()
+    sensor_distancia.atual *= np.cos(ANG_PITCH_CABECA*np.pi/180)
+    DIST_MIN_OBST_ATUAL = sensor_distancia.atual
+    
+    while True:
+        time.sleep(tempo_de_giro)
+        passos_girados +=1
+        sensor_distancia.Get_distance()
+        sensor_distancia.atual *= np.cos(ANG_PITCH_CABECA*np.pi/180)
+
+        if sensor_distancia.atual < sensor_distancia.anterior:
+            DIST_MIN_OBST_ATUAL = sensor_distancia.atual
+            passos_girados = 0
+        if(sensor_distancia.atual > DIST_MAXIMA):    
+            theta_passo = passos_girados*ang_por_passo
+
+            ANG_GIRADO = np.arctan2( DIST_MIN_OBST_ATUAL*np.tan(theta_passo) + largura_robo*mult_largura, DIST_MIN_OBST_ATUAL)
+            ANG_GIRADO //= ang_por_passo
+            ANG_GIRADO = (ANG_GIRADO + 1 )*ang_por_passo 
+            #theta_trigo = np.arccos(DIST_MIN_OBST_ATUAL/sensor_distancia.anterior)
+           # ANG_GIRADO_TRIGO = np.arctan2( DIST_MIN_OBST_ATUAL*np.tan(theta_trigo) + largura_robo*mult_largura, DIST_MIN_OBST_ATUAL)
+        #    print("ANG_GIRADO_VEL_ANG: ", ANG_GIRADO_VEL_ANG, "\nANG_GIRADO_TRIGO: ", ANG_GIRADO_TRIGO, "\n")
+           # ANG_GIRADO = mult_ang_girado*ANG_GIRADO_TRIGO + (1-mult_ang_girado)*ANG_GIRADO_VEL_ANG
+           
+            intervalo_seguranca = tempo_de_giro*((ANG_GIRADO//ang_por_passo) - passos_girados)
+           
+            time.sleep(intervalo_seguranca)
+            break
+ #   print("ANG GIRADO: ", ANG_GIRADO)
+    return PARAR
+
+def quando_parar_de_realinhar_quantizado(lista_tempo_de_giro, lista_ang_por_passo, sentido_de_giro):
+    global ANG_GIRADO
+    if(sentido == GIRAR_DIREITA ):
+        ang_por_passo = lista_ang_por_passo[int(GIRAR_DIREITA)]
+        tempo_de_giro = lista_tempo_de_giro[int(GIRAR_DIREITA)]
+    if(sentido == GIRAR_ESQUERDA ):
+        ang_por_passo = lista_ang_por_passo[int(GIRAR_ESQUERDA)]
+        tempo_de_giro = lista_tempo_de_giro[int(GIRAR_ESQUERDA)]
+
+
+    intervalo_realinhamento = tempo_de_giro*(ANG_GIRADO//ang_por_passo)
+    t_0 = t_1 = time.time()
+    while True:
+        time.sleep(tempo_de_giro)
+        t_1 = time.time()
+        if t_1-t_0 > intervalo_realinhamento: 
+            break
+        if(sentido_de_giro == GIRAR_DIREITA):
+            print("girando para a  DIREITA, faltam ", (intervalo_realinhamento-(t_1 - t_0))//tempo_de_giro, "passos para compensar o angulo girado")
+        else:
+            print("girando para a  ESQUERDA, faltam ", (intervalo_realinhamento-(t_1 - t_0))//tempo_de_giro, "passos para compensar o angulo girado")
+
+    return ANDAR
+
+
+'''Utiliza somente a velocidade e a variavel global angular definida pela funcao quando parar de girar'''
+def quando_parar_de_andar_visaocomp_quantizado(lista_tempo_de_passo, lista_cm_por_passo):
+    cm_por_passo = lista_cm_por_passo[int(ANDAR)]
+    tempo_de_passo = lista_tempo_de_passo[int(ANDAR)]
+
+    dist_estimado = (DIST_MIN_OBST_ATUAL*np.cos(ANG_PITCH_CABECA*np.pi/180)) / np.cos(ANG_GIRADO)
+    tempo_estimado = dist_estimado / (cm_por_passo/float(tempo_de_passo))
+    t_0 = t_1 = time.time()
+    while (t_1 - t_0 < tempo_estimado):
+        print("Ainda faltam andar:", (tempo_estimado - (t_1 - t_0))//tempo_de_passo, "passos")
+        t_1 = time.time()
+        continue
+
+    return PARAR
 
 '''Gira o robo ate haver uma variacao brusca de distancia, quando eh suposto nao haver mais obstaculo na direcao, acrescido
 de uma margem de segurnca dependente da altura do robo. Usada em Loop Obstaculo'''
