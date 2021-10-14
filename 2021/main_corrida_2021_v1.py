@@ -25,10 +25,10 @@ import funcoes
 
 intervalo_alinhamento = 20
 intervalo_caminhada = 0.4
-intervalo_enquanto_gira = 0.5
+intervalo_enquanto_gira = 3
+tempo_para_parar = 1
 tolerancia_central = 10
 tolerancia_para_frente = 15
-tempo_para_parar = 1
 
 ANDAR="0"                 
 GIRAR_ESQUERDA="1"        
@@ -57,13 +57,16 @@ def Loop_corrida():
             estado.Trocar_estado(PARAR, myrio)
             sleep(tempo_para_parar)
             estado.Trocar_estado(funcoes.checar_alinhamento_pista_v1(camera, tolerancia_central, tolerancia_para_frente), myrio)  # Frente, GIRAR_ESQUERDA ou GIRAR_DIREITA
+            numero_de_giradas = 1
             while estado.Obter_estado_atual() != PARAR or estado.Obter_estado_atual() != ANDAR:
-                print("desalinhado com a pista")
+                print("desalinhado com a pista, iniciando a ",numero_de_giradas, "a girada")
                 sleep(intervalo_enquanto_gira)
                 estado.Trocar_estado(PARAR, myrio)
                 sleep(tempo_para_parar)
                 estado.Trocar_estado(funcoes.checar_alinhamento_pista_v1(camera, tolerancia_central, tolerancia_para_frente), myrio)
+                numero_de_giradas+=1
             print("direcao corrigida")
+            numero_de_giradas = 1
             print(estado.atual)
             t_0 = t_1 = time()
         else:
