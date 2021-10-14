@@ -201,10 +201,10 @@ class Classe_estado:
             if next_state != PARAR:
                 self.atual = PARAR
                 self.serial_obj.Escrever_estado(PARAR)
-                time.sleep(self.lista_tempos[int(PARAR)])
+                time.sleep(self.lista_tempos[(PARAR)])
             self.atual = next_state
             self.serial_obj.Escrever_estado(next_state)
-            time.sleep(self.lista_tempos[int(next_state)])
+            time.sleep(self.lista_tempos[(next_state)])
             print(self.__str__())
         else:
             print("Mantive o estado :" , self.name[self.atual])
