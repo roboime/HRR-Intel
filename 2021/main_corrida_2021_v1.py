@@ -38,7 +38,7 @@ def Loop_corrida():
         estado.Trocar_estado(ANDAR)
         sleep(intervalo_caminhada)
         ########################################### Checando alinhamento com a pista ###########################################
-        if t_1 - t_0 > intervalo_alinhamento:
+        if t_1 - t_0 >= intervalo_alinhamento:
             print("hora de alinhar")
             estado.Trocar_estado(PARAR)
             sleep(tempo_para_parar)
