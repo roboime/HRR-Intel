@@ -412,14 +412,14 @@ def checar_proximidade(valor_comparar, imagem_path):
                     maximo = lines[i][0][y1]
 
     except:#quando ele nao encontrar mais nenhuma reta no vetor line, ele vai dar erro e vir para essa parte do codigo. 
-        porcentagem = (maximo/altura)*100
+        porcentagem = 100 - ((maximo/altura)*100)
         #print(maximo)
         print("A porcentagem eh: {}".format(porcentagem))
-        if(porcentagem>valor_comparar):
-            print("checar_proximidade deu True")
+        if(porcentagem<valor_comparar):
+            print("obstaculo proximo")
             #cv2.imwrite("imagem com linhas.png", img)
             return True
         else:
-            print("checar_proximidade deu False")
+            print("obstaculo ainda distante")
             #cv2.imwrite("imagem com linhas.png", img)
             return False
