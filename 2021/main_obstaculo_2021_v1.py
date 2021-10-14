@@ -58,7 +58,7 @@ def Loop_obstaculo():
     t_1 = t_0 + intervalo_alinhamento
     while True:
         print("Estado padrao")
-        estado.Trocar_estado(ANDAR, myrio)  
+        estado.Trocar_estado(ANDAR)  
         print(estado)
         sleep(0.4)
         ########################################### Checando proximidade de obstaculo ##########################################
@@ -67,41 +67,41 @@ def Loop_obstaculo():
 
         if sensor_distancia.Get_distance() <= distancialimite:
             print ("obstaculo detectado ", sensor_distancia.atual)
-            estado.Trocar_estado(PARAR, myrio)
+            estado.Trocar_estado(PARAR)
             print(estado)
-            estado.Trocar_estado(funcoes.decisao_desvio(camera), myrio)
+            estado.Trocar_estado(funcoes.decisao_desvio(camera))
             print(estado)
             
             if (estado.atual == GIRAR_ESQUERDA or estado.atual == GIRAR_DIREITA):
                 direcao_girada  = estado.atual            
-                estado.Trocar_estado(funcoes.quando_parar_de_girar(sensor_distancia, velocidade_angular, largura_do_robo, direcao_girada), myrio)    
+                estado.Trocar_estado(funcoes.quando_parar_de_girar(sensor_distancia, velocidade_angular, largura_do_robo, direcao_girada))    
                 print(estado)
-                estado.Trocar_estado(ANDAR, myrio)
+                estado.Trocar_estado(ANDAR)
                 print(estado)
-                estado.Trocar_estado(funcoes.quando_parar_de_andar_visaocomp(velocidade), myrio)
+                estado.Trocar_estado(funcoes.quando_parar_de_andar_visaocomp(velocidade))
                 print(estado)
                 print("obstaculo ultrapassado, iniciando compensasao de angulo")
                 if(direcao_girada == GIRAR_ESQUERDA):
-                    estado.Trocar_estado(GIRAR_DIREITA, myrio)
-                    estado.Trocar_estado(funcoes.quando_parar_de_realinhar(velocidade_angular, GIRAR_DIREITA), myrio)
+                    estado.Trocar_estado(GIRAR_DIREITA)
+                    estado.Trocar_estado(funcoes.quando_parar_de_realinhar(velocidade_angular, GIRAR_DIREITA))
                 if(direcao_girada == GIRAR_DIREITA):
-                    estado.Trocar_estado(GIRAR_ESQUERDA, myrio)
-                    estado.Trocar_estado(funcoes.quando_parar_de_realinhar(velocidade_angular, GIRAR_ESQUERDA), myrio)
+                    estado.Trocar_estado(GIRAR_ESQUERDA)
+                    estado.Trocar_estado(funcoes.quando_parar_de_realinhar(velocidade_angular, GIRAR_ESQUERDA))
                 print("compensado o angulo girado")
             t_1 = time()
 
         ########################################### Checando alinhamento com a pista ###########################################
         if t_1 - t_0 > intervalo_alinhamento:
             print("hora de verificar alinhamento")
-            estado.Trocar_estado(PARAR, myrio)
+            estado.Trocar_estado(PARAR)
             sleep(tempo_para_parar)
-            estado.Trocar_estado(funcoes.checar_alinhamento_pista_v1(camera, tolerancia_central, tolerancia_para_frente), myrio)  # Frente, GIRAR_ESQUERDA ou GIRAR_DIREITA
+            estado.Trocar_estado(funcoes.checar_alinhamento_pista_v1(camera, tolerancia_central, tolerancia_para_frente))  # Frente, GIRAR_ESQUERDA ou GIRAR_DIREITA
             while estado.Obter_estado_atual() != PARAR and estado.Obter_estado_atual() != ANDAR:
                 print("desalinhado com a pista")
                 sleep(intervalo_enquanto_gira)
-                estado.Trocar_estado(PARAR, myrio)
+                estado.Trocar_estado(PARAR)
                 sleep(tempo_para_parar)
-                estado.Trocar_estado(funcoes.checar_alinhamento_pista_v1(camera, tolerancia_central, tolerancia_para_frente), myrio)
+                estado.Trocar_estado(funcoes.checar_alinhamento_pista_v1(camera, tolerancia_central, tolerancia_para_frente))
             print("esta alinhado")
             print(estado.atual)
             t_0 = t_1 = time()
@@ -115,5 +115,5 @@ if __name__ == "__main__":
         Loop_obstaculo()
     except KeyboardInterrupt:
         print(" CTRL+C detectado. O loop foi interrompido.")
-    estado.Trocar_estado(PARAR, myrio)
+    estado.Trocar_estado(PARAR)
     print(estado)

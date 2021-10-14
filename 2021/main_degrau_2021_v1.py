@@ -52,7 +52,7 @@ myrio = classes.Classe_porta_serial()
 estado = classes.Classe_estado(myrio)
 print("Antes da Classe_camera")
 camera = main_corrida_2021_v1.get_camera()
-estado.Trocar_estado(PARAR, myrio)
+estado.Trocar_estado(PARAR)
 
 
 intervalo_alinhamento = 10
@@ -61,24 +61,24 @@ tolerancia_para_frente = 60
 
 # Anda ate a proximidade do degrau desejada e realinha
 def Loop_degrau(Estado, proximidade):
-    estado.Trocar_estado(ANDAR, myrio)
+    estado.Trocar_estado(ANDAR)
     print("Dentro do Loop_degrau")
     ##ponto em que seria bom parar para tirar a foto                  
     while visao.checar_proximidade(proximidade, camera.Take_photo()):
         print("Andando em frente")
-    estado.Trocar_estado(PARAR, myrio)
+    estado.Trocar_estado(PARAR)
 
     situacao = funcoes.checar_alinhamento_pista_v1(camera, tolerancia_centro, tolerancia_para_frente)
 
     while situacao != ANDAR:
-        estado.Trocar_estado(situacao, myrio)
+        estado.Trocar_estado(situacao)
         sleep(tempo_enquanto_gira)
-        estado.Trocar_estado(PARAR, myrio)
+        estado.Trocar_estado(PARAR)
         sleep(tempo_para_parar)
         situacao = funcoes.checar_alinhamento_pista_v1(camera, tolerancia_centro, tolerancia_para_frente)
         print("Alinhando...")
 
-    estado.Trocar_estado(Estado, myrio)
+    estado.Trocar_estado(Estado)
 
 #Funcao main
         
@@ -91,4 +91,4 @@ if __name__ == "__main__":
 
     except KeyboardInterrupt:
         print(" CTRL+C detectado. O loop foi interrompido.")
-    estado.Trocar_estado(PARAR, myrio)
+    estado.Trocar_estado(PARAR)
