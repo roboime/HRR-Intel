@@ -171,8 +171,8 @@ class Classe_porta_serial():
 class Classe_estado:
     def __init__(self, myrio):
         self.atual = PARAR
-        self.Trocar_estado(PARAR, myrio)
         self.serial_obj = myrio
+        self.Trocar_estado(PARAR)
 
     def Obter_estado_atual(self):
         return self.atual
