@@ -159,7 +159,7 @@ class Classe_porta_serial():
         GPIO.setup(channel, GPIO.OUT)
 
         ################################################ Configuracoes da MyRio ################################################
-        porta = "/dev/ttyAMA0"                                                                             #nao e a porta AMA0**
+        porta = "/dev/ttyAMA1"                                                                             #nao e a porta AMA0**
         baudrate_myrio = 230400                                                                         #deve igualar a da myrio
         self.serial_output = serial.Serial(porta,baudrate_myrio)                   # porta serial que faz comunicacao coma MyRio
         
