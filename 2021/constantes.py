@@ -59,8 +59,8 @@ velocidade_angular[int(GIRAR_DIREITA)] = velocidade_ang_em_graus[int(GIRAR_DIREI
 
 # CONSTANTES DE VISAO
 
-tolerancia_central = 10
-tolerancia_para_frente = 15
+tolerancia_central = 15
+tolerancia_para_frente = 60
 
 ## CONSTANTES DO DEGRAU
 
