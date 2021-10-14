@@ -23,7 +23,7 @@ import funcoes
 
 #Variaveis auxiliares, a velocidade esta em cm/seg
 
-intervalo_alinhamento = 2
+intervalo_alinhamento = 20
 intervalo_caminhada = 0.4
 intervalo_enquanto_gira = 0.5
 tolerancia_central = 10
