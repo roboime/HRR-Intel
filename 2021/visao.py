@@ -310,9 +310,7 @@ def bordas_laterais_v2(objeto_imagem):
                 if math.atan(-1)-theta/2 < math.atan(coef_angular(line)) < math.atan(-1)+theta/2:
                     left_lines.append([x1,y1,x2,y2])
                     cv2.line(objeto_imagem.img, (x1,y1), (x2,y2), (0,127,0), 2)
-    else:
-        print("NAO DETECTOU RETA NENHUMA")
-	return [],[],NAO_HA_RETA
+    else: return [],[],NAO_HA_RETA
    # cv2.imwrite("todas_as_linhas.png", todas_as_linhas)
 
     ha_reta_na_direita = False
