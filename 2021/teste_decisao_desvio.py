@@ -5,7 +5,7 @@ from os.path import  join
 from visao import *
 import copy
 
-path = "./tests/teste_contraste"
+path = "./tests/fotos_main/"
 
 IMAGES = [Classe_imagem(join(path, f)) for f in listdir(join(path))]
 
@@ -83,7 +83,7 @@ def ponto_medio_borda_inferior2(objeto_imagem):
     print("Pto_Med_Borda_Inf-Num_seg: {} before for".format(numero_segmentos))
     for i in range(numero_segmentos):
         x1, y1, x2, y2 = segmentos[i].reshape(4)
-   #     cv2.line(objeto_imagem.img, (x1,y1), (x2,y2), (255,0,255), 2)
+        cv2.line(objeto_imagem.img, (x1,y1), (x2,y2), (255,0,255), 2)
         if (segmentos[i][0][Y1] > ymed_bloco_todo*fator_para_baixo or segmentos[i][0][Y2] > ymed_bloco_todo*fator_para_baixo):
             x_min = min(x_min, segmentos[i][0][X1], segmentos[i][0][X2])
             x_max = max(x_max, segmentos[i][0][X1], segmentos[i][0][X2])
