@@ -27,7 +27,7 @@ from constantes import *
 myrio = classes.Classe_porta_serial()
 sensor_distancia = classes.Classe_distancia()
 camera = classes.Classe_camera()
-estado = classes.Classe_estado(myrio)
+estado = classes.Classe_estado(myrio, tempo_do_passo)
 
 #Funcao main
 
@@ -52,7 +52,8 @@ def Loop_obstaculo():
             
             if (estado.atual == GIRAR_ESQUERDA or estado.atual == GIRAR_DIREITA):
                 direcao_girada  = estado.atual            
-                estado.Trocar_estado(funcoes.quando_parar_de_girar_quantizado(sensor_distancia, velocidade_angular, largura_do_robo, direcao_girada))    
+                estado.Trocar_estado(funcoes.quando_parar_de_girar(sensor_distancia, velocidade_angular, largura_do_robo, direcao_girada))
+                print("terminei de girar")  
                 print(estado)
                 estado.Trocar_estado(ANDAR)
                 print(estado)
