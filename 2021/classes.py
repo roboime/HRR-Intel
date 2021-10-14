@@ -13,8 +13,9 @@ ANDAR="0"
 GIRAR_ESQUERDA="1"        
 GIRAR_DIREITA="2"         
 PARAR="3"
-SUBIR = "4"
-DESCER = "5"
+SUBIR = "6"
+DESCER = "7"
+tempo_para_parar = 0.4
 
 DIST_MAXIMA = 80
 
@@ -197,6 +198,10 @@ class Classe_estado:
         return "Estado atual: " + name[atual] + ".\nindice: " + str(atual) + ".\nCorrecao: " + need[atual] + ".\n\n"
         
     def Trocar_estado(self, state):
+        if(self.atual != PARAR and state != PARAR):
+            self.atual = PARAR
+            self.serial_obj.Escrever_estado(PARAR)
+            time.sleep(tempo_para_parar)
         self.atual = state
         self.serial_obj.Escrever_estado(state)
         print(self.__str__())
