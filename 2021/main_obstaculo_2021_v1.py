@@ -52,7 +52,8 @@ def Loop_obstaculo():
             
             if (estado.atual == GIRAR_ESQUERDA or estado.atual == GIRAR_DIREITA):
                 direcao_girada  = estado.atual            
-                estado.Trocar_estado(funcoes.quando_parar_de_girar(sensor_distancia, velocidade_angular, largura_do_robo, direcao_girada))    
+                estado.Trocar_estado(funcoes.quando_parar_de_girar(sensor_distancia, velocidade_angular, largura_do_robo, direcao_girada))
+                print("terminei de girar")  
                 print(estado)
                 estado.Trocar_estado(ANDAR)
                 print(estado)
