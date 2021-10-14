@@ -16,32 +16,8 @@ import numpy as np
 import math
 import classes
 import funcoes
+from constantes import *
 
-ANDAR="0"                 
-GIRAR_ESQUERDA="1"        
-GIRAR_DIREITA="2"         
-PARAR="3"
-SUBIR = "4"
-DESCER = "5"
-#Variaveis auxiliares, a velocidade esta em cm/seg
-velocidade = 5             
-distancialimite = 50.0
-distanciaMedia = 35.0
-distanciaMinimia = 20.0
-angulo_limite = 10.0
-intervalo_alinhamento = 5
-intervalo_caminhada = 0.4
-largura_do_robo = 25.0
-tempo_para_parar = 1
-intervalo_enquanto_gira = 1
-tolerancia_central = 15
-tolerancia_para_frente = 60
-velocidade_ang_em_graus = [0,0,0]
-velocidade_angular = [0,0,0]
-velocidade_ang_em_graus[int(GIRAR_ESQUERDA)] = 10
-velocidade_ang_em_graus[int(GIRAR_DIREITA)] = 10
-velocidade_angular[int(GIRAR_ESQUERDA)] = velocidade_ang_em_graus[int(GIRAR_ESQUERDA)]*np.pi/180
-velocidade_angular[int(GIRAR_DIREITA)] = velocidade_ang_em_graus[int(GIRAR_DIREITA)]*np.pi/180
 
 # Configuracoes iniciais
 
@@ -49,6 +25,7 @@ myrio = classes.Classe_porta_serial()
 sensor_distancia = classes.Classe_distancia()
 camera = classes.Classe_camera()
 estado = classes.Classe_estado(myrio)
+
 
 #Funcao main
 
@@ -89,7 +66,7 @@ def Loop_obstaculo():
                     estado.Trocar_estado(funcoes.quando_parar_de_realinhar(velocidade_angular, GIRAR_ESQUERDA))
                 print("compensado o angulo girado")
             t_1 = time()
-        elif sensor_distancia.Get_distance()<=distanciaMedia and sensor_distancia.Get_distance() >distanciaMinimia:
+        elif sensor_distancia.Get_distance()<=distanciaMedia and sensor_distancia.Get_distance() >distanciaMinima:
             print("obstaculo muito proximo")
             if EstadoDesvio == GIRAR_DIREITA:
                 estado.atual = GIRAR_ESQUERDA
@@ -135,7 +112,7 @@ def Loop_obstaculo():
             t_1 = time()
 
 
-        elif sensor_distancia.Get_distance()< distanciaMinimia:
+        elif sensor_distancia.Get_distance()< distanciaMinima:
             print("obstaculo muito proximo")
             if EstadoDesvio == GIRAR_DIREITA:
                 estado.atual = GIRAR_DIREITA

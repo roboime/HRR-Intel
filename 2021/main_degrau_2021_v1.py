@@ -28,24 +28,10 @@ import main_corrida_2021_v1
 print("Depois da Loop_corrida")
 import picamera
 import visao
-
 import funcoes
+from constantes import *
 
 
-#Variaveis auxiliares, a velocidade esta em cm/seg                
-
-proximidade_subida = 10
-proximidade_descida = 10
-tempo_para_parar = 1
-tempo_enquanto_gira = 0.5
-intervalo_caminhada = 0.4
-
-ANDAR="0"                 
-GIRAR_ESQUERDA="1"        
-GIRAR_DIREITA="2"         
-PARAR="3"                 
-SUBIR= "6"
-DESCER = "7"
 # Configuracoes iniciais
 
 myrio = classes.Classe_porta_serial()
@@ -53,11 +39,6 @@ estado = classes.Classe_estado(myrio)
 print("Antes da Classe_camera")
 camera = main_corrida_2021_v1.get_camera()
 estado.Trocar_estado(PARAR)
-
-
-intervalo_alinhamento = 10
-tolerancia_centro = 15
-tolerancia_para_frente = 60
 
 
 # Anda ate a proximidade do degrau desejada e realinha
@@ -72,14 +53,14 @@ def Loop_degrau(Estado, proximidade,numero_de_passos):
         
     estado.Trocar_estado(PARAR)
 
-    situacao = funcoes.checar_alinhamento_pista_v1(camera, tolerancia_centro, tolerancia_para_frente)
+    situacao = funcoes.checar_alinhamento_pista_v1(camera, tolerancia_central, tolerancia_para_frente)
 
     while situacao != ANDAR:
         estado.Trocar_estado(situacao)
-        sleep(tempo_enquanto_gira)
+        sleep(intervalo_enquanto_gira)
         estado.Trocar_estado(PARAR)
         sleep(tempo_para_parar)
-        situacao = funcoes.checar_alinhamento_pista_v1(camera, tolerancia_centro, tolerancia_para_frente)
+        situacao = funcoes.checar_alinhamento_pista_v1(camera, tolerancia_central, tolerancia_para_frente)
         print("Alinhando...")
 
     estado.Trocar_estado(Estado)

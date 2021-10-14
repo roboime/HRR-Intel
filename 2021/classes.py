@@ -8,15 +8,13 @@ import picamera
 import os
 import cv2
 import numpy as np
+from constantes import *
 
-ANDAR="0"                 
-GIRAR_ESQUERDA="1"        
-GIRAR_DIREITA="2"         
-PARAR="3"
-SUBIR = "4"
-DESCER = "5"
+def get_tempo_do_passo():
+    return tempo_do_passo
 
-DIST_MAXIMA = 80
+def get_desloc_por_passo():
+    return desloc_por_passo
 
 class Classe_camera():
     def __init__(self):

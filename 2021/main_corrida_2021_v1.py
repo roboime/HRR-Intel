@@ -14,33 +14,19 @@ Baseado em main_INTEL_humanoid_2020
 
 #Bibliotecas 
 
-from time import *
+from time import sleep, time
 import numpy as np
 import math
 import classes
 import funcoes
+from constantes import *
 
 
-#Variaveis auxiliares, a velocidade esta em cm/seg
-
-intervalo_alinhamento = 20
-intervalo_caminhada = 0.4
-intervalo_enquanto_gira = 3
-tempo_para_parar = 1
-tolerancia_central = 10
-tolerancia_para_frente = 15
-
-ANDAR="0"                 
-GIRAR_ESQUERDA="1"        
-GIRAR_DIREITA="2"         
-PARAR="3"
-SUBIR = "4"
-DESCER = "5"
 # Configuracoes iniciais
 
 myrio = classes.Classe_porta_serial()
 camera = classes.Classe_camera()
-estado = classes.Classe_estado(myrio)
+estado = classes.Classe_estado(myrio, tempo_do_passo)
 
 #Funcao main
 

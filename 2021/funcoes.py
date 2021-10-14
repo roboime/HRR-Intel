@@ -6,8 +6,6 @@ from visao import *
 #from classes import Classe_camera
 
 
-
-
 ANDAR = "0"                 
 GIRAR_ESQUERDA = "1"        
 GIRAR_DIREITA = "2"         
@@ -17,26 +15,25 @@ DESCER = "5"
 
 casos_dic = ["NAO_HA_RETA", "HA_DUAS_RETAS", "SO_ESQUERDA", "SO_DIREITA"]
 
-ANG_GIRADO = 0.0
 ANG_PITCH_CABECA = 30.0
 ANG_CABECA_DEGRAU = 0.0
 DIST_MAXIMA = 80
-DIST_MIN_OBST_ATUAL = 50.0
+global ANG_GIRADO
+global DIST_MIN_OBST_ATUAL
 
 
-DIST_MAXIMA = 80
-DIST_MIN_OBST_ATUAL = 80
-
-def quando_parar_de_girar_quantizado(sensor_distancia, lista_tempo_de_giro, lista_ang_por_passo, largura_robo, sentido):
+def quando_parar_de_girar_quantizado(sensor_distancia, lista_tempo_de_giro, 
+    lista_ang_por_passo, largura_robo, sentido):
+    
     global DIST_MIN_OBST_ATUAL
     global ANG_GIRADO
     
     if(sentido == GIRAR_DIREITA ):
-        ang_por_passo = lista_ang_por_passo[int(GIRAR_DIREITA)]
-        tempo_de_giro = lista_tempo_de_giro[int(GIRAR_DIREITA)]
+        ang_por_passo = lista_ang_por_passo[GIRAR_DIREITA]
+        tempo_de_giro = lista_tempo_de_giro[GIRAR_DIREITA]
     if(sentido == GIRAR_ESQUERDA ):
-        ang_por_passo = lista_ang_por_passo[int(GIRAR_ESQUERDA)]
-        tempo_de_giro = lista_tempo_de_giro[int(GIRAR_ESQUERDA)]
+        ang_por_passo = lista_ang_por_passo[GIRAR_ESQUERDA]
+        tempo_de_giro = lista_tempo_de_giro[GIRAR_ESQUERDA]
 
     passos_girados = 0
     mult_dist = 4
@@ -75,12 +72,12 @@ def quando_parar_de_girar_quantizado(sensor_distancia, lista_tempo_de_giro, list
 
 def quando_parar_de_realinhar_quantizado(lista_tempo_de_giro, lista_ang_por_passo, sentido_de_giro):
     global ANG_GIRADO
-    if(sentido == GIRAR_DIREITA ):
-        ang_por_passo = lista_ang_por_passo[int(GIRAR_DIREITA)]
-        tempo_de_giro = lista_tempo_de_giro[int(GIRAR_DIREITA)]
-    if(sentido == GIRAR_ESQUERDA ):
-        ang_por_passo = lista_ang_por_passo[int(GIRAR_ESQUERDA)]
-        tempo_de_giro = lista_tempo_de_giro[int(GIRAR_ESQUERDA)]
+    if(sentido_de_giro == GIRAR_DIREITA ):
+        ang_por_passo = lista_ang_por_passo[GIRAR_DIREITA]
+        tempo_de_giro = lista_tempo_de_giro[GIRAR_DIREITA]
+    if(sentido_de_giro == GIRAR_ESQUERDA ):
+        ang_por_passo = lista_ang_por_passo[GIRAR_ESQUERDA]
+        tempo_de_giro = lista_tempo_de_giro[GIRAR_ESQUERDA]
 
 
     intervalo_realinhamento = tempo_de_giro*(ANG_GIRADO//ang_por_passo)
@@ -100,8 +97,8 @@ def quando_parar_de_realinhar_quantizado(lista_tempo_de_giro, lista_ang_por_pass
 
 '''Utiliza somente a velocidade e a variavel global angular definida pela funcao quando parar de girar'''
 def quando_parar_de_andar_visaocomp_quantizado(lista_tempo_de_passo, lista_cm_por_passo):
-    cm_por_passo = lista_cm_por_passo[int(ANDAR)]
-    tempo_de_passo = lista_tempo_de_passo[int(ANDAR)]
+    cm_por_passo = lista_cm_por_passo[ANDAR]
+    tempo_de_passo = lista_tempo_de_passo[ANDAR]
 
     dist_estimado = (DIST_MIN_OBST_ATUAL*np.cos(ANG_PITCH_CABECA*np.pi/180)) / np.cos(ANG_GIRADO)
     tempo_estimado = dist_estimado / (cm_por_passo/float(tempo_de_passo))
