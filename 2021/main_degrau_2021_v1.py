@@ -44,8 +44,8 @@ ANDAR="0"
 GIRAR_ESQUERDA="1"        
 GIRAR_DIREITA="2"         
 PARAR="3"                 
-SUBIR= "4"
-DESCER = "5"
+SUBIR= "6"
+DESCER = "7"
 # Configuracoes iniciais
 
 myrio = classes.Classe_porta_serial()
