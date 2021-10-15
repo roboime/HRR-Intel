@@ -11,7 +11,7 @@ def main():
 
     while(True):
         k = str(input("Entre com um codigo(0-5): "))
-        estado.Trocar_estado(k, myrio)
+        estado.Trocar_estado(k)
 
 
 if __name__ == "__main__":
@@ -19,4 +19,4 @@ if __name__ == "__main__":
         main()
     except:
         print(" CTRL+C detectado. O loop foi interrompido.")
-    estado.Trocar_estado(PARAR, myrio)
+    estado.Trocar_estado(PARAR)
