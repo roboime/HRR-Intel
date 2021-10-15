@@ -16,7 +16,7 @@ angulo_limite = 10.0
 
 largura_do_robo = 25.0
 
-distancialimite = 50.0
+distancialimite = 55.0
 distanciaMedia = 35.0
 distanciaMinima = 20.0
 
