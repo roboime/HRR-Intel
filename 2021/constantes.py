@@ -44,8 +44,8 @@ tempo_para_parar = 1
 ## CONSTANTES DE GIRO
 desloc_por_passo = {
     ANDAR : 10,              # cm por passada
-    GIRAR_ESQUERDA : 10 * np.pi / 180,   # grau por passada
-    GIRAR_DIREITA : 10 * np.pi / 180     # grau por passada
+    GIRAR_ESQUERDA : 2 * np.pi / 180,   # grau por passada
+    GIRAR_DIREITA : 2 * np.pi / 180     # grau por passada
 }
 
 velocidade_ang_em_graus = [0,0,0]
