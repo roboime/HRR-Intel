@@ -35,7 +35,7 @@ tempo_do_passo = {
     PARAR : 1
 }
 
-intervalo_alinhamento = 10
+intervalo_alinhamento = 27
 intervalo_caminhada = 2     # Tentar maximizar intervalo_caminhada quando for botar o robo para andar
 intervalo_enquanto_gira = 3
 tempo_para_parar = 1

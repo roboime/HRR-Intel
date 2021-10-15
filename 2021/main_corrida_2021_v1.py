@@ -32,7 +32,7 @@ estado = classes.Classe_estado(myrio, tempo_do_passo)
 
 def Loop_corrida():
     t_0 = time()
-    t_1 = intervalo_alinhamento + t_0
+    t_1 =  t_0
     while True:
         print("Andando em frente")
         estado.Trocar_estado(ANDAR)
