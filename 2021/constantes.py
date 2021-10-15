@@ -71,7 +71,7 @@ Y2 = 3
 
 RANGE_INCLINACAO = 80 #Em graus
 
-constraste_da_camera = 90
+constraste_da_camera = 80
 tolerancia_central = 15
 tolerancia_para_frente = 60
 
