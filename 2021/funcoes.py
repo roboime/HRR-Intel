@@ -4,20 +4,9 @@ import numpy as np
 import cv2
 from visao import *
 #from classes import Classe_camera
+from constantes import *
 
 
-ANDAR = "0"                 
-GIRAR_ESQUERDA = "1"        
-GIRAR_DIREITA = "2"         
-PARAR = "3"
-SUBIR = "4"
-DESCER = "5"
-
-casos_dic = ["NAO_HA_RETA", "HA_DUAS_RETAS", "SO_ESQUERDA", "SO_DIREITA"]
-
-ANG_PITCH_CABECA = 30.0
-ANG_CABECA_DEGRAU = 0.0
-DIST_MAXIMA = 80
 global ANG_GIRADO
 global DIST_MIN_OBST_ATUAL
 
@@ -46,7 +35,10 @@ def quando_parar_de_girar_quantizado(sensor_distancia, lista_tempo_de_giro,
     while True:
         time.sleep(tempo_de_giro)
         passos_girados +=1
+        print("Passos girados: ", passos_girados)
         sensor_distancia.Get_distance()
+        print("Distancia atual: ", sensor_distancia.atual)
+
         sensor_distancia.atual *= np.cos(ANG_PITCH_CABECA*np.pi/180)
 
         if sensor_distancia.atual < sensor_distancia.anterior:

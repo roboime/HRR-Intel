@@ -23,7 +23,6 @@ distanciaMinima = 20.0
 ######################## CONSTANSTES A SE AJUSTAR ########################
 
 
-DIST_MAXIMA = 80
 
 
 # CONSTANTES DE PASSO
@@ -74,6 +73,15 @@ RANGE_INCLINACAO = 80 #Em graus
 constraste_da_camera = 70
 tolerancia_central = 15
 tolerancia_para_frente = 60
+
+## CONSTANTES FUNCOES
+casos_dic = ["NAO_HA_RETA", "HA_DUAS_RETAS", "SO_ESQUERDA", "SO_DIREITA"]
+
+ANG_PITCH_CABECA = 30.0
+ANG_CABECA_DEGRAU = 0.0
+
+DIST_MAXIMA = 63 * np.cos(ANG_PITCH_CABECA*np.pi/180)
+
 
 ## CONSTANTES DO DEGRAU
 
