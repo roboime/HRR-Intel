@@ -1,5 +1,4 @@
 #import pickle
-from math import dist
 import time
 import numpy as np
 import cv2
