@@ -1,15 +1,10 @@
 from classes import Classe_porta_serial
 from classes import Classe_estado
+from constantes import *
 
-ANDAR="0"                 
-GIRAR_ESQUERDA="1"        
-GIRAR_DIREITA="2"         
-PARAR="3"                 
-SUBIR= "4"
-DESCER = "5"
 
 myrio = Classe_porta_serial()
-estado = Classe_estado(myrio)
+estado = Classe_estado(myrio, tempo_do_passo)
 
 def main():
     print("Os codigos possiveis sao:\nANDAR: 0\nGIRAR_ESQUERDA: 1\nGIRAR_DIREITA: 2\nPARAR: 3\nSUBIR: 4\nDESCER: 5\n")
