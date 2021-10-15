@@ -100,6 +100,7 @@ def ponto_medio_borda_inferior2(objeto_imagem):
     cv2.waitKey()'''
     cv2.line(objeto_imagem.img, (x_min,y_max), (x_max,y_max), (0,0,255), 2)
     objeto_imagem.img = cv2.circle(objeto_imagem.img, (x_med, y_max), radius=10, color=(0, 255, 255), thickness=-1)
+    print("TAMANHO DO BAGUIU", x_max - x_min)
     return x_min, x_max, y_max
 
 def bordas_laterais_v3(objeto_imagem):
@@ -177,7 +178,7 @@ def decisao_desvio2(objeto_imagem):
     poly_left = [coef_angular(lista_esquerda), coef_linear(lista_esquerda)]
     poly_right = [coef_angular(lista_direita), coef_linear(lista_direita)]
     # j = 1: linha central. j = 2: borda direita. j = 3: borda esquerda. j = 0: nenhuma borda
-    pixel_scale = 20.4
+    pixel_scale = 17.5
     d_min = 40
     x_robot = 0
     if x == 0 and y == 0:
