@@ -65,15 +65,13 @@ def quando_parar_de_girar_quantizado(sensor_distancia, lista_tempo_de_giro,
 
 def quando_parar_de_realinhar_quantizado(lista_tempo_de_giro, lista_ang_por_passo, sentido_de_giro):
     global ANG_GIRADO
-    if(sentido_de_giro == GIRAR_DIREITA ):
-        ang_por_passo = lista_ang_por_passo[GIRAR_DIREITA]
-        tempo_de_giro = lista_tempo_de_giro[GIRAR_DIREITA]
-    if(sentido_de_giro == GIRAR_ESQUERDA ):
-        ang_por_passo = lista_ang_por_passo[GIRAR_ESQUERDA]
-        tempo_de_giro = lista_tempo_de_giro[GIRAR_ESQUERDA]
+    
+    ang_por_passo = lista_ang_por_passo[sentido_de_giro]
+    tempo_de_giro = lista_tempo_de_giro[sentido_de_giro]
 
 
     intervalo_realinhamento = tempo_de_giro*(ANG_GIRADO//ang_por_passo)
+    print("Intervalo_realinhamento: ", intervalo_realinhamento)
     t_0 = t_1 = time.time()
     while t_1-t_0 <= intervalo_realinhamento:
         time.sleep(tempo_de_giro)
