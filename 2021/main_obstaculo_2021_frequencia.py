@@ -75,7 +75,7 @@ def Loop_obstaculo():
             estado.Trocar_estado(funcoes.checar_alinhamento_pista_v2(camera))  # Frente, GIRAR_ESQUERDA ou GIRAR_DIREITA
             while estado.Obter_estado_atual()  == GIRAR_ESQUERDA or estado.Obter_estado_atual() == GIRAR_DIREITA:
                 print("desalinhado com a pista")
-                sleep(tempo_do_passo[int(estado.Obter_estado_atual())])
+                sleep(tempo_do_passo[estado.Obter_estado_atual()])
                 estado.Trocar_estado(funcoes.checar_alinhamento_pista_v2(camera))
             print("REALINHOU!")
             t_0 = t_1 = time()
