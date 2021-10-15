@@ -13,7 +13,7 @@ tolerancia_para_frente = 60
 
 class Classe_camera():
     def __init__(self):
-        self.path_atual = "./tests/fotos_main/imagem_teste_contraste_4.jpg"
+        self.path_atual = "./tests/fotos_main/imagem_main0.jpg"
 
     def Take_photo(self):
         return self.path_atual

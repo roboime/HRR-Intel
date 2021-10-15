@@ -1,19 +1,9 @@
 import cv2
 import numpy as np
 import math
+from constantes import *
 #import classes
 
-NAO_HA_RETA = 0
-HA_DUAS_RETAS = 1
-SO_ESQUERDA = 2
-SO_DIREITA = 3
-
-X1 = 0
-Y1 = 1
-X2 = 2
-Y2 = 3
-
-RANGE_INCLINACAO = 70 #Em graus
 
 """ Classe relacionada a imagem obtida pela camera. Ao ser chamada, inverte a imagem e salva constantes relacionadas a imagem, como altura, largura e centro.
  Possui o metodo mask, que retorna a mascara da imagem, passando o arquivo onde esta salvo os ranges da cor."""
@@ -24,7 +14,7 @@ class Classe_imagem():
         #img = np.array(img)
 
         img = cv2.rotate(img, cv2.ROTATE_180)
-        cv2.imwrite("/home/pi/Pictures/imagem_girada.jpg", img)
+        #cv2.imwrite("/home/pi/Pictures/imagem_girada.jpg", img)
 
         img.astype(np.uint8)
 
