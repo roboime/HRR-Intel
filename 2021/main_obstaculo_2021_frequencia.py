@@ -45,18 +45,18 @@ def Loop_obstaculo():
         if sensor_distancia.Get_distance() <= distancialimite:
             print ("obstaculo detectado ", sensor_distancia.atual)
             estado.Trocar_estado(PARAR)
-            print(estado)
+            #print(estado)
             estado.Trocar_estado(funcoes.decisao_desvio(camera))
-            print(estado)
+            #print(estado)
             
             if (estado.atual == GIRAR_ESQUERDA or estado.atual == GIRAR_DIREITA):
                 direcao_girada  = estado.atual            
                 estado.Trocar_estado(funcoes.quando_parar_de_girar_quantizado(sensor_distancia, tempo_do_passo, desloc_por_passo, largura_do_robo, direcao_girada))    
-                print(estado)
+                #print(estado)
                 estado.Trocar_estado(ANDAR)
-                print(estado)
+                #print(estado)
                 estado.Trocar_estado(funcoes.quando_parar_de_andar_visaocomp_quantizado(tempo_do_passo, desloc_por_passo))
-                print(estado)
+                #print(estado)
                 print("obstaculo ultrapassado, iniciando compensasao de angulo")
                 if(direcao_girada == GIRAR_ESQUERDA):
                     estado.Trocar_estado(GIRAR_DIREITA)
