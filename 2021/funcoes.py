@@ -56,7 +56,7 @@ def quando_parar_de_girar_quantizado(sensor_distancia, lista_tempo_de_giro,
            # ANG_GIRADO = mult_ang_girado*ANG_GIRADO_TRIGO + (1-mult_ang_girado)*ANG_GIRADO_VEL_ANG
            
             intervalo_seguranca = tempo_de_giro*((ANG_GIRADO//ang_por_passo) - passos_girados)
-           
+            print("Intervalo de seguranca: ", intervalo_seguranca)
             time.sleep(intervalo_seguranca)
             break
  #   print("ANG GIRADO: ", ANG_GIRADO)
