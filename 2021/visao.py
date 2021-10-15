@@ -29,7 +29,8 @@ class Classe_imagem():
 
         #print("SAIMO DO WARPAFFINE")
         self.img = img
-        self.topo_da_pista = int(0.3*self.altura) #coordenada y do topo da pista
+        #self.topo_da_pista = int(0.0*self.altura) #coordenada y do topo da pista
+        self.topo_da_pista = 0
         self.meio_da_pista = 0 # coordenada x do meio da pista
         self.largura_pista = 0 # largura do final da pista na imagem
         self.mult_largura_pista = 0.7 #ate quanto da metade da largura da pista ainda eh atravessavel pelo robo
@@ -44,7 +45,8 @@ class Classe_imagem():
             upper = np.array([int(range[3]),int(range[4]),int(range[5])])
         mask = cv2.inRange(hsv, lower, upper)
         kernel = np.ones((5,5), np.uint8) 
-        mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel, iterations=2)
+        mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel, iterations=1)
+        mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel, iterations=1)
         return mask
 
 '''tira o coeficiente angular ( delta y / delta x) a partir de uma lista de coordenadas x1 y1 x2 y2. utilizada em funcoes 

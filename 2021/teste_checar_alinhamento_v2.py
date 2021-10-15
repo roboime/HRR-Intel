@@ -4,7 +4,7 @@ from os import listdir
 from os.path import  join
 from visao import *
 
-path = "./tests/fotos/"
+path = "./tests/fotos_main/"
 
 IMAGES = [Classe_imagem(join(path, f)) for f in listdir(join(path))]
 
@@ -27,7 +27,7 @@ def bordas_laterais_v3(objeto_imagem):
    # reconhecer_pista(mask, objeto_imagem)
     img = objeto_imagem.img
     edges = cv2.Canny(mask, 50, 150, apertureSize=3)
-#    cv2.imwrite( path+"../masks/"+str(i)+".png", mask)
+    cv2.imwrite( path+"../masks/"+str(i)+".png", mask)
 
     lines = cv2.HoughLinesP(edges, 1, np.pi/180, 100, minLineLength=10, maxLineGap=150)
     left_lines = []
