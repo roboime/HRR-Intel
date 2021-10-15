@@ -53,14 +53,14 @@ def Loop_degrau(Estado, proximidade,numero_de_passos):
         
     estado.Trocar_estado(PARAR)
 
-    situacao = funcoes.checar_alinhamento_pista_v1(camera)
+    situacao = funcoes.checar_alinhamento_pista_v1(camera, tolerancia_central, tolerancia_para_frente)
 
     while situacao != ANDAR:
         estado.Trocar_estado(situacao)
         sleep(intervalo_enquanto_gira)
         estado.Trocar_estado(PARAR)
         sleep(tempo_para_parar)
-        situacao = funcoes.checar_alinhamento_pista_v1(camera)
+        situacao = funcoes.checar_alinhamento_pista_v1(camera, tolerancia_central, tolerancia_para_frente)
         print("Alinhando...")
 
     estado.Trocar_estado(Estado)
