@@ -1,4 +1,5 @@
 #import pickle
+from math import dist
 import time
 import numpy as np
 import cv2
@@ -93,7 +94,8 @@ def quando_parar_de_andar_visaocomp_quantizado(lista_tempo_de_passo, lista_cm_po
     tempo_de_passo = lista_tempo_de_passo[ANDAR]
 
     dist_estimado = (DIST_MIN_OBST_ATUAL*np.cos(ANG_PITCH_CABECA*np.pi/180)) / np.cos(ANG_GIRADO)
-    tempo_estimado = dist_estimado / (cm_por_passo/float(tempo_de_passo))
+    tempo_estimado = (dist_estimado // (cm_por_passo)) * (tempo_de_passo)
+    print("Ultima distancia: ", DIST_MIN_OBST_ATUAL, " dis estimado: ", dist_estimado, " tempo estimado: ", tempo_estimado)
     t_0 = t_1 = time.time()
     while (t_1 - t_0 < tempo_estimado):
         print("Ainda faltam andar:", (tempo_estimado - (t_1 - t_0))//tempo_de_passo, "passos")
