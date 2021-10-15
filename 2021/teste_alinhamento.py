@@ -13,7 +13,7 @@ tolerancia_para_frente = 60
 
 class Classe_camera():
     def __init__(self):
-        self.path_atual = "./tests/fotos_main/imagem_main0.jpg"
+        self.path_atual = "./tests/fotos_main/imagem_main3.jpg"
 
     def Take_photo(self):
         return self.path_atual
@@ -55,5 +55,6 @@ def main():
     camera = Classe_camera()
     estado = Classe_estado()
     estado.Trocar_estado(funcoes.checar_alinhamento_pista_v1(camera, tolerancia_central, tolerancia_para_frente))
+    #estado.Trocar_estado(funcoes.checar_alinhamento_pista_v2(camera))
 
 if __name__ == "__main__": main()
