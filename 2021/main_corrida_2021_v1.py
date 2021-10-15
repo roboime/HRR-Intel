@@ -42,14 +42,14 @@ def Loop_corrida():
             print("hora de alinhar")
             estado.Trocar_estado(PARAR)
             sleep(tempo_para_parar)
-            estado.Trocar_estado(funcoes.checar_alinhamento_pista_v2(camera))  # Frente, GIRAR_ESQUERDA ou GIRAR_DIREITA
+            estado.Trocar_estado(funcoes.checar_alinhamento_pista_v1(camera))  # Frente, GIRAR_ESQUERDA ou GIRAR_DIREITA
             numero_de_giradas = 1
             while estado.Obter_estado_atual() == GIRAR_DIREITA or estado.Obter_estado_atual() == GIRAR_ESQUERDA:
                 print("desalinhado com a pista, iniciando a ",numero_de_giradas, "a girada")
                 sleep(intervalo_enquanto_gira)
                 estado.Trocar_estado(PARAR)
                 sleep(tempo_para_parar)
-                estado.Trocar_estado(funcoes.checar_alinhamento_pista_v2(camera))
+                estado.Trocar_estado(funcoes.checar_alinhamento_pista_v1(camera))
                 numero_de_giradas+=1
             print("direcao corrigida")
             numero_de_giradas = 1
