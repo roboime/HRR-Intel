@@ -97,6 +97,7 @@ def quando_parar_de_andar_visaocomp_quantizado(lista_tempo_de_passo, lista_cm_po
     t_0 = t_1 = time.time()
     while (t_1 - t_0 < tempo_estimado):
         print("Ainda faltam andar:", (tempo_estimado - (t_1 - t_0))//tempo_de_passo, "passos")
+        time.sleep(tempo_de_passo)
         t_1 = time.time()
         continue
 
