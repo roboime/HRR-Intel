@@ -434,7 +434,7 @@ def checar_alinhamento_pista_v2(camera):
         x1, _ = interscetion(horizontal, left)
         x2, _ = interscetion(horizontal, right)
         largura_pista = abs(x2 - x1)
-        mult_largura_pista = 0.7
+        mult_largura_pista = 1
         delta_x = (x1+x2)//2-objeto_imagem.largura//2
 #        objeto_imagem.img = cv2.line(objeto_imagem.img, (objeto_imagem.largura//2, 0), (objeto_imagem.largura//2, objeto_imagem.altura), (255, 0, 0), 2)
  #       objeto_imagem.img = cv2.line(objeto_imagem.img, (int(objeto_imagem.largura_pista//2*objeto_imagem.mult_largura_pista)+(x1+x2)//2, 0), (int(objeto_imagem.largura_pista//2*objeto_imagem.mult_largura_pista)+(x1+x2)//2, objeto_imagem.altura), (127, 127, 0), 2)
