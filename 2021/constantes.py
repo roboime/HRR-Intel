@@ -29,10 +29,10 @@ distanciaMinima = 20.0
 
 ## CONSTANTES DE TEMPO
 tempo_do_passo = {
-    ANDAR : 2,
-    GIRAR_ESQUERDA : 1,
-    GIRAR_DIREITA : 1,
-    PARAR : 1
+    ANDAR : 0.53,
+    GIRAR_ESQUERDA : 1.76,
+    GIRAR_DIREITA : 1.72,
+    PARAR : 0.5
 }
 
 intervalo_alinhamento = 27
@@ -43,9 +43,9 @@ tempo_para_parar = 1
 
 ## CONSTANTES DE GIRO
 desloc_por_passo = {
-    ANDAR : 10,              # cm por passada
-    GIRAR_ESQUERDA : 10 * np.pi / 180,   # grau por passada
-    GIRAR_DIREITA : 10 * np.pi / 180     # grau por passada
+    ANDAR : 0.73,              # cm por passada
+    GIRAR_ESQUERDA : 5.3 * np.pi / 180,   # grau por passada
+    GIRAR_DIREITA : 7.5 * np.pi / 180     # grau por passada
 }
 
 velocidade_ang_em_graus = [0,0,0]
