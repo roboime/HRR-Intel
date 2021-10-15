@@ -26,7 +26,7 @@ lineType               = 2
 def ponto_medio_borda_inferior2(objeto_imagem):
     
     orangemask = objeto_imagem.mask("ranges_laranja.txt")
-    cv2.imwrite( path+"../masks/"+str(ind)+".png", orangemask)
+   # cv2.imwrite( path+"../masks/"+str(ind)+".png", orangemask)
     largura = objeto_imagem.largura
     # Usamos "Canny" para pegar os contornos
     
@@ -108,7 +108,7 @@ def bordas_laterais_v3(objeto_imagem):
    # reconhecer_pista(mask, objeto_imagem)
     img = objeto_imagem.img
     edges = cv2.Canny(mask, 50, 150, apertureSize=3)
-  #  cv2.imwrite( path+"../masks/"+str(ind)+".png", mask)
+    cv2.imwrite( path+"../masks/"+str(ind)+".png", mask)
 
     lines = cv2.HoughLinesP(edges, 1, np.pi/180, 100, minLineLength=10, maxLineGap=150)
     left_lines = []
