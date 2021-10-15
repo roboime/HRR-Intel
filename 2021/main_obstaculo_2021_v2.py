@@ -163,13 +163,13 @@ def Loop_obstaculo():
         if t_1 - t_0 >= intervalo_alinhamento:
             estado.Trocar_estado(PARAR)
             sleep(tempo_para_parar)
-            estado.Trocar_estado(funcoes.checar_alinhamento_pista_v2(camera))  # Frente, GIRAR_ESQUERDA ou GIRAR_DIREITA
+            estado.Trocar_estado(funcoes.checar_alinhamento_pista_v1(camera, tolerancia_central, tolerancia_para_frente))  # Frente, GIRAR_ESQUERDA ou GIRAR_DIREITA
             while estado.Obter_estado_atual() != PARAR and estado.Obter_estado_atual() != ANDAR:
                 print("desalinhado com a pista")
                 sleep(intervalo_enquanto_gira)
                 estado.Trocar_estado(PARAR)
                 sleep(tempo_para_parar)
-                estado.Trocar_estado(funcoes.checar_alinhamento_pista_v2(camera))
+                estado.Trocar_estado(funcoes.checar_alinhamento_pista_v1(camera, tolerancia_central, tolerancia_para_frente))
             print("direcao corrigida")
             print(estado.atual)
             t_0 = t_1 = time()

@@ -23,8 +23,6 @@ distanciaMinima = 20.0
 ######################## CONSTANSTES A SE AJUSTAR ########################
 
 
-
-
 # CONSTANTES DE PASSO
 
 ## CONSTANTES DE TEMPO
@@ -39,7 +37,6 @@ intervalo_alinhamento = 27
 intervalo_caminhada = 2     # Tentar maximizar intervalo_caminhada quando for botar o robo para andar
 intervalo_enquanto_gira = 3
 tempo_para_parar = 1
-
 
 ## CONSTANTES DE GIRO
 desloc_por_passo = {
@@ -77,11 +74,10 @@ tolerancia_para_frente = 60
 ## CONSTANTES FUNCOES
 casos_dic = ["NAO_HA_RETA", "HA_DUAS_RETAS", "SO_ESQUERDA", "SO_DIREITA"]
 
-ANG_PITCH_CABECA = 30.0
+ANG_PITCH_CABECA = 38.0
 ANG_CABECA_DEGRAU = 0.0
 
 DIST_MAXIMA = 63 * np.cos(ANG_PITCH_CABECA*np.pi/180)
-
 
 ## CONSTANTES DO DEGRAU
 

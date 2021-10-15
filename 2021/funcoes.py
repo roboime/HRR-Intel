@@ -34,7 +34,7 @@ def quando_parar_de_girar_quantizado(sensor_distancia, lista_tempo_de_giro,
     
     while True:
         time.sleep(tempo_de_giro)
-        passos_girados +=1
+        passos_girados += 1
         print("Passos girados: ", passos_girados)
         sensor_distancia.Get_distance()
         print("Distancia atual: ", sensor_distancia.atual)
@@ -49,7 +49,8 @@ def quando_parar_de_girar_quantizado(sensor_distancia, lista_tempo_de_giro,
 
             ANG_GIRADO = np.arctan2( DIST_MIN_OBST_ATUAL*np.tan(theta_passo) + largura_robo*mult_largura, DIST_MIN_OBST_ATUAL)
             ANG_GIRADO //= ang_por_passo
-            ANG_GIRADO = (ANG_GIRADO + 1 )*ang_por_passo 
+            ANG_GIRADO = (ANG_GIRADO + 1)*ang_por_passo 
+            print("ANG GIRADO: ", 180/np.pi*ANG_GIRADO)
             #theta_trigo = np.arccos(DIST_MIN_OBST_ATUAL/sensor_distancia.anterior)
            # ANG_GIRADO_TRIGO = np.arctan2( DIST_MIN_OBST_ATUAL*np.tan(theta_trigo) + largura_robo*mult_largura, DIST_MIN_OBST_ATUAL)
         #    print("ANG_GIRADO_VEL_ANG: ", ANG_GIRADO_VEL_ANG, "\nANG_GIRADO_TRIGO: ", ANG_GIRADO_TRIGO, "\n")
@@ -64,26 +65,23 @@ def quando_parar_de_girar_quantizado(sensor_distancia, lista_tempo_de_giro,
 
 def quando_parar_de_realinhar_quantizado(lista_tempo_de_giro, lista_ang_por_passo, sentido_de_giro):
     global ANG_GIRADO
-    if(sentido_de_giro == GIRAR_DIREITA ):
-        ang_por_passo = lista_ang_por_passo[GIRAR_DIREITA]
-        tempo_de_giro = lista_tempo_de_giro[GIRAR_DIREITA]
-    if(sentido_de_giro == GIRAR_ESQUERDA ):
-        ang_por_passo = lista_ang_por_passo[GIRAR_ESQUERDA]
-        tempo_de_giro = lista_tempo_de_giro[GIRAR_ESQUERDA]
+    
+    ang_por_passo = lista_ang_por_passo[sentido_de_giro]
+    tempo_de_giro = lista_tempo_de_giro[sentido_de_giro]
 
 
     intervalo_realinhamento = tempo_de_giro*(ANG_GIRADO//ang_por_passo)
+    print("Intervalo_realinhamento: ", intervalo_realinhamento)
     t_0 = t_1 = time.time()
-    while True:
+    while t_1-t_0 <= intervalo_realinhamento:
         time.sleep(tempo_de_giro)
         t_1 = time.time()
-        if t_1-t_0 > intervalo_realinhamento: 
-            break
+
         if(sentido_de_giro == GIRAR_DIREITA):
             print("girando para a  DIREITA, faltam ", (intervalo_realinhamento-(t_1 - t_0))//tempo_de_giro, "passos para compensar o angulo girado")
         else:
             print("girando para a  ESQUERDA, faltam ", (intervalo_realinhamento-(t_1 - t_0))//tempo_de_giro, "passos para compensar o angulo girado")
-
+        
     return ANDAR
 
 

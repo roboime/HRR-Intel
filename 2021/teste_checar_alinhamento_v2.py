@@ -3,6 +3,7 @@
 from os import listdir
 from os.path import  join
 from visao import *
+from constantes import *
 
 path = "./tests/fotos_main/"
 
