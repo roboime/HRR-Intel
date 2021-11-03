@@ -20,7 +20,7 @@ class Classe_camera():
     def __init__(self):
         print("Entra no _init_ da Classe_camera")
         self.camera = picamera.PiCamera()
-        self.intervalo_foto = 0.5
+        self.intervalo_foto = 0.25
         self.indice_atual = 0
         self.path_pasta = os.path.dirname(os.path.abspath(__file__))
         self.path_atual = self.path_pasta + "1.jpg"

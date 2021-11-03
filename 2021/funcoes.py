@@ -26,7 +26,7 @@ def quando_parar_de_girar_quantizado(sensor_distancia, lista_tempo_de_giro,
 
     passos_girados = 0
     mult_dist = 4
-    mult_largura = 0.6
+    mult_largura = 0.0
     mult_ang_girado = 0
     sensor_distancia.Get_distance()
     sensor_distancia.atual *= np.cos(ANG_PITCH_CABECA*np.pi/180)
