@@ -40,7 +40,7 @@ def Loop_corrida():
         ########################################### Checando alinhamento com a pista ###########################################
         if t_1 - t_0 >= intervalo_alinhamento:
             print("hora de alinhar")
-            estado.Trocar_estado(PARAR)
+            estado.Trocar_estado(PARAR) ##tirar esse tempo ja que as pausas devem estar embutidas no tirar foto e na troca de estados
             sleep(tempo_para_parar)
             estado.Trocar_estado(funcoes.checar_alinhamento_pista_v1(camera, tolerancia_central, tolerancia_para_frente))  # Frente, GIRAR_ESQUERDA ou GIRAR_DIREITA
             numero_de_giradas = 1
