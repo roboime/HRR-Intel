@@ -31,7 +31,7 @@ estado = classes.Classe_estado(myrio, tempo_do_passo)
 #Funcao main
 
 def Loop_corrida():
-    t_0 = time()
+    t_0 = time() #time() é a função que retorna o tempo que está sendo marcado
     t_1 =  t_0
     while True:
         print("Andando em frente")
@@ -41,7 +41,7 @@ def Loop_corrida():
         if t_1 - t_0 >= intervalo_alinhamento:
             print("hora de alinhar")
             estado.Trocar_estado(PARAR) ##tirar esse tempo ja que as pausas devem estar embutidas no tirar foto e na troca de estados
-            sleep(tempo_para_parar)
+            sleep(tempo_para_parar) ## a função sleep para a execução do código pelo tempo passado como parametro
             estado.Trocar_estado(funcoes.checar_alinhamento_pista_v2(camera))  # Frente, GIRAR_ESQUERDA ou GIRAR_DIREITA
             numero_de_giradas = 1
             while estado.Obter_estado_atual() == GIRAR_DIREITA or estado.Obter_estado_atual() == GIRAR_ESQUERDA:
@@ -54,9 +54,9 @@ def Loop_corrida():
             print("direcao corrigida")
             numero_de_giradas = 1
             print(estado.atual)
-            t_0 = t_1 = time()
+            t_0 = t_1 = time() # reiniciar a contagem do tempo
         else:
-            t_1 = time()
+            t_1 = time() # atualizar o tempo decorrido para ao passar do intercvalo de caminhada o robo receber o comando de parar
 
 def get_camera():
     return camera

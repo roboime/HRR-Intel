@@ -40,7 +40,6 @@ def Loop_obstaculo():
         ########################################### Checando proximidade de obstaculo ##########################################
 
         print("Medida do sensor de distancia: {}\n".format(sensor_distancia.Get_distance()))
-
         if sensor_distancia.Get_distance() <= distancialimite and sensor_distancia.Get_distance() >= distanciaMedia:
             print ("obstaculo detectado ", sensor_distancia.atual)
             estado.Trocar_estado(PARAR)
