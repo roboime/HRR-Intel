@@ -1,3 +1,4 @@
+from cv2 import imread
 import serial
 import RPi.GPIO as GPIO
 import RTIMU
@@ -9,6 +10,8 @@ import os
 import cv2
 import numpy as np
 from constantes import *
+
+#cont = 0
 
 def get_tempo_do_passo():
     return tempo_do_passo
@@ -30,12 +33,16 @@ class Classe_camera():
         self.camera.contrast = constraste_da_camera
         time.sleep(self.intervalo_foto)
         try:
-            self.path_atual = "./tests/fotos_main/imagem_main" + str(self.indice_atual) + ".jpg"
+            self.path_atual = "./tests/imagens/filme3/" + str(self.indice_atual) + ".jpg"
             print(" foto tirada em " + self.path_atual)
             self.camera.capture(self.path_atual)
             self.camera.stop_preview()
-            self.indice_atual = (self.indice_atual + 1) % 10
-            print("Saindo do Take_photo()")
+            #self.indice_atual = (self.indice_atual + 1) % 10
+            print(self.indice_atual)
+            #print("Saindo do Take_photo()")
+            img = imread(self.path_atual)
+            cv2.imwrite("./tests/imagens/filme4/" + str(self.indice_atual) + ".jpg", img)
+            self.indice_atual += 1
             return self.path_atual
         except KeyboardInterrupt: self.camera.stop_preview()
 

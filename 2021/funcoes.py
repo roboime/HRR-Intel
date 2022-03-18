@@ -395,37 +395,44 @@ def checar_alinhamento_pista_v1(camera, tolerancia_central, tolerancia_para_fren
     HA_DUAS_RETAS - Neste caso, calcula-se a interseccao das duas bordas com o topo da pista. Se o meio da imagem estiver entre os 2 pontos
     e numa folga relativa a largura do robo, entao o robo esta na direcao certa. Senao, retornara para girar.
 '''
-def checar_alinhamento_pista_v2(camera):
-    path = camera.Take_photo()
-    objeto_imagem = Classe_imagem(path)
+def checar_alinhamento_pista_v2( objeto_imagem):
+   # path = camera.Take_photo()
+    #objeto_imagem = Classe_imagem(path)
     left, right, caso = bordas_laterais_v2(objeto_imagem)
-    reta_esquerda, reta_direita, caso = bordas_laterais_v2(objeto_imagem)
+    #reta_esquerda, reta_direita, caso = bordas_laterais_v2(objeto_imagem)
     k = objeto_imagem.largura//2
     if caso == SO_DIREITA:
         horizontal = [0, objeto_imagem.topo_da_pista, objeto_imagem.largura, objeto_imagem.topo_da_pista]
         x, _ = interscetion(horizontal, right)
         delta_x = x-objeto_imagem.largura//2
-        min_largura = k - (objeto_imagem.altura - objeto_imagem.topo_da_pista) / coef_angular(right)
-  #      objeto_imagem.img = cv2.circle(objeto_imagem.img, (x, objeto_imagem.topo_da_pista), radius=10, color=(0, 0, 255), thickness=-1)
-   #     objeto_imagem.img = cv2.line(objeto_imagem.img, (objeto_imagem.largura//2 + min_largura, 0), (objeto_imagem.largura//2 + min_largura, objeto_imagem.altura), (127, 127, 0), 2)
-    #    objeto_imagem.img = cv2.line(objeto_imagem.img, (objeto_imagem.largura//2, 0), (objeto_imagem.largura//2, objeto_imagem.altura), (255, 0, 0), 2)
+        min_largura =int( k - (objeto_imagem.altura - objeto_imagem.topo_da_pista) / coef_angular(right))
+
+        objeto_imagem.img = cv2.circle(objeto_imagem.img, (x, objeto_imagem.topo_da_pista), radius=10, color=(0, 0, 255), thickness=-1)
+        objeto_imagem.img = cv2.line(objeto_imagem.img, (objeto_imagem.largura//2 + min_largura, 0), (objeto_imagem.largura//2 + min_largura, objeto_imagem.altura), (127, 127, 0), 2)
+        objeto_imagem.img = cv2.line(objeto_imagem.img, (objeto_imagem.largura//2, 0), (objeto_imagem.largura//2, objeto_imagem.altura), (255, 0, 0), 2)
+        
         if delta_x > min_largura and delta_x > 0:
+            cv2.putText(objeto_imagem.img, 'EM FRENTE', (30,30), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2, cv2.LINE_AA)
             return ANDAR
         else:
+            cv2.putText(objeto_imagem.img, 'GIRAR A ESQUERDA', (30,30), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2, cv2.LINE_AA)
             return GIRAR_ESQUERDA
     elif caso == SO_ESQUERDA:
         horizontal = [0, objeto_imagem.topo_da_pista, objeto_imagem.largura, objeto_imagem.topo_da_pista]
         x, _ = interscetion(horizontal, left)
         delta_x = -x + objeto_imagem.largura//2
-        min_largura = k + (objeto_imagem.altura - objeto_imagem.topo_da_pista) / coef_angular(left)
-        #objeto_imagem.img = cv2.circle(objeto_imagem.img, (x, objeto_imagem.topo_da_pista), radius=10, color=(0, 0, 255), thickness=-1)
-        #objeto_imagem.img = cv2.line(objeto_imagem.img, (objeto_imagem.largura//2 + min_largura, 0), (objeto_imagem.largura//2 + min_largura, objeto_imagem.altura), (127, 127, 0), 2)
-        #objeto_imagem.img = cv2.line(objeto_imagem.img, (objeto_imagem.largura//2, 0), (objeto_imagem.largura//2, objeto_imagem.altura), (255, 0, 0), 2)
+        min_largura = int(k + (objeto_imagem.altura - objeto_imagem.topo_da_pista) / coef_angular(left))
+        objeto_imagem.img = cv2.circle(objeto_imagem.img, (x, objeto_imagem.topo_da_pista), radius=10, color=(0, 0, 255), thickness=-1)
+        objeto_imagem.img = cv2.line(objeto_imagem.img, (objeto_imagem.largura//2 + min_largura, 0), (objeto_imagem.largura//2 + min_largura, objeto_imagem.altura), (127, 127, 0), 2)
+        objeto_imagem.img = cv2.line(objeto_imagem.img, (objeto_imagem.largura//2, 0), (objeto_imagem.largura//2, objeto_imagem.altura), (255, 0, 0), 2)
         if delta_x > min_largura and delta_x > 0:
+            cv2.putText(objeto_imagem.img, 'EM FRENTE', (30,30), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2, cv2.LINE_AA)
             return ANDAR
         else:
+            cv2.putText(objeto_imagem.img, 'GIRAR A DIREITA', (30,30), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2, cv2.LINE_AA)
             return GIRAR_DIREITA
     elif caso == NAO_HA_RETA:
+        cv2.putText(objeto_imagem.img, 'EM FRENTE (RETAS NAO ENCONTRADAS)', (30,30), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2, cv2.LINE_AA)
         return ANDAR
     else:
         horizontal = [0, objeto_imagem.topo_da_pista, objeto_imagem.largura, objeto_imagem.topo_da_pista]
@@ -434,15 +441,18 @@ def checar_alinhamento_pista_v2(camera):
         largura_pista = abs(x2 - x1)
         mult_largura_pista = 1
         delta_x = (x1+x2)//2-objeto_imagem.largura//2
-#        objeto_imagem.img = cv2.line(objeto_imagem.img, (objeto_imagem.largura//2, 0), (objeto_imagem.largura//2, objeto_imagem.altura), (255, 0, 0), 2)
- #       objeto_imagem.img = cv2.line(objeto_imagem.img, (int(objeto_imagem.largura_pista//2*objeto_imagem.mult_largura_pista)+(x1+x2)//2, 0), (int(objeto_imagem.largura_pista//2*objeto_imagem.mult_largura_pista)+(x1+x2)//2, objeto_imagem.altura), (127, 127, 0), 2)
-  #      objeto_imagem.img = cv2.line(objeto_imagem.img, (-int(objeto_imagem.largura_pista//2*objeto_imagem.mult_largura_pista)+(x1+x2)//2, 0), (-int(objeto_imagem.largura_pista//2*objeto_imagem.mult_largura_pista)+(x1+x2)//2, objeto_imagem.altura), (127, 127, 0), 2)
-   #     objeto_imagem.img = cv2.circle(objeto_imagem.img, (x1, objeto_imagem.topo_da_pista), radius=10, color=(0, 255, 255), thickness=-1)
-    #    objeto_imagem.img = cv2.circle(objeto_imagem.img, (x2, objeto_imagem.topo_da_pista), radius=10, color=(0, 255, 255), thickness=-1)
-     #   objeto_imagem.img = cv2.circle(objeto_imagem.img, ((x1+x2)//2, objeto_imagem.topo_da_pista), radius=10, color=(0, 0, 255), thickness=-1)
+        objeto_imagem.img = cv2.line(objeto_imagem.img, (objeto_imagem.largura//2, 0), (objeto_imagem.largura//2, objeto_imagem.altura), (255, 0, 0), 2)
+        objeto_imagem.img = cv2.line(objeto_imagem.img, (int(objeto_imagem.largura_pista//2*objeto_imagem.mult_largura_pista)+(x1+x2)//2, 0), (int(objeto_imagem.largura_pista//2*objeto_imagem.mult_largura_pista)+(x1+x2)//2, objeto_imagem.altura), (127, 127, 0), 2)
+        objeto_imagem.img = cv2.line(objeto_imagem.img, (-int(objeto_imagem.largura_pista//2*objeto_imagem.mult_largura_pista)+(x1+x2)//2, 0), (-int(objeto_imagem.largura_pista//2*objeto_imagem.mult_largura_pista)+(x1+x2)//2, objeto_imagem.altura), (127, 127, 0), 2)
+        objeto_imagem.img = cv2.circle(objeto_imagem.img, (x1, objeto_imagem.topo_da_pista), radius=10, color=(0, 255, 255), thickness=-1)
+        objeto_imagem.img = cv2.circle(objeto_imagem.img, (x2, objeto_imagem.topo_da_pista), radius=10, color=(0, 255, 255), thickness=-1)
+        objeto_imagem.img = cv2.circle(objeto_imagem.img, ((x1+x2)//2, objeto_imagem.topo_da_pista), radius=10, color=(0, 0, 255), thickness=-1)
         if largura_pista//2*mult_largura_pista > abs(delta_x):
+            cv2.putText(objeto_imagem.img, 'EM FRENTE', (30,30), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2, cv2.LINE_AA)
             return ANDAR
         elif delta_x > 0:
+            cv2.putText(objeto_imagem.img, 'GIRAR A DIREITA', (30,30), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2, cv2.LINE_AA)
             return GIRAR_DIREITA
         else:
+            cv2.putText(objeto_imagem.img, 'GIRAR A ESQUERDA', (30,30), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2, cv2.LINE_AA)
             return GIRAR_ESQUERDA

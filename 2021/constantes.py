@@ -27,14 +27,14 @@ distanciaMinima = 20.0
 
 ## CONSTANTES DE TEMPO
 tempo_do_passo = {
-    ANDAR : 1.06,
-    GIRAR_ESQUERDA : 1.76,
-    GIRAR_DIREITA : 1.72,
-    PARAR : 0.75
+    ANDAR : 0.04,
+    GIRAR_ESQUERDA : 0.04,
+    GIRAR_DIREITA : 0.04,
+    PARAR : 0.04
 }
 
-intervalo_alinhamento = 20
-intervalo_caminhada = 2     # Tentar maximizar intervalo_caminhada quando for botar o robo para andar
+intervalo_alinhamento = 0.04
+intervalo_caminhada = 1     # Tentar maximizar intervalo_caminhada quando for botar o robo para andar
 intervalo_enquanto_gira = 3
 tempo_para_parar = 1
 

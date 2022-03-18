@@ -2,19 +2,19 @@ import cv2
 import numpy as np
 import math
 from constantes import *
-#import classes
+
 
 
 """ Classe relacionada a imagem obtida pela camera. Ao ser chamada, inverte a imagem e salva constantes relacionadas a imagem, como altura, largura e centro.
  Possui o metodo mask, que retorna a mascara da imagem, passando o arquivo onde esta salvo os ranges da cor."""
 class Classe_imagem():
     def __init__(self, path):
+        self.cont = 0
         #print("Entrando no _init_ do Classe_imagem()")
         img = cv2.imread(path)
         #img = np.array(img)
 
         img = cv2.rotate(img, cv2.ROTATE_180)
-        #cv2.imwrite("/home/pi/Pictures/imagem_girada.jpg", img)
 
         img.astype(np.uint8)
 
@@ -30,7 +30,7 @@ class Classe_imagem():
         #print("SAIMO DO WARPAFFINE")
         self.img = img
         #self.topo_da_pista = int(0.0*self.altura) #coordenada y do topo da pista
-        self.topo_da_pista = 0
+        self.topo_da_pista = (self.altura)//2 
         self.meio_da_pista = 0 # coordenada x do meio da pista
         self.largura_pista = 0 # largura do final da pista na imagem
         self.mult_largura_pista = 0.7 #ate quanto da metade da largura da pista ainda eh atravessavel pelo robo
@@ -272,7 +272,7 @@ def bordas_laterais_v2(objeto_imagem):
    # reconhecer_pista(mask, objeto_imagem)
     img = objeto_imagem.img
     edges = cv2.Canny(mask, 50, 150, apertureSize=3)
-    cv2.imwrite("./tests/mask.png", mask)
+    #cv2.imwrite("./tests/mask.png", mask)
 
     lines = cv2.HoughLinesP(edges, 1, np.pi/180, 100, minLineLength=10, maxLineGap=150)
     left_lines = []
@@ -285,11 +285,11 @@ def bordas_laterais_v2(objeto_imagem):
             img = cv2.line(img, (x1,y1), (x2,y2), (0,127,255), 2)
         	
             desvio_maximo = np.pi/180*RANGE_INCLINACAO
-            print("topo da imagem", objeto_imagem.topo_da_pista)
-            print("range inclinacao", RANGE_INCLINACAO)
-            print("pontos: ", line)
-            print("coef_angular: ", coef_angular(line))
-            print("angulo: ", 180/np.pi*math.atan(coef_angular(line)))
+    #        print("topo da imagem", objeto_imagem.topo_da_pista)
+    #        print("range inclinacao", RANGE_INCLINACAO)
+     #       print("pontos: ", line)
+      #      print("coef_angular: ", coef_angular(line))
+       #     print("angulo: ", 180/np.pi*math.atan(coef_angular(line)))
             if y1>objeto_imagem.topo_da_pista or y2>objeto_imagem.topo_da_pista:
                 if math.atan(1)-desvio_maximo/2 < math.atan(coef_angular(line)) < math.atan(1)+desvio_maximo/2:
                     right_lines.append([x1,y1,x2,y2])
@@ -330,7 +330,10 @@ def bordas_laterais_v2(objeto_imagem):
         [x1, y1, x2, y2] = left
         cv2.line(objeto_imagem.img, (x1,y1), (x2,y2), (0,0,255), 2)
 
-    cv2.imwrite("./tests/bordas_laterais.jpg", objeto_imagem.img)
+    #global cont
+    #cv2.imwrite("./tests/imagens/filme/" + str(cont) + ".jpg", objeto_imagem.img)
+   # cont+= 1
+  #  print(cont)
     if ha_reta_na_direita == False and ha_reta_na_esquerda == False:
         return [],[],NAO_HA_RETA
     if ha_reta_na_direita == True and ha_reta_na_esquerda == True:
