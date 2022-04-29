@@ -47,6 +47,5 @@ Possui o metodo mask, que retorna a mascara da imagem, passando o arquivo onde e
         mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel, iterations=2)
         return mask
 
-
 if __name__ == "__main__":
     help(Imagem)
