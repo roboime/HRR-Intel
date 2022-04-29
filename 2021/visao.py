@@ -274,7 +274,8 @@ def bordas_laterais_v2(objeto_imagem):
     edges = cv2.Canny(mask, 50, 150, apertureSize=3)
     cv2.imwrite("./tests/mask.png", mask)
 
-    lines = cv2.HoughLinesP(edges, 1, np.pi/180, 100, minLineLength=10, maxLineGap=150)
+    lines = cv2.HoughLinesP(edges, 1, np.pi/180, threshold=40, minLineLength=10, maxLineGap=50)
+  #  lines = cv2.HoughLinesP(mask, 1, np.pi/180, threshold=100, minLineLength=10, maxLineGap=20)
     left_lines = []
     right_lines =[]
    # todas_as_linhas = IMG
@@ -285,11 +286,11 @@ def bordas_laterais_v2(objeto_imagem):
             img = cv2.line(img, (x1,y1), (x2,y2), (0,127,255), 2)
         	
             desvio_maximo = np.pi/180*RANGE_INCLINACAO
-            print("topo da imagem", objeto_imagem.topo_da_pista)
-            print("range inclinacao", RANGE_INCLINACAO)
-            print("pontos: ", line)
-            print("coef_angular: ", coef_angular(line))
-            print("angulo: ", 180/np.pi*math.atan(coef_angular(line)))
+            #print("topo da imagem", objeto_imagem.topo_da_pista)
+            #print("range inclinacao", RANGE_INCLINACAO)
+            #print("pontos: ", line)
+            #print("coef_angular: ", coef_angular(line))
+            #print("angulo: ", 180/np.pi*math.atan(coef_angular(line)))
             if y1>objeto_imagem.topo_da_pista or y2>objeto_imagem.topo_da_pista:
                 if math.atan(1)-desvio_maximo/2 < math.atan(coef_angular(line)) < math.atan(1)+desvio_maximo/2:
                     right_lines.append([x1,y1,x2,y2])
