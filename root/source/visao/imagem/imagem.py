@@ -1,9 +1,12 @@
-
+import cv2
 
 class Imagem():
-    ''' Classe relacionada a imagem obtida pela camera. Ao ser chamada, inverte a imagem e salva constantes relacionadas a imagem, como altura, largura e centro.
-    Possui o metodo mask, que retorna a mascara da imagem, passando o arquivo onde esta salvo os ranges da cor.'''
+    ''' 
+Classe relacionada a imagem obtida pela camera. Ao ser chamada, inverte a imagem e salva constantes relacionadas a imagem, como altura, largura e centro.
+Possui o metodo mask, que retorna a mascara da imagem, passando o arquivo onde esta salvo os ranges da cor.
+'''
     def __init__(self, path):
+        """esse eh o init"""
         print("Entrando no _init_ do Classe_imagem()")
         img = cv2.imread(path)
         #img = np.array(img)
@@ -43,3 +46,7 @@ class Imagem():
         kernel = np.ones((5,5), np.uint8) 
         mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel, iterations=2)
         return mask
+
+
+if __name__ == "__main__":
+    help(Imagem)
