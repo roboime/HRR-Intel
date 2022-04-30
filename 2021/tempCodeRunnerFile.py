@@ -1,2 +1,0 @@
-
-def stackImages(scale, imgArray):
