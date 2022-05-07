@@ -1,9 +1,9 @@
-from camera import Camera
+#from source.robo.visao.camera.camera import Camera
 import cv2
-import constantes as c
+import source.robo.visao.constantes as c
 import numpy as np
-
-
+import math
+import source.robo.visao.helpers as h
 class Visao():
     ''' 
     Classe relacionada a imagem obtida pela camera. Ao ser chamada, inverte a imagem e salva constantes relacionadas a imagem, como altura, largura e centro.
@@ -58,7 +58,7 @@ class Visao():
     
     def desenhar_bordas(self,lines, right, left, right_lines, left_lines):
         for line in lines:
-            x1,y1,x2,y2 = line
+            x1,y1,x2,y2 = line.reshape(4)
             cv2.line(self.img, (x1,y1), (x2,y2), (0,127,255), 2)
         for line in right_lines:
             x1,y1,x2,y2 = line
@@ -73,7 +73,7 @@ class Visao():
         
     def bordas_laterais(self):
         if self.camera is not None: self.img = self.camera.capture_opencv()
-        mask = self.mask("../data/filtros_de_cor/ranges_preto.txt")
+        mask = self.mask("./data/filtros_de_cor/ranges_preto.txt")
         edges = cv2.Canny(mask, 50, 150, apertureSize=3)
         lines = cv2.HoughLinesP(edges, 1, np.pi/180, threshold = c.THRESHOLD, minLineLength = c.MINLINELENGTH, maxLineGap = c.MAXLINEGAP)
         left_lines = []
@@ -84,9 +84,9 @@ class Visao():
                 x1,y1,x2,y2 = line                
                 desvio_maximo = np.pi/180*c.RANGE_INCLINACAO
                 if y1>self.topo_da_pista or y2>self.topo_da_pista:
-                    if np.atan(1)-desvio_maximo/2 < np.atan(self.coef_angular(line)) < np.atan(1)+desvio_maximo/2:
+                    if math.atan(1)-desvio_maximo/2 < math.atan(h.coef_angular(line)) < math.atan(1)+desvio_maximo/2:
                         right_lines.append([x1,y1,x2,y2])
-                    if np.atan(-1)-desvio_maximo/2 < np.atan(self.coef_angular(line)) < np.atan(-1)+desvio_maximo/2:
+                    if math.atan(-1)-desvio_maximo/2 < math.atan(h.coef_angular(line)) < math.atan(-1)+desvio_maximo/2:
                         left_lines.append([x1,y1,x2,y2])
                         
         left = vertical_esquerda = [0,0,0,self.altura]
@@ -96,7 +96,7 @@ class Visao():
             y_max = 0
             right = right_lines[0]
             for line in right_lines:
-                _,y = self.interscetion(line, vertical_direita)
+                _,y = h.intersection(line, vertical_direita)
                 if y > y_max:
                     y_max = y
                     right = line
@@ -105,24 +105,24 @@ class Visao():
             y_max = 0
             left = left_lines[0]
             for line in left_lines:
-                _,y = self.interscetion(line, vertical_esquerda)
+                _,y = h.intersection(line, vertical_esquerda)
                 if y > y_max:
                     y_max = y
                     left = line
-
+        self.desenhar_bordas(lines, right, left, right_lines, left_lines)
         return left, right
     
     def decisao_alinhamento(self):
         left, right = self.bordas_laterais()
         horizontal = [0, self.topo_da_pista, self.largura, self.topo_da_pista]
         
-        self.x1, _ = self.interscetion(horizontal, left)
-        self.x2, _ = self.interscetion(horizontal, right)
+        self.x1, _ = h.intersection(horizontal, left)
+        self.x2, _ = h.intersection(horizontal, right)
 
         largura_pista = abs(self.x2 - self.x1)
         mult_largura_pista = 0.3
         delta_x = (self.x1+self.x2)//2-self.largura//2
-        #self.desenhar_alinhamento()
+        self.desenhar_alinhamento()
         if largura_pista//2*mult_largura_pista > abs(delta_x):
             return "ANDAR"
         elif delta_x > 0:
