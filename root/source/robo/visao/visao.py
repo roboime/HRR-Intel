@@ -15,7 +15,7 @@ class Visao():
         img = cv2.imread(self.camera.path_atual)
         #img = np.array(img)
         img = cv2.rotate(img, cv2.ROTATE_180)
-        cv2.imwrite("/home/pi/Pictures/img.jpg", img)
+        #cv2.imwrite("/home/pi/Pictures/img.jpg", img)
         img.astype(np.uint8)
         self.img = img
 
@@ -50,6 +50,7 @@ class Visao():
         self.img = cv2.circle(self.img, ((self.x1+self.x2)//2, self.topo_da_pista), radius=10, color=(0, 0, 255), thickness=-1)
 
     def bordas_laterais(self):
+        
         mask = self.mask("ranges_preto.txt")
     # reconhecer_pista(mask, self)
         edges = cv2.Canny(mask, 50, 150, apertureSize=3)
