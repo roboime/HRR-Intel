@@ -19,7 +19,6 @@ class Imu():
 
         #self.Save_config(self)
 
-    
     def __calcular_angulo_yaw(self):
         t_0 = time.time()
         t_1 = time.time()
@@ -28,7 +27,7 @@ class Imu():
             if self.giroscopio.IMURead():
                 data = self.giroscopio.getIMUData()
                 fusionPose = data["fusionPose"]
-                angulo_yaw = math.degrees(fusionPose[2])
+                angulo_yaw = math.degrees(fusionPose[0]) # yaw corresponde ao fusion pose do eixo x (imu esta na vertical, com eixo x para cima)
                 time.sleep(self.intervalo_poll*1.0/1000.0)
         return angulo_yaw              # retorna o desvio em graus entre o angulo_yaw atual e o inicial 
 

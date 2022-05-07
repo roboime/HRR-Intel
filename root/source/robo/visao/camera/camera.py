@@ -1,18 +1,20 @@
+import os
 import picamera
+import constantes as c
+from time import sleep
 
 class Camera():
     def __init__(self):
         print("Entra no _init_ da Classe_camera")
         self.camera = picamera.PiCamera()
-        self.intervalo_foto = 0.25
         self.indice_atual = 0
         self.path_pasta = os.path.dirname(os.path.abspath(__file__))
         self.path_atual = self.path_pasta + "1.jpg"
 
     def take_photo(self):
         self.camera.start_preview()
-        self.camera.contrast = constraste_da_camera
-        time.sleep(self.intervalo_foto)
+        self.camera.contrast = c.CONTRASTE_DA_CAMERA
+        sleep(c.INTERVALO_FOTO)
         try:
             self.path_atual = "./tests/fotos_main/imagem_main" + str(self.indice_atual) + ".jpg"
             print(" foto tirada em " + self.path_atual)
@@ -24,9 +26,9 @@ class Camera():
         except KeyboardInterrupt: self.camera.stop_preview()
 
 
-    def parar_fotografar(self, estado):
-        atual = estado.Obter_estado_atual()
-        estado.Trocar_estado(PARAR)
-        img = self.Take_photo()
-        estado.Trocar_estado(atual)
-        return img
+    # def parar_fotografar(self, estado):
+        # atual = estado.Obter_estado_atual()
+        # estado.Trocar_estado(PARAR)
+        # img = self.Take_photo()
+        # estado.Trocar_estado(atual)
+        # return img

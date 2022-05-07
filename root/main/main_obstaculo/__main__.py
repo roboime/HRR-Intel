@@ -6,4 +6,4 @@ if __name__ == "__main__":
         robo_obstaculo.corrida_obstaculo()
     except KeyboardInterrupt:
         print(" CTRL+C detectado. O loop foi interrompido.")
-        robo.estado.trocar_estado(PARAR)
+        robo.estado.trocar_estado("PARAR")

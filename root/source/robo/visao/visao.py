@@ -1,42 +1,132 @@
-import cv2
-from imagem import Imagem
 from camera import Camera
+import cv2
+import root.source.robo.constantes as c
+import numpy as np
+
 
 class Visao():
     ''' 
-Classe relacionada a imagem obtida pela camera. Ao ser chamada, inverte a imagem e salva constantes relacionadas a imagem, como altura, largura e centro.
-Possui o metodo mask, que retorna a mascara da imagem, passando o arquivo onde esta salvo os ranges da cor.
-'''
+    Classe relacionada a imagem obtida pela camera. Ao ser chamada, inverte a imagem e salva constantes relacionadas a imagem, como altura, largura e centro.
+    Possui o metodo mask, que retorna a mascara da imagem, passando o arquivo onde esta salvo os ranges da cor.
+    '''
     def __init__(self):
-        self.imagem = Imagem()
-    def checar_alinhamento_pista(self):
-        left, right, case = self.imagem.bordas_laterais()
-        horizontal = [0, self.imagem.topo_da_pista, self.imagem.largura, self.imagem.topo_da_pista]
-        x1 = 0
-        x2 = self.imagem.largura
-        
-        if case ==NAO_HA_RETA:
-            return ANDAR
-        elif case == HA_DUAS_RETAS:
-            x1, _ = self.imagem.interscetion(horizontal, left)
-            x2, _ = self.imagem.interscetion(horizontal, right)
-        elif case == SO_ESQUERDA:
-            x1, _ = self.imagem.interscetion(horizontal, left)
-        elif case == SO_DIREITA:
-            x2, _ = self.imagem.interscetion(horizontal, right)  
+        self.camera = Camera()
 
-        largura_pista = abs(x2 - x1)
+        img = cv2.imread(self.camera.path_atual)
+        #img = np.array(img)
+        img = cv2.rotate(img, cv2.ROTATE_180)
+        cv2.imwrite("/home/pi/Pictures/img.jpg", img)
+        img.astype(np.uint8)
+        self.img = img
+
+        (self.altura, self.largura) = img.shape[:2] 
+        self.centro = ( (self.largura)//2, (self.altura)//2 )
+        #M = cv2.getRotationMatriself.x2D(self.centro, 180, 1)
+        #img = cv2.warpAffine(img, M, (self.largura, self.altura))
+
+        self.topo_da_pista = int(0.4*self.altura) #coordenada y do topo da pista
+        self.meio_da_pista = 0 # coordenada x do meio da pista
+        self.largura_pista = 0 # largura do final da pista na imagem
+        self.mult_largura_pista = 0.7 #ate quanto da metade da largura da pista ainda eh atravessavel pelo robo
+
+    def mask(self, ranges_file_path):
+        hsv = cv2.cvtColor(self.img, cv2.COLOR_BGR2HSV) # converte a cor para hsv
+        with open(ranges_file_path, "r") as f:
+            lines = f.readlines()
+            range = lines[0].split(",")
+            lower = np.array([int(range[0]),int(range[1]),int(range[2])])  #range de cores em hsv para reconhecer as bordas
+            upper = np.array([int(range[3]),int(range[4]),int(range[5])])
+        mask = cv2.inRange(hsv, lower, upper)
+        kernel = np.ones((5,5), np.uint8) 
+        mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel, iterations=2)
+        return mask
+    
+    def desenhar_alinhamento(self):
+        self.img = cv2.line(self.img, (self.largura//2, 0), (self.largura//2, self.altura), (255, 0, 0), 2)
+        self.img = cv2.line(self.img, (int(self.largura_pista//2*self.mult_largura_pista)+(self.x1+self.x2)//2, 0), (int(self.largura_pista//2*self.mult_largura_pista)+(self.x1+self.x2)//2, self.altura), (127, 127, 0), 2)
+        self.img = cv2.line(self.img, (-int(self.largura_pista//2*self.mult_largura_pista)+(self.x1+self.x2)//2, 0), (-int(self.largura_pista//2*self.mult_largura_pista)+(self.x1+self.x2)//2, self.altura), (127, 127, 0), 2)
+        self.img = cv2.circle(self.img, (self.x1, self.topo_da_pista), radius=10, color=(0, 255, 255), thickness=-1)
+        self.img = cv2.circle(self.img, (self.x2, self.topo_da_pista), radius=10, color=(0, 255, 255), thickness=-1)
+        self.img = cv2.circle(self.img, ((self.x1+self.x2)//2, self.topo_da_pista), radius=10, color=(0, 0, 255), thickness=-1)
+
+    def bordas_laterais(self):
+        mask = self.mask("ranges_preto.txt")
+    # reconhecer_pista(mask, self)
+        edges = cv2.Canny(mask, 50, 150, apertureSize=3)
+        cv2.imwrite("./tests/mask.png", mask)
+
+        lines = cv2.HoughLinesP(edges, 1, np.pi/180, threshold=40, minLineLength=10, maxLineGap=50)
+    #  lines = cv2.HoughLinesP(mask, 1, np.pi/180, threshold=100, minLineLength=10, maxLineGap=20)
+        left_lines = []
+        right_lines =[]
+    # todas_as_linhas = IMG
+        if lines is not None:
+            for line in lines:
+                line = line.reshape(4)
+                x1,y1,x2,y2 = line
+                #img = cv2.line(img, (x1,y1), (x2,y2), (0,127,255), 2)
+                
+                desvio_maximo = np.pi/180*c.RANGE_INCLINACAO
+                #print("topo da imagem", self.topo_da_pista)
+                #print("range inclinacao", RANGE_INCLINACAO)
+                #print("pontos: ", line)
+                #print("self.coef_angular: ", self.coef_angular(line))
+                #print("angulo: ", 180/np.pi*np.atan(self.coef_angular(line)))
+                if y1>self.topo_da_pista or y2>self.topo_da_pista:
+                    if np.atan(1)-desvio_maximo/2 < np.atan(self.coef_angular(line)) < np.atan(1)+desvio_maximo/2:
+                        right_lines.append([x1,y1,x2,y2])
+                    #    print("angulo : ", 180/np.pi*np.atan(self.coef_angular(line)))
+                    #  print([x1, y1, x2, y2])
+                        #cv2.line(self.img, (x1,y1), (x2,y2), (0,255,0), 2)
+                    if np.atan(-1)-desvio_maximo/2 < np.atan(self.coef_angular(line)) < np.atan(-1)+desvio_maximo/2:
+                        left_lines.append([x1,y1,x2,y2])
+                        #cv2.line(self.img, (x1,y1), (x2,y2), (0,127,0), 2)
+        left = vertical_esquerda = [0,0,0,self.altura]
+        right = vertical_direita = [self.largura,0,self.largura,self.altura]
+
+        # cv2.imwrite("todas_as_linhas.png", todas_as_linhas)
+
+        if(len(right_lines) != 0):
+            y_max = 0
+            right = right_lines[0]
+            for line in right_lines:
+                _,y = self.interscetion(line, vertical_direita)
+                if y > y_max:
+                    y_max = y
+                    right = line
+            [x1, y1, x2, y2] = right
+            #cv2.line(self.img, (x1,y1), (x2,y2), (0,0,255), 2)
+            
+        if(len(left_lines) != 0):
+            y_max = 0
+            left = left_lines[0]
+            for line in left_lines:
+                _,y = self.interscetion(line, vertical_esquerda)
+                if y > y_max:
+                    y_max = y
+                    left = line
+            [x1, y1, x2, y2] = left
+            #cv2.line(self.img, (x1,y1), (x2,y2), (0,0,255), 2)
+
+        #cv2.imwrite("./tests/bordas_laterais.jpg", self.img)
+        return left, right
+    
+    def decisao_alinhamento(self):
+        left, right = self.bordas_laterais()
+        horizontal = [0, self.topo_da_pista, self.largura, self.topo_da_pista]
+        
+        self.x1, _ = self.interscetion(horizontal, left)
+        self.x2, _ = self.interscetion(horizontal, right)
+
+        largura_pista = abs(self.x2 - self.x1)
         mult_largura_pista = 0.3
-        delta_x = (x1+x2)//2-self.imagem.largura//2
-        #self.imagem.img = cv2.line(self.imagem.img, (self.imagem.largura//2, 0), (self.imagem.largura//2, self.imagem.altura), (255, 0, 0), 2)
-        #self.imagem.img = cv2.line(self.imagem.img, (int(self.imagem.largura_pista//2*self.imagem.mult_largura_pista)+(x1+x2)//2, 0), (int(self.imagem.largura_pista//2*self.imagem.mult_largura_pista)+(x1+x2)//2, self.imagem.altura), (127, 127, 0), 2)
-        #self.imagem.img = cv2.line(self.imagem.img, (-int(self.imagem.largura_pista//2*self.imagem.mult_largura_pista)+(x1+x2)//2, 0), (-int(self.imagem.largura_pista//2*self.imagem.mult_largura_pista)+(x1+x2)//2, self.imagem.altura), (127, 127, 0), 2)
-        #self.imagem.img = cv2.circle(self.imagem.img, (x1, self.imagem.topo_da_pista), radius=10, color=(0, 255, 255), thickness=-1)
-        #self.imagem.img = cv2.circle(self.imagem.img, (x2, self.imagem.topo_da_pista), radius=10, color=(0, 255, 255), thickness=-1)
-        #self.imagem.img = cv2.circle(self.imagem.img, ((x1+x2)//2, self.imagem.topo_da_pista), radius=10, color=(0, 0, 255), thickness=-1)
+        delta_x = (self.x1+self.x2)//2-self.largura//2
+        #self.desenhar_alinhamento()
         if largura_pista//2*mult_largura_pista > abs(delta_x):
-            return ANDAR
+            return "ANDAR"
         elif delta_x > 0:
-            return GIRAR_DIREITA
+            return "GIRAR_DIREITA"
         else:
-            return GIRAR_ESQUERDA 
+            return "GIRAR_ESQUERDA"
+        
+    

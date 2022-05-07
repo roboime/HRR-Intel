@@ -13,8 +13,14 @@ class PortaSerial():
         porta = "/dev/ttyAMA1"                                                                             #nao e a porta AMA0**
         baudrate_myrio = 230400                                                                         #deve igualar a da myrio
         self.serial_output = serial.Serial(porta,baudrate_myrio)                   # porta serial que faz comunicacao coma MyRio
-        
-        #self.Save_config(self)
+        self.states = {
+            "ANDAR" : "0",   
+            "GIRAR_ESQUERDA" : "1",
+            "GIRAR_DIREITA" : "2",
+            "PARAR" : "3",
+            "SUBIR"  :  "6",
+            "DESCER" : "7"
+        }
 
     def Escrever_estado(self, state):
-        self.serial_output.write(state)
+        self.serial_output.write(self.states[state])
