@@ -1,6 +1,6 @@
-from porta_serial.porta_serial import PortaSerial
+from source.robo.estado.porta_serial.porta_serial import PortaSerial
 from time import sleep
-import constantes as c
+import source.robo.estado.constantes as c
 
 class Estado:
     def __init__(self):

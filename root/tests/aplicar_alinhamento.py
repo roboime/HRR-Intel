@@ -3,11 +3,11 @@ import time
 import numpy as np
 from os import listdir
 from os.path import  join
-from source import robo
+from source.robo.visao.visao import Visao
 
 path = "../data/images/input_imgs/"
 
-VISAO = [robo.Visao.from_path(join(path, f)) for f in listdir(join(path))]
+VISAO = [Visao.from_path(join(path, f)) for f in listdir(join(path))]
 
 font                   = cv2.FONT_HERSHEY_SIMPLEX
 bottomLeftCornerOfText = (10,30)
@@ -15,7 +15,7 @@ fontScale              = 1
 fontColor              = (255,255,255)
 lineType               = 2
 
-if __name__ == "__main__":
+def main():
     cnt=1
     for OBJ in VISAO:
 
@@ -26,7 +26,7 @@ if __name__ == "__main__":
         image = np.zeros(frame.shape, np.uint8)
         smaller_frame = cv2.resize(frame, (0, 0), fx=0.5, fy=0.5)
         frame = cv2.rotate(frame, cv2.ROTATE_180)
-        obj = robo.Visao(cv2.resize(frame, (0, 0), fx=0.5, fy=0.5), None)
+        obj = Visao(cv2.resize(frame, (0, 0), fx=0.5, fy=0.5), None)
         mask_img = obj.mask("../data/filtros_de_cor/ranges_preto.txt")
         mask_img2 = cv2.Canny(mask_img, 50, 150, apertureSize=3)
         _ = obj.decisao_alinhamento()

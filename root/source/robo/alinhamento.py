@@ -1,9 +1,9 @@
 from time import sleep
-import constantes as c
+import source.robo.constantes as c
 
 def girar(robo, sentido):
     robo.estado.trocar_estado(sentido)
-    while abs(robo.imu.obter_angulo_yaw) > c.TOLERANCIA_ALINHAMENTO:
+    while abs(robo.imu.obter_angulo_yaw()) > c.TOLERANCIA_ALINHAMENTO:
         sleep(c.INTERVALO_GIRO_ALINHAMENTO)
     robo.estado.trocar_estado(c.PARAR)
 

@@ -1,4 +1,4 @@
-from alinhamento import alinhamento
+from source.robo.alinhamento import alinhamento
 
 class Robo:
     def __init__(self, estado, imu, sensor_distancia, visao):
