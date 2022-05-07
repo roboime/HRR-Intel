@@ -9,10 +9,9 @@ class Visao():
     Classe relacionada a imagem obtida pela camera. Ao ser chamada, inverte a imagem e salva constantes relacionadas a imagem, como altura, largura e centro.
     Possui o metodo mask, que retorna a mascara da imagem, passando o arquivo onde esta salvo os ranges da cor.
     '''
-    def __init__(self):
-        self.camera = Camera()
-
-        img = cv2.imread(self.camera.path_atual)
+    def __init__(self, img, camera):
+        self.camera = camera
+        
         #img = np.array(img)
         img = cv2.rotate(img, cv2.ROTATE_180)
         #cv2.imwrite("/home/pi/Pictures/img.jpg", img)
@@ -28,6 +27,14 @@ class Visao():
         self.meio_da_pista = 0 # coordenada x do meio da pista
         self.largura_pista = 0 # largura do final da pista na imagem
         self.mult_largura_pista = 0.7 #ate quanto da metade da largura da pista ainda eh atravessavel pelo robo
+    @classmethod
+    def from_camera(cls):
+        camera = Camera()
+        return cls(camera.capture_opencv(), camera)
+
+    @classmethod
+    def from_path(cls, path):
+        return cls(cv2.imread(path), None)
 
     def mask(self, ranges_file_path):
         hsv = cv2.cvtColor(self.img, cv2.COLOR_BGR2HSV) # converte a cor para hsv
@@ -65,7 +72,7 @@ class Visao():
         cv2.line(self.img, (x1,y1), (x2,y2), (0,0,255), 2)
         
     def bordas_laterais(self):
-        self.img = self.camera.capture_opencv()
+        if self.camera is not None: self.img = self.camera.capture_opencv()
         mask = self.mask("../data/filtros_de_cor/ranges_preto.txt")
         edges = cv2.Canny(mask, 50, 150, apertureSize=3)
         lines = cv2.HoughLinesP(edges, 1, np.pi/180, threshold = c.THRESHOLD, minLineLength = c.MINLINELENGTH, maxLineGap = c.MAXLINEGAP)

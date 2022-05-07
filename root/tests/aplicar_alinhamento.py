@@ -7,7 +7,7 @@ from source import robo
 
 path = "../data/images/input_imgs/"
 
-IMAGES = [robo.Visao(cv2.imread(join(path, f))) for f in listdir(join(path))]
+IMAGES = [robo.Visao.from_path(join(path, f)) for f in listdir(join(path))]
 
 font                   = cv2.FONT_HERSHEY_SIMPLEX
 bottomLeftCornerOfText = (10,30)
