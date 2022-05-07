@@ -65,7 +65,6 @@ Y1 = 1
 X2 = 2
 Y2 = 3
 
-RANGE_INCLINACAO = 75 #Em graus
 
 constraste_da_camera = 70
 tolerancia_central = 15

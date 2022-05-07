@@ -1,11 +1,17 @@
 from porta_serial.porta_serial import PortaSerial
 from time import sleep
+import constantes as c
 
 class Estado:
-    def __init__(self, myrio, lista_tempos):
-        self.lista_tempos = lista_tempos
+    def __init__(self):
+        self.tempo_do_passo = {
+            "ANDAR" : c.TEMPO_ANDAR,
+            "GIRAR_ESQUERDA" : c.TEMPO_GIRAR_ESQUERDA,
+            "GIRAR_DIREITA" : c.TEMPO_GIRAR_DIREITA,
+            "PARAR" : c.TEMPO_PARAR
+        }
         self.atual = "PARAR"
-        self.serial_obj = myrio
+        self.myrio = PortaSerial()
         self.Trocar_estado("PARAR")
 
     def Obter_estado_atual(self):
@@ -28,10 +34,10 @@ class Estado:
         if next_state != self.atual:
             if next_state != "PARAR":
                 self.atual = "PARAR"
-                self.serial_obj.Escrever_estado("PARAR")
+                self.myrio.Escrever_estado("PARAR")
                 sleep(self.lista_tempos["PARAR"])
             self.atual = next_state
-            self.serial_obj.Escrever_estado(next_state)
+            self.myrio.Escrever_estado(next_state)
             sleep(self.lista_tempos[next_state])
             print(self)
         else:

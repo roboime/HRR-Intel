@@ -1,6 +1,6 @@
 from camera import Camera
 import cv2
-import root.source.robo.constantes as c
+import constantes as c
 import numpy as np
 
 
@@ -38,7 +38,7 @@ class Visao():
             upper = np.array([int(range[3]),int(range[4]),int(range[5])])
         mask = cv2.inRange(hsv, lower, upper)
         kernel = np.ones((5,5), np.uint8) 
-        mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel, iterations=2)
+        mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel, iterations = c.INTERATIONS)
         return mask
     
     def desenhar_alinhamento(self):
@@ -48,44 +48,42 @@ class Visao():
         self.img = cv2.circle(self.img, (self.x1, self.topo_da_pista), radius=10, color=(0, 255, 255), thickness=-1)
         self.img = cv2.circle(self.img, (self.x2, self.topo_da_pista), radius=10, color=(0, 255, 255), thickness=-1)
         self.img = cv2.circle(self.img, ((self.x1+self.x2)//2, self.topo_da_pista), radius=10, color=(0, 0, 255), thickness=-1)
-
-    def bordas_laterais(self):
+    
+    def desenhar_bordas(self,lines, right, left, right_lines, left_lines):
+        for line in lines:
+            x1,y1,x2,y2 = line
+            cv2.line(self.img, (x1,y1), (x2,y2), (0,127,255), 2)
+        for line in right_lines:
+            x1,y1,x2,y2 = line
+            cv2.line(self.img, (x1,y1), (x2,y2), (0,255,0), 2)
+        for line in left_lines:
+            x1,y1,x2,y2 = line
+            cv2.line(self.img, (x1,y1), (x2,y2), (0,127,0), 2)
+        [x1, y1, x2, y2] = right
+        cv2.line(self.img, (x1,y1), (x2,y2), (0,0,255), 2)
+        [x1, y1, x2, y2] = left
+        cv2.line(self.img, (x1,y1), (x2,y2), (0,0,255), 2)
         
-        mask = self.mask("ranges_preto.txt")
-    # reconhecer_pista(mask, self)
+    def bordas_laterais(self):
+        self.img = self.camera.capture_opencv()
+        mask = self.mask("../data/filtros_de_cor/ranges_preto.txt")
         edges = cv2.Canny(mask, 50, 150, apertureSize=3)
-        cv2.imwrite("./tests/mask.png", mask)
-
-        lines = cv2.HoughLinesP(edges, 1, np.pi/180, threshold=40, minLineLength=10, maxLineGap=50)
-    #  lines = cv2.HoughLinesP(mask, 1, np.pi/180, threshold=100, minLineLength=10, maxLineGap=20)
+        lines = cv2.HoughLinesP(edges, 1, np.pi/180, threshold = c.THRESHOLD, minLineLength = c.MINLINELENGTH, maxLineGap = c.MAXLINEGAP)
         left_lines = []
         right_lines =[]
-    # todas_as_linhas = IMG
         if lines is not None:
             for line in lines:
                 line = line.reshape(4)
-                x1,y1,x2,y2 = line
-                #img = cv2.line(img, (x1,y1), (x2,y2), (0,127,255), 2)
-                
+                x1,y1,x2,y2 = line                
                 desvio_maximo = np.pi/180*c.RANGE_INCLINACAO
-                #print("topo da imagem", self.topo_da_pista)
-                #print("range inclinacao", RANGE_INCLINACAO)
-                #print("pontos: ", line)
-                #print("self.coef_angular: ", self.coef_angular(line))
-                #print("angulo: ", 180/np.pi*np.atan(self.coef_angular(line)))
                 if y1>self.topo_da_pista or y2>self.topo_da_pista:
                     if np.atan(1)-desvio_maximo/2 < np.atan(self.coef_angular(line)) < np.atan(1)+desvio_maximo/2:
                         right_lines.append([x1,y1,x2,y2])
-                    #    print("angulo : ", 180/np.pi*np.atan(self.coef_angular(line)))
-                    #  print([x1, y1, x2, y2])
-                        #cv2.line(self.img, (x1,y1), (x2,y2), (0,255,0), 2)
                     if np.atan(-1)-desvio_maximo/2 < np.atan(self.coef_angular(line)) < np.atan(-1)+desvio_maximo/2:
                         left_lines.append([x1,y1,x2,y2])
-                        #cv2.line(self.img, (x1,y1), (x2,y2), (0,127,0), 2)
+                        
         left = vertical_esquerda = [0,0,0,self.altura]
         right = vertical_direita = [self.largura,0,self.largura,self.altura]
-
-        # cv2.imwrite("todas_as_linhas.png", todas_as_linhas)
 
         if(len(right_lines) != 0):
             y_max = 0
@@ -95,8 +93,6 @@ class Visao():
                 if y > y_max:
                     y_max = y
                     right = line
-            [x1, y1, x2, y2] = right
-            #cv2.line(self.img, (x1,y1), (x2,y2), (0,0,255), 2)
             
         if(len(left_lines) != 0):
             y_max = 0
@@ -106,10 +102,7 @@ class Visao():
                 if y > y_max:
                     y_max = y
                     left = line
-            [x1, y1, x2, y2] = left
-            #cv2.line(self.img, (x1,y1), (x2,y2), (0,0,255), 2)
 
-        #cv2.imwrite("./tests/bordas_laterais.jpg", self.img)
         return left, right
     
     def decisao_alinhamento(self):
@@ -130,4 +123,3 @@ class Visao():
         else:
             return "GIRAR_ESQUERDA"
         
-    

@@ -1,4 +1,4 @@
-from root.source import robo
+from source import robo
 
 if __name__ == "__main__":
     robo_corrida = robo.Robo(robo.Estado(), robo.Imu(), None, robo.Visao())
