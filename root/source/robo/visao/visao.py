@@ -1,21 +1,23 @@
+from ast import IsNot
+from tkinter.messagebox import NO
 from source.robo.visao.camera.camera import Camera
 import cv2
 import source.robo.visao.constantes as c
 import numpy as np
 import math
 import source.robo.visao.helpers as h
-class Visao():
+class Visao(Camera):
     ''' 
     Classe relacionada a imagem obtida pela camera. Ao ser chamada, inverte a imagem e salva constantes relacionadas a imagem, como altura, largura e centro.
     Possui o metodo mask, que retorna a mascara da imagem, passando o arquivo onde esta salvo os ranges da cor.
     '''
-    def __init__(self, img, camera):
-        self.camera = camera
-        
+    def __init__(self, img = None):
+        Camera.__init__()
         #img = np.array(img)
+        if img is None:
+            img = self.capture_opencv(self)
+            
         img = cv2.rotate(img, cv2.ROTATE_180)
-        #cv2.imwrite("/home/pi/Pictures/img.jpg", img)
-        img.astype(np.uint8)
         self.img = img
 
         (self.altura, self.largura) = img.shape[:2] 
@@ -27,14 +29,6 @@ class Visao():
         self.meio_da_pista = 0 # coordenada x do meio da pista
         self.largura_pista = 0 # largura do final da pista na imagem
         self.mult_largura_pista = 0.7 #ate quanto da metade da largura da pista ainda eh atravessavel pelo robo
-    @classmethod
-    def from_camera(cls):
-        camera = Camera()
-        return cls(camera.capture_opencv(), camera)
-
-    @classmethod
-    def from_path(cls, path):
-        return cls(cv2.imread(path), None)
 
     def mask(self, ranges_file_path):
         hsv = cv2.cvtColor(self.img, cv2.COLOR_BGR2HSV) # converte a cor para hsv

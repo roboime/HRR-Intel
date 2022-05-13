@@ -2,7 +2,7 @@ from source.robo.estado.porta_serial.porta_serial import PortaSerial
 from time import sleep
 import source.robo.estado.constantes as c
 
-class Estado:
+class Estado(PortaSerial):
     def __init__(self):
         self.tempo_do_passo = {
             "ANDAR" : c.TEMPO_ANDAR,
@@ -11,7 +11,7 @@ class Estado:
             "PARAR" : c.TEMPO_PARAR
         }
         self.atual = "PARAR"
-        self.myrio = PortaSerial()
+        PortaSerial.__init__(self)
         self.Trocar_estado("PARAR")
 
     def Obter_estado_atual(self):
@@ -34,10 +34,10 @@ class Estado:
         if next_state != self.atual:
             if next_state != "PARAR":
                 self.atual = "PARAR"
-                self.myrio.Escrever_estado("PARAR")
+                self.Escrever_estado("PARAR")
                 sleep(self.lista_tempos["PARAR"])
             self.atual = next_state
-            self.myrio.Escrever_estado(next_state)
+            self.Escrever_estado(next_state)
             sleep(self.lista_tempos[next_state])
             print(self)
         else:
