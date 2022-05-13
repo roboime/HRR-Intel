@@ -1,7 +1,7 @@
-from source import robo
+from source.robo import robo
 
 if __name__ == "__main__":
-    robo_corrida = robo.Robo(robo.Estado(), robo.Imu(), None, robo.Visao())
+    robo_corrida = robo.Robo()
     try:
         robo_corrida.corrida()
     except KeyboardInterrupt:

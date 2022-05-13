@@ -1,4 +1,4 @@
-#from source.robo.visao.camera.camera import Camera
+from source.robo.visao.camera.camera import Camera
 import cv2
 import source.robo.visao.constantes as c
 import numpy as np
