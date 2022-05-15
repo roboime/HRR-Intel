@@ -3,7 +3,7 @@ import time
 import numpy as np
 from os import listdir
 from os.path import  join
-from source.robo.visao.visao import Visao
+from root.source.robo.visao.visao import Visao
 
 path = "./data/images/input_imgs/"
 
