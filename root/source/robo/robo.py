@@ -1,24 +1,18 @@
-from source.robo.alinhamento import alinhamento
+from alinhamento import Alinhamento
 
 class Robo:
-    def __init__(self, estado, imu, sensor_distancia, visao):
+    """Classe base do robo de corrida"""
+    def __init__(self = None, estado = None, imu = None, visao = None):
+        """Inicializa com instancias das classes Estado, Visao, Imu e Alinhamento"""
         self.estado = estado
         self.imu = imu
-        self.sensor_distancia = sensor_distancia
         self.visao = visao
+        self.alinhamento = Alinhamento(self)
         
     def corrida(self):
+        """Metodo base da corrida do robo"""
         while(True):
             self.estado.trocar_estado("ANDAR")
-            alinhamento(self)
-    def corrida_obstaculo(self):
-        while(True):
-            self.estado.trocar_estado("ANDAR")
-            alinhamento(self)
-            desvio_obstaculo(self)
-    def corrida_degrau(self):
-        while(True):
-            self.estado.trocar_estado("ANDAR")
-            alinhamento(self)
-            desvio_degrau(self)
-        
+            self.alinhamento.verificar_alinhamento()
+    
+    
