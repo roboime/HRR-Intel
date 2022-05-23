@@ -10,20 +10,15 @@ from constantes import *
 global ANG_GIRADO
 global DIST_MIN_OBST_ATUAL
 
-'''Decide para onde virar quando encontra um obstaculo. Recebe somente a camera. Usado apenas no loop de obstaculo.'''
 
 def decisao_desvio(camera):
-    print("Entrando decisao desvio")
+    """Decide para onde virar quando encontra um obstaculo. Recebe somente a camera. Usado apenas no loop de obstaculo."""
     path = camera.Take_photo()
-    print("Tirou foto")
     objeto_imagem = Classe_imagem(path)
-    print("Fez o objeto_imagem")
     x_min, x_max, y = ponto_medio_borda_inferior(objeto_imagem)
     x = (x_min+x_max)//2
-    print("Entrou no bordas laterais")
     #lista_esquerda, lista_direita, j = bordas_laterais_v2(objeto_imagem)
     lista_esquerda, lista_direita, j = bordas_laterais_v2(objeto_imagem)
-    print("Saiu do bordas laterais")
     poly_left = [coef_angular(lista_esquerda), coef_linear(lista_esquerda)]
     poly_right = [coef_angular(lista_direita), coef_linear(lista_direita)]
     # j = 1: linha central. j = 2: borda direita. j = 3: borda esquerda. j = 0: nenhuma borda
@@ -33,7 +28,6 @@ def decisao_desvio(camera):
     if x == 0 and y == 0:
         # Nao detectou obstaculo
       #  cv2.putText(objeto_imagem.img,'NAO HA RETA', bottomLeftCornerOfText, font, fontScale, fontColor, lineType)
-        print("NAO HA OBSTACULO: ANDAR")
         return ANDAR
     else:
         if j == HA_DUAS_RETAS:
@@ -58,47 +52,37 @@ def decisao_desvio(camera):
                     d = max(d_left, d_right)
                     if d == d_left:
                         #cv2.putText(objeto_imagem.img,'2 RETAS: GIRAR ESQUERDA', bottomLeftCornerOfText, font, fontScale, fontColor, lineType)
-                        print("HA DUAS RETAS: GIRAR ESQUERDA")
                         return GIRAR_ESQUERDA
                     else:
                   #      cv2.putText(objeto_imagem.img,'2 RETAS: GIRAR DIREITA', bottomLeftCornerOfText, font, fontScale, fontColor, lineType)
-                        print("HA DUAS RETAS: GIRAR DIREITA")
                         return GIRAR_DIREITA
                 elif d_left > d_min and d_right <= d_min:
                 #    cv2.putText(objeto_imagem.img,'2 RETAS: GIRAR ESQUERDA', bottomLeftCornerOfText, font, fontScale, fontColor, lineType)
-                    print("HA DUAS RETAS: GIRAR ESQUERDA")
                     return GIRAR_ESQUERDA
                 elif d_left <= d_min and d_right > d_min:
                   #  cv2.putText(objeto_imagem.img,'2 RETAS: GIRAR DIREITA', bottomLeftCornerOfText, font, fontScale, fontColor, lineType)
-                    print("HA DUAS RETAS: GIRAR DIREITA")
                     return GIRAR_DIREITA
                 else:
                     d = max(d_left, d_right)
                     if d == d_left:
                    #     cv2.putText(objeto_imagem.img,'2 RETAS: GIRAR ESQUERDA', bottomLeftCornerOfText, font, fontScale, fontColor, lineType)
-                        print("HA DUAS RETAS: GIRAR ESQUERDA")
                         return GIRAR_ESQUERDA
                     else:
                     #    cv2.putText(objeto_imagem.img,'2 RETAS: GIRAR DIREITA', bottomLeftCornerOfText, font, fontScale, fontColor, lineType)
-                        print("HA DUAS RETAS: GIRAR DIREITA")
                         return GIRAR_DIREITA
             if x_robot == 1:
                 if d_left < d_min:
                  #   cv2.putText(objeto_imagem.img,'2 RETAS: GIRAR DIREITA', bottomLeftCornerOfText, font, fontScale, fontColor, lineType)
-                    print("HA DUAS RETAS: GIRAR DIREITA")
                     return GIRAR_DIREITA
                 else:
                  #   cv2.putText(objeto_imagem.img,'2 RETAS: GIRAR ESQUERDA', bottomLeftCornerOfText, font, fontScale, fontColor, lineType)
-                    print("HA DUAS RETAS: GIRAR ESQUERDA")
                     return GIRAR_ESQUERDA
             if x_robot == 2:
                 if d_right < d_min:
                  #   cv2.putText(objeto_imagem.img,'2 RETAS: GIRAR ESQUERDA', bottomLeftCornerOfText, font, fontScale, fontColor, lineType)
-                    print("HA DUAS RETAS: GIRAR ESQUERDA")
                     return GIRAR_ESQUERDA
                 else:
                 #    cv2.putText(objeto_imagem.img,'2 RETAS: GIRAR DIREITA', bottomLeftCornerOfText, font, fontScale, fontColor, lineType)
-                    print("HA DUAS RETAS: GIRAR DIREITA")
                     return GIRAR_DIREITA
         if j == SO_DIREITA:
             poly_inv = [1/poly_right[0], -poly_right[1]/poly_right[0]]
@@ -106,11 +90,9 @@ def decisao_desvio(camera):
            # print("imagem: ", ind, "Dist: ", abs(x_max - x_linha)/pixel_scale )
             if abs(x_max - x_linha) > d_min*pixel_scale:
             #    cv2.putText(objeto_imagem.img,'SO DIREITA: GIRAR DIREITA', bottomLeftCornerOfText, font, fontScale, fontColor, lineType)
-                print("SO DIREITA: GIRAR DIREITA")
                 return GIRAR_DIREITA
             else:
             #    cv2.putText(objeto_imagem.img,'SO DIREITA: GIRAR ESQUERDA', bottomLeftCornerOfText, font, fontScale, fontColor, lineType)
-                print("SO DIREITA: GIRAR ESQUERDA")
                 return GIRAR_ESQUERDA
         if j == SO_ESQUERDA:
             poly_inv = [1/poly_left[0], -poly_left[1]/poly_left[0]]
@@ -118,11 +100,9 @@ def decisao_desvio(camera):
             #print("imagem: ", ind, "Dist: ", abs(x_min - x_linha)/pixel_scale )
             if abs(x_min - x_linha) > d_min*pixel_scale:
              #   cv2.putText(objeto_imagem.img,'SO ESQUERDA: GIRAR ESQUERDA', bottomLeftCornerOfText, font, fontScale, fontColor, lineType)
-                print("SO ESQUERDA: GIRAR ESQUERDA")
                 return GIRAR_ESQUERDA
             else:
               #  cv2.putText(objeto_imagem.img,'SO ESQUERDA: GIRAR DIREITA', bottomLeftCornerOfText, font, fontScale, fontColor, lineType)
-                print("SO ESQUERDA: GIRAR DIREITA")
                 return GIRAR_DIREITA
         if j == NAO_HA_RETA: return ANDAR
 
@@ -312,10 +292,6 @@ def quando_parar_de_andar_giroscopio(giroscopio, s_distancia, velocidade, largur
         print("andamos ", velocidade*time.time() - instante_inicial(), " de ", trajetoria)
 
     return PARAR
-
-
-
-
 
 # No momento nao utilizada em funcao de poder ser feita apenas com whiles dentro do loop
 """def quando_parar_de_alinhar(tolerancia_centro, tolerancia_para_frente):

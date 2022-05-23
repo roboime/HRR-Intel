@@ -1,4 +1,5 @@
-from alinhamento import Alinhamento
+"""Modulo base do robo de corrida"""
+from .alinhamento import Alinhamento
 
 class Robo:
     """Classe base do robo de corrida"""
@@ -8,11 +9,9 @@ class Robo:
         self.imu = imu
         self.visao = visao
         self.alinhamento = Alinhamento(self)
-        
     def corrida(self):
         """Metodo base da corrida do robo"""
-        while(True):
+        while True:
             self.estado.trocar_estado("ANDAR")
             self.alinhamento.verificar_alinhamento()
-    
     

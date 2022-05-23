@@ -1,5 +1,6 @@
-
+"""Modulo responsavel pelo desvio de obstaculo do robo"""
 class DesvioObstaculo():
+    """Classe que instancia Robo e implementa as funcoes de desvio de obstaculo"""
     def __init__(self, robo):
         self.robo = robo
 
@@ -13,8 +14,5 @@ class DesvioObstaculo():
         pass
     def __proximidade(self):
         pass
-
     def verificar_obstaculo(self):
-        pass
-
-        
+        """implementar"""
