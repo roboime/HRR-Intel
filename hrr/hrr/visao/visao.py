@@ -9,11 +9,11 @@ from . import helpers as h
 
 class Visao():
     """Classe responsavel pela analise de imagens usando o opencv"""
-    def __init__(self, img, camera):
+    def __init__(self, camera):
         """Inicia com uma instancia de Camera() e uma imagem. A imagem eh invertida e instanciada.
         Tambem sao salvos alguns atributos relacionados a imagem"""
         self.camera = camera
-
+        img = self.camera.capture()
         #img = np.array(img)
         img = cv2.rotate(img, cv2.ROTATE_180)
         #cv2.imwrite("/home/pi/Pictures/img.jpg", img)

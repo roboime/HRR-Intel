@@ -4,7 +4,8 @@ if __name__ == "__main__":
     robo_corrida = robo.Robo(estado = estado.Estado(),
         imu = imu.Imu(),
         visao = visao.Visao(),
-        alinhamento= robo.Alinhamento_imu)
+        alinhamento= robo.Alinhamento_imu,
+        desvio= robo.DesvioObstaculo)
     try:
         robo_corrida.corrida()
     except KeyboardInterrupt:
