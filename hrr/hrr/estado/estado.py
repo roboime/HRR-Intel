@@ -19,7 +19,7 @@ class Estado:
             "DESCER" : c.TEMPO_DESCER
         }
         self.atual = "PARAR"
-        self.myrio = porta_serial
+        self.porta_serial = porta_serial
         self.trocar_estado("PARAR")
 
     def obter_estado_atual(self):
@@ -45,10 +45,10 @@ class Estado:
         if next_state != self.atual:
             if next_state != "PARAR":
                 self.atual = "PARAR"
-                self.myrio.Escrever_estado("PARAR")
+                self.porta_serial.Escrever_estado("PARAR")
                 sleep(self.tempo_do_passo["PARAR"])
             self.atual = next_state
-            self.myrio.Escrever_estado(next_state)
+            self.porta_serial.Escrever_estado(next_state)
             sleep(self.tempo_do_passo[next_state])
             print(self)
         else:

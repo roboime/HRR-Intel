@@ -50,4 +50,3 @@ class Alinhamento_visao(__Alinhamento):
         """Verificar o alinhamento do robo com a pista com o auxílio da visao
         e o corrige caso esteja desalinhado"""
         self.__corrigir()
-    

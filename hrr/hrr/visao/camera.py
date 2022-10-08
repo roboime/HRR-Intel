@@ -24,7 +24,7 @@ class Teste(__Camera):
         pass
     def capture(self):
         print('captured')
-        return cv2.imread('./hrr/data/images/fotos/imagem_main0.jpg')
+        return cv2.imread('./hrr/data/images/fotos/imagem_teste_checar_alinhamento_3.jpg')
 
 class RaspCamera(__Camera):
     def __init__(self):
