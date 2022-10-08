@@ -2,7 +2,7 @@
 try:
     import RPi.GPIO as GPIO
 except ImportError:
-    print('picamera not imported due to ImportError')
+    print('GPIO not imported due to ImportError')
 import serial
 
 PATH = './hrr/data/serial_teste/serial_teste.txt'

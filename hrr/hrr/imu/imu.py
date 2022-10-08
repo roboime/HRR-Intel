@@ -1,7 +1,10 @@
 """Modulo responsavel pela leitura dos dados do sensor IMU"""
 from math import degrees
 from time import time, sleep
-import RTIMU
+try:
+    import RTIMU
+except ImportError:
+    print('RTIMU not imported due to ImportError')
 from . import constantes as c
 
 class Imu():
