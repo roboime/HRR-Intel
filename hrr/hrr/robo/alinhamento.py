@@ -23,6 +23,7 @@ class __Alinhamento():
             self.robo.estado.trocar_estado(self.robo.visao.decisao_alinhamento())
     def verificar_alinhamento(self):
         """Verificar o alinhamento do robo com a pista e o corrige caso esteja desalinhado"""
+        self.__corrigir()
 
 class Alinhamento_imu(__Alinhamento):
     def __init__(self):

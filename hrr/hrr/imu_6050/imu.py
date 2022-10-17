@@ -52,7 +52,7 @@ class Imu6050():
         self.angulo_yaw_referencia = self.__calcular_angulo_yaw()
     def obter_angulo_yaw(self):
         """Externaliza o metodo privado __calcular_angulo_yaw()"""
-        self.__calcular_angulo_yaw()
+        return self.__calcular_angulo_yaw()
     
     def _read_raw_data(addr):
 	    #Accelero and Gyro value are 16-bit

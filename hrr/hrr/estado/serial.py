@@ -17,8 +17,7 @@ class Serialport():
         "SUBIR"  :  "6",
         "DESCER" : "7"
     }
-    def escrever_estado(self, state):
-        """Metodo que envia o estado atual por meio de comunicacao serial"""
+    
 
 class SerialTeste(Serialport):
     """Classe herdada da classe SeriaBase e define uma porta serial ficticia
@@ -52,3 +51,4 @@ class SerialMyrio(Serialport):
     def escrever_estado(self, state):
         """Metodo que envia o estado atual para a myrio por meio de comunicacao serial"""
         self.serial_output.write(self.states[state])
+        print(self.states[state])

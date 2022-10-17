@@ -46,10 +46,8 @@ class Estado:
             if next_state != "PARAR":
                 self.atual = "PARAR"
                 self.porta_serial.Escrever_estado("PARAR")
-                sleep(self.tempo_do_passo["PARAR"])
             self.atual = next_state
             self.porta_serial.Escrever_estado(next_state)
-            sleep(self.tempo_do_passo[next_state])
             print(self)
         else:
             print(f'Mantive o estado : {self.atual}')

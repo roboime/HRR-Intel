@@ -1,2 +1,1 @@
-from .imu import Imu
-import smbus
+from .imu import Imu6050
