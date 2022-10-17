@@ -31,9 +31,9 @@ distanciaMinima = 20.0
 
 ## CONSTANTES DE TEMPO
 tempo_do_passo = {
-    ANDAR : 1.06,
-    GIRAR_ESQUERDA : 1.76,
-    GIRAR_DIREITA : 1.72,
+    ANDAR : 3.6,
+    GIRAR_ESQUERDA : 2.4,
+    GIRAR_DIREITA : 2.4,
     PARAR : 0.75
 }
 
