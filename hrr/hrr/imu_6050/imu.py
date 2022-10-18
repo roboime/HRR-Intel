@@ -33,7 +33,8 @@ class Imu6050():
         bus.write_byte_data(Device_Address, PWR_MGMT_1, 1)
         bus.write_byte_data(Device_Address, CONFIG, 0)
         bus.write_byte_data(Device_Address, GYRO_CONFIG, 24)
-        bus.write_byte_data(Device_Address, INT_ENABLE, 1)       
+        bus.write_byte_data(Device_Address, INT_ENABLE, 1) 
+        print("Gyro Inicializado")      
         
 
     def __calcular_angulo_yaw(self):
@@ -52,7 +53,10 @@ class Imu6050():
         self.angulo_yaw_referencia = self.__calcular_angulo_yaw()
     def obter_angulo_yaw(self):
         """Externaliza o metodo privado __calcular_angulo_yaw()"""
-        return self.__calcular_angulo_yaw()
+        print("Angulo calculado:")
+        a = self.__calcular_angulo_yaw()
+        print(a)
+        return a
     
     def _read_raw_data(addr):
 	    #Accelero and Gyro value are 16-bit

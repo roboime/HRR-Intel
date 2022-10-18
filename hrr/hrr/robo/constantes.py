@@ -1,7 +1,7 @@
 import numpy as np
 
 TOLERANCIA_ALINHAMENTO = 5
-INTERVALO_GIRO_ALINHAMENTO = 0.2
+INTERVALO_GIRO_ALINHAMENTO = 0.0022
 ANGULO_YAW_LIMITE = 10
 
 ######################## CONSTANTES BASICAS ##############################

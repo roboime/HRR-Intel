@@ -18,7 +18,6 @@ class __Alinhamento():
         """Gira o robo ate alinhar com o centro da pista com o auxilio da visao"""
         self.robo.estado.trocar_estado(self.robo.visao.decisao_alinhamento())
         while self.robo.estado.obter_estado_atual() != "ANDAR":
-            sleep(c.INTERVALO_GIRO_ALINHAMENTO)
             self.robo.estado.trocar_estado(c.PARAR)
             self.robo.estado.trocar_estado(self.robo.visao.decisao_alinhamento())
     def verificar_alinhamento(self):
@@ -36,13 +35,17 @@ class Alinhamento_imu(__Alinhamento):
             return
 
         elif delta < - c.ANGULO_YAW_LIMITE:
+            print("Girar Direita ")
             self.__girar("GIRAR_DIREITA")
 
         elif delta > c.ANGULO_YAW_LIMITE:
+            print("Girar Esquerda ")
             self.__girar("GIRAR_ESQUERDA")
 
         self.__corrigir()
+        print("Corrigiu ")
         self.robo.imu.mudar_referencia()
+        print("Referência do Giro Resetada ")
 
 class Alinhamento_visao(__Alinhamento):
     def __init__(self):
@@ -50,4 +53,5 @@ class Alinhamento_visao(__Alinhamento):
     def verificar_alinhamento(self):
         """Verificar o alinhamento do robo com a pista com o auxílio da visao
         e o corrige caso esteja desalinhado"""
+        print("Verificar Alinhamento ")
         self.__corrigir()
