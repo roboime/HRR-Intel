@@ -1,6 +1,6 @@
 from ..hrr import estado, imu_6050, robo, visao, sensor_distancia
 
-if __name__ == "__main__":
+def main():
     robo_corrida = robo.Robo(estado = estado.Estado(),
         imu = imu_6050.Imu6050(),
         visao = visao.Visao(),
