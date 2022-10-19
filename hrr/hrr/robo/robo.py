@@ -22,3 +22,7 @@ class Robo:
             if self.desvio is not None:
                 self.desvio.verificar_desvio()
             
+
+def main():
+    Robo.__init__
+    Robo.corrida
