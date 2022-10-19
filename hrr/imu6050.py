@@ -15,7 +15,7 @@ class Imu6050():
         """Instancia um objeto da classe RTIMU e o configura a partir da calibracao feita"""
         # Constantes
         
-        self.c = 20.0  #Constante de ajuste de precisÃ£o
+        self.c = 20.0  #Constante de ajuste de precisao
         self.b = 0.000225
         self.IntgrGz = 0.0
         self.angulo_yaw_referencia = self.__calcular_angulo_yaw()

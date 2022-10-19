@@ -9,7 +9,6 @@ TEMPO_SUBIR = 0
 TEMPO_DESCER = 0
 
 """Constantes utilizadas em visao.py"""
-from numpy import pi
 
 #Canny constants
 THRESHOLD1= 50
@@ -17,14 +16,14 @@ THRESHOLD2= 150
 APERTURE_SIZE= 3
 #HoughLinesP constants
 RHO = 1
-THETA = pi/180
+THETA = np.pi/180
 THRESHOLD= 40  #100
 MINLINELENGTH = 10 #10
 MAXLINEGAP = 50 #20
 RANGE_INCLINACAO = 75 #Em graus
 INTERATIONS = 2
 
-"""Constantes utilizadas em robo.py e seus módulos derivados"""
+"""Constantes utilizadas em robo.py e seus modulos derivados"""
 
 TOLERANCIA_ALINHAMENTO = 5
 INTERVALO_GIRO_ALINHAMENTO = 0.0022

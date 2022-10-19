@@ -61,7 +61,7 @@ class Visao():
 
     def bordas_laterais_pista(self):
         """Acha todas as retas correspondentes as bordas laterais da pista.
-        Caso não ache alguma delas ela retorna uma reta vertical no lado esquerdo ou direito."""
+        Caso nao ache alguma delas ela retorna uma reta vertical no lado esquerdo ou direito."""
         self.atualizar_imagem()
         mask = self.imagem.mask()
         edges = cv2.Canny(mask,

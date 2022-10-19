@@ -37,8 +37,8 @@ class Estado:
             "SUBIR" : "Deve estar subindo o degrau",
             "DESCER" : "Deve estar descendo o degrau"
             }
-        atual = self.obter_estado_atual()
-        print(f'Estado atual: {atual}.\nCorrecao: {need[atual]}.\n\n')
+        self.atual = self.obter_estado_atual()
+        print("Estado atual: "+ self.atual + "\n")
 
     def trocar_estado(self, next_state):
         """Troca o estado atual do robo e o envia para a porta serial."""
@@ -50,4 +50,4 @@ class Estado:
             self.porta_serial.Escrever_estado(next_state)
             print(self)
         else:
-            print(f'Mantive o estado : {self.atual}')
+            print("Mantive o estado : " + self.atual + "\n")
