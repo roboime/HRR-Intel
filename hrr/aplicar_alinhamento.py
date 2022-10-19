@@ -2,7 +2,7 @@
 from os import listdir
 from os.path import  join
 import cv2
-from .visao import Visao
+from visao import Visao
 
 PATH = "./data/images/input_imgs/"
 VISAO = [Visao.from_path(join(PATH, f)) for f in listdir(join(PATH))]

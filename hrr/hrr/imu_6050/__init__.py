@@ -1,1 +1,1 @@
-from .imu import Imu6050
+from ...imu6050 import Imu6050

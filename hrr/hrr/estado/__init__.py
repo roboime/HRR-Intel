@@ -1,1 +1,1 @@
-from .estado import Estado
+from ...estado import Estado

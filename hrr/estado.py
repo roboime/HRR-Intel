@@ -1,6 +1,6 @@
 """Modulo responsavel pela a maquina de estados do robo."""
 from time import sleep
-from . import constantes as c
+import constantes as c
 
 class Estado:
     """Classe responsavel pela a maquina de estados do robo."""
@@ -38,7 +38,7 @@ class Estado:
             "DESCER" : "Deve estar descendo o degrau"
             }
         atual = self.obter_estado_atual()
-        return f'Estado atual: {atual}.\nCorrecao: {need[atual]}.\n\n'
+        print(f'Estado atual: {atual}.\nCorrecao: {need[atual]}.\n\n')
 
     def trocar_estado(self, next_state):
         """Troca o estado atual do robo e o envia para a porta serial."""

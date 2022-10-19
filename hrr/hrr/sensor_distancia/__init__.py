@@ -1,1 +1,1 @@
-from .sensor_distancia import SensorDistancia
+from ...sensor_distancia import SensorDistancia

@@ -1,8 +1,8 @@
-from hrr.robo.robo import Robo
-from hrr.estado.estado import Estado
-from hrr.imu_6050.imu import Imu6050 
-from hrr.visao.visao import Visao
-from hrr.sensor_distancia.sensor_distancia import SensorDistancia
+from robo import Robo
+from estado import Estado
+from imu6050 import Imu6050 
+from visao import Visao
+from sensor_distancia import SensorDistancia
 
 def main():
     robo_corrida = Robo(estado = Estado(),

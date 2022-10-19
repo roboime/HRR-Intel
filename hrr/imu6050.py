@@ -2,18 +2,8 @@
 import smbus
 from math import degrees
 from time import time, sleep
+import constantes as c
 
-PWR_MGMT_1   = 0x6B
-SMPLRT_DIV   = 0x19
-CONFIG       = 0x1A
-GYRO_CONFIG  = 0x1B
-INT_ENABLE   = 0x38
-ACCEL_XOUT_H = 0x3B
-ACCEL_YOUT_H = 0x3D
-ACCEL_ZOUT_H = 0x3F
-GYRO_XOUT_H  = 0x43
-GYRO_YOUT_H  = 0x45
-GYRO_ZOUT_H  = 0x47
 bus = smbus.SMBus(1) 	# or bus = smbus.SMBus(0) for older version boards
 Device_Address = 0x68 
 
@@ -29,17 +19,17 @@ class Imu6050():
         self.b = 0.000225
         self.IntgrGz = 0.0
         self.angulo_yaw_referencia = self.__calcular_angulo_yaw()
-        bus.write_byte_data(Device_Address, SMPLRT_DIV, 7) 
-        bus.write_byte_data(Device_Address, PWR_MGMT_1, 1)
-        bus.write_byte_data(Device_Address, CONFIG, 0)
-        bus.write_byte_data(Device_Address, GYRO_CONFIG, 24)
-        bus.write_byte_data(Device_Address, INT_ENABLE, 1) 
+        bus.write_byte_data(Device_Address, c.SMPLRT_DIV, 7) 
+        bus.write_byte_data(Device_Address, c.PWR_MGMT_1, 1)
+        bus.write_byte_data(Device_Address, c.CONFIG, 0)
+        bus.write_byte_data(Device_Address, c.GYRO_CONFIG, 24)
+        bus.write_byte_data(Device_Address, c.INT_ENABLE, 1) 
         print("Gyro Inicializado")      
         
 
     def __calcular_angulo_yaw(self):
         """Retorna o angulo yaw atual em graus em relacao ao zero padrao da calibracao"""
-        gyro_z = self._read_raw_data(GYRO_ZOUT_H)
+        gyro_z = self._read_raw_data(c.GYRO_ZOUT_H)
         Gz = gyro_z/self.c
         self.IntgrGz = self.IntgrGz + (Gz * 1/2610 + self.b)*3.0
         print ("AnGz=%.2f" %self.IntgrGz)

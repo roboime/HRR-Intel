@@ -3,9 +3,9 @@
 import math
 import numpy as np
 import cv2
-from . import constantes as c
-from . import helpers as h
-from .imagem import Imagem
+import constantes as c
+import helpers as h
+from imagem import Imagem
 
 class Visao():
     """Classe responsavel pela analise de imagens usando o opencv"""

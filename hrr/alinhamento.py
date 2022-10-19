@@ -1,6 +1,6 @@
 """Modulo responsavel pelo alinhament do robo"""
 from time import sleep
-from . import constantes as c
+import constantes as c
 
 class __Alinhamento():
     """Classe dedicada a verificar e corrigir o alinhamento do robo com a direcao da pista"""

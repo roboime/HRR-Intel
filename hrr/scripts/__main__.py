@@ -1,3 +1,3 @@
-from .corrida import main
+from ..corrida import main
 
 main()
