@@ -1,4 +1,4 @@
-"""Modulo responsavel pelo alinhament do robo"""
+"""Modulo responsavel pelo alinhamento do robo"""
 from time import sleep
 import constantes as c
 
@@ -28,8 +28,6 @@ class Alinhamento_imu(__Alinhamento):
     def __init__(self):
         __Alinhamento.__init__()
     def verificar_alinhamento(self):
-        """Verificar o alinhamento do robo com a pista com o auxílio do IMU e o
-        corrige caso esteja desalinhado"""
         delta = self.robo.imu.delta_angulo_yaw()
         if abs(delta) < c.ANGULO_YAW_LIMITE:
             return
@@ -45,13 +43,11 @@ class Alinhamento_imu(__Alinhamento):
         self.__corrigir()
         print("Corrigiu ")
         self.robo.imu.mudar_referencia()
-        print("Referência do Giro Resetada ")
+        print("Referencia do Giro Resetada ")
 
 class Alinhamento_visao(__Alinhamento):
     def __init__(self):
         __Alinhamento.__init__()
     def verificar_alinhamento(self):
-        """Verificar o alinhamento do robo com a pista com o auxílio da visao
-        e o corrige caso esteja desalinhado"""
         print("Verificar Alinhamento ")
         self.__corrigir()

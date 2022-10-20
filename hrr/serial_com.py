@@ -9,14 +9,15 @@ PATH = './hrr/data/serial_teste/serial_teste.txt'
 
 class Serialport():
     """Classe base para implementacao de classes para a comunicacao serial"""
-    states = {
-        "ANDAR" : "0",
-        "GIRAR_ESQUERDA" : "1",
-        "GIRAR_DIREITA" : "2",
-        "PARAR" : "3",
-        "SUBIR"  :  "6",
-        "DESCER" : "7"
-    }
+    def __init__(self):
+        self.states = {
+            "ANDAR" : "0",
+            "GIRAR_ESQUERDA" : "1",
+            "GIRAR_DIREITA" : "2",
+            "PARAR" : "3",
+            "SUBIR"  :  "6",
+            "DESCER" : "7"
+        }
     
 
 class SerialTeste(Serialport):
@@ -30,7 +31,7 @@ class SerialTeste(Serialport):
         """Metodo que envia o estado atual para o arquivo destino,
         simulando uma comunicacao serial"""
         with open(self.output_path, 'a') as output:
-            output.write(f'{state}\n')
+            output.write(state + "\n")
 
 
 class SerialMyrio(Serialport):
@@ -43,12 +44,19 @@ class SerialMyrio(Serialport):
         GPIO.setup(channel, GPIO.OUT)
 
         # Configuracoes da MyRio
-        porta = "/dev/ttyAMA1" # nao e a porta AMA0**
+        porta = "/dev/ttyAMA0" # nao e a porta AMA0**
         baudrate_myrio = 230400 # deve igualar a da myrio
         # porta serial que faz comunicacao com a MyRio
         self.serial_output = serial.Serial(porta,baudrate_myrio)
 
+    def obter_porta(self):
+        return self.channel
+
     def escrever_estado(self, state):
         """Metodo que envia o estado atual para a myrio por meio de comunicacao serial"""
         self.serial_output.write(self.states[state])
-        print(self.states[state])
+        print(self.states[state] + "\n")
+
+    def parar(self):
+        self.serial_output.write("3")
+        print("PARAR \n")

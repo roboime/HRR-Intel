@@ -1,10 +1,11 @@
 """Modulo responsavel pela a maquina de estados do robo."""
 from time import sleep
 import constantes as c
+from serial_com import SerialMyrio
 
 class Estado:
     """Classe responsavel pela a maquina de estados do robo."""
-    def __init__(self, porta_serial):
+    def __init__(self):
         """
         Inicia variaveis de tempo de intervalo para cada estado.
         Instancia objeto da classe porta_Serial correspondente, que envia os estados do robo para a
@@ -19,7 +20,9 @@ class Estado:
             "DESCER" : c.TEMPO_DESCER
         }
         self.atual = "PARAR"
-        self.porta_serial = porta_serial
+        x = SerialMyrio()
+        self.porta_serial = x.obter_porta()
+        print(self.porta_serial)
         self.trocar_estado("PARAR")
 
     def obter_estado_atual(self):
@@ -45,9 +48,9 @@ class Estado:
         if next_state != self.atual:
             if next_state != "PARAR":
                 self.atual = "PARAR"
-                self.porta_serial.Escrever_estado("PARAR")
+                SerialMyrio.escrever_estado("PARAR")
             self.atual = next_state
-            self.porta_serial.Escrever_estado(next_state)
+            SerialMyrio.escrever_estado(next_state)
             print(self)
         else:
             print("Mantive o estado : " + self.atual + "\n")
