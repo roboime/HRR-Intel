@@ -16,7 +16,7 @@ class Visao():
         self.camera = picamera.PiCamera()
         self.camera.resolution = (1024,768)
         self.camera.start_preview()
-        self.imagem = Imagem(self.camera.capture())
+        self.imagem = Imagem(self.camera.capture('/home/pi/HRR-Intel/hrr/image.jpg'))
         self.camera.stop_preview()
 
         (self.altura, self.largura) = self.imagem.shape()

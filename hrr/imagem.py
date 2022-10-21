@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import math
 
 class Imagem():
     PATH_FILTROS = "./hrr/data/filtros_de_cor/ranges_preto.txt"
@@ -11,10 +12,10 @@ class Imagem():
         #img = cv2.warpAffine(img, M, (self.largura, self.altura))
 
     def atualizar(self, img):
-        #img = np.array(img)
-        self.img = cv2.rotate(img, cv2.ROTATE_180)
-        #cv2.imwrite("/home/pi/Pictures/img.jpg", img)
-        self.img.astype(np.uint8)
+        img = np.array(img)
+        img.astype(np.uint8)
+        img = cv2.rotate(img, cv2.ROTATE_180)
+        cv2.imwrite('/home/pi/HRR-Intel/hrr/image.jpg', img)
     
     def shape(self):
         return self.img.shape[:2]
