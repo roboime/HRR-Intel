@@ -1,8 +1,9 @@
 """Modulo responsavel pelo alinhamento do robo"""
 from time import sleep
 import constantes as c
+from imu6050 import Imu6050
 
-class __Alinhamento():
+class Alinhamento():
     """Classe dedicada a verificar e corrigir o alinhamento do robo com a direcao da pista"""
     def __init__(self, robo):
         """Inicializa com uma instancia da classe Robo"""
@@ -24,11 +25,16 @@ class __Alinhamento():
         """Verificar o alinhamento do robo com a pista e o corrige caso esteja desalinhado"""
         self.__corrigir()
 
-class Alinhamento_imu(__Alinhamento):
-    def __init__(self):
-        __Alinhamento.__init__()
+class Alinhamento_imu(Alinhamento):
+    def __init__(self, robo):
+        Alinhamento.__init__(self, robo)
+        self.angulo = 0.0
     def verificar_alinhamento(self):
-        delta = self.robo.imu.delta_angulo_yaw()
+        print("Entrou na Verificacao de Alinhamento")
+        g = Imu6050()
+        self.angulo = self.angulo + (g.__calcular_w_yaw() * 1/2610 + c.B)*3.0
+        print ("AnGz=%.2f" %self.angulo)
+        delta = self.angulo - g.get_referencia()
         if abs(delta) < c.ANGULO_YAW_LIMITE:
             return
 
@@ -42,12 +48,12 @@ class Alinhamento_imu(__Alinhamento):
 
         self.__corrigir()
         print("Corrigiu ")
-        self.robo.imu.mudar_referencia()
+        g.mudar_referencia(self.angulo)
         print("Referencia do Giro Resetada ")
 
-class Alinhamento_visao(__Alinhamento):
+class Alinhamento_visao(Alinhamento):
     def __init__(self):
-        __Alinhamento.__init__()
+        Alinhamento.__init__()
     def verificar_alinhamento(self):
         print("Verificar Alinhamento ")
         self.__corrigir()

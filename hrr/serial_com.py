@@ -44,7 +44,7 @@ class SerialMyrio(Serialport):
         GPIO.setup(channel, GPIO.OUT)
 
         # Configuracoes da MyRio
-        porta = "/dev/ttyAMA0" # nao e a porta AMA0**
+        porta = "/dev/ttyS0" # nao e a porta AMA0**
         baudrate_myrio = 230400 # deve igualar a da myrio
         # porta serial que faz comunicacao com a MyRio
         self.serial_output = serial.Serial(porta,baudrate_myrio)

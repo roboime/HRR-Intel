@@ -11,7 +11,6 @@ from sensor_distancia import SensorDistancia
 
 class Robo:
     """Classe base do robo de corrida"""
-    loop_rate = 24
     def __init__(self, estado = Estado, imu = Imu6050, visao = Visao, alinhamento = Alinhamento_imu,
         desvio= DesvioObstaculo, sensor_distancia= SensorDistancia):
         """Inicializa com instancias das classes Estado, Visao, Imu e Alinhamento"""
@@ -24,10 +23,13 @@ class Robo:
     def corrida(self):
         """Metodo base da corrida do robo"""
         x = SerialMyrio()
+        a = Alinhamento_imu(self)
+        
         while True:
-            sleep(1/self.loop_rate)
             x.escrever_estado("ANDAR")
-            self.alinhamento.verificar_alinhamento()
-            if self.desvio is not None:
-                self.desvio.verificar_desvio()
+            print("Mandou Andar \n")
+            a.verificar_alinhamento()
+          #  if self.desvio is not None:
+           #     d = DesvioObstaculo()
+            #    d.verificar_desvio()
             
