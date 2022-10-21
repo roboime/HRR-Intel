@@ -6,14 +6,18 @@ import cv2
 import constantes as c
 import helpers as h
 from imagem import Imagem
+import picamera
 
 class Visao():
     """Classe responsavel pela analise de imagens usando o opencv"""
-    def __init__(self, camera):
+    def __init__(self):
         """Inicia com uma instancia de Camera() e uma imagem. A imagem eh invertida e instanciada.
         Tambem sao salvos alguns atributos relacionados a imagem"""
-        self.camera = camera
+        self.camera = picamera.PiCamera()
+        self.camera.resolution = (1024,768)
+        self.camera.start_preview()
         self.imagem = Imagem(self.camera.capture())
+        self.camera.stop_preview()
 
         (self.altura, self.largura) = self.imagem.shape()
         self.centro = ( (self.largura)//2, (self.altura)//2)

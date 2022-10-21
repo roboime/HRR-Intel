@@ -23,7 +23,7 @@ class Imu6050():
         print("Gyro Inicializado")      
         
 
-    def __calcular_w_yaw(self):
+    def calcular_w_yaw(self):
         """Retorna o angulo yaw atual em graus em relacao ao zero padrao da calibracao"""
         gyro_z = self._read_raw_data(c.GYRO_ZOUT_H)
         Gz = gyro_z/c.C

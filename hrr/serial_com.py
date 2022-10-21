@@ -39,15 +39,16 @@ class SerialMyrio(Serialport):
     def __init__(self):
         Serialport.__init__(self)
         # Configuracoes da Rasp
-        channel = 18 #porta utilizada
+        self.channel = 18 #porta utilizada
         GPIO.setmode(GPIO.BCM)
-        GPIO.setup(channel, GPIO.OUT)
+        GPIO.setup(self.channel, GPIO.OUT)
 
         # Configuracoes da MyRio
         porta = "/dev/ttyS0" # nao e a porta AMA0**
         baudrate_myrio = 230400 # deve igualar a da myrio
         # porta serial que faz comunicacao com a MyRio
         self.serial_output = serial.Serial(porta,baudrate_myrio)
+        print("Port serial setada")
 
     def obter_porta(self):
         return self.channel
