@@ -24,10 +24,9 @@ class Robo:
         """Metodo base da corrida do robo"""
         x = SerialMyrio()
         a = Alinhamento_imu()
-        
+        x.escrever_estado("ANDAR")
+        print("Mandou Andar \n")
         while True:
-            x.escrever_estado("ANDAR")
-            print("Mandou Andar \n")
             a.verificar_alinhamento()
           #  if self.desvio is not None:
            #     d = DesvioObstaculo()
