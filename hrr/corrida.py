@@ -26,7 +26,8 @@ class CriarRobo:
         except KeyboardInterrupt:
             print(" CTRL+C detectado. O loop foi interrompido.")
             y = SerialMyrio()
-            y.parar()
+            while(1):
+                y.parar()
         
 
 x = CriarRobo()
