@@ -37,11 +37,12 @@ class Alinhamento_imu(Alinhamento):
         self.x = SerialMyrio()
     def verificar_alinhamento(self):
         print("Entrou na Verificacao de Alinhamento")
-        self.angulo = self.angulo + (self.g.calcular_w_yaw() * 1/2610 + c.B)*3.0
+        self.angulo = self.angulo + (self.g.calcular_w_yaw() * 1/2610 + c.B)
         print ("AnGz=%.2f" %self.angulo)
         delta = self.angulo - self.g.get_referencia()
         if abs(delta) < c.ANGULO_YAW_LIMITE:
-            return
+           self.x.escrever_estado("ANDAR") 
+           print("Andar Frente ")
 
         elif delta < - c.ANGULO_YAW_LIMITE:
             print("Girar Direita ")
@@ -51,10 +52,10 @@ class Alinhamento_imu(Alinhamento):
             print("Girar Esquerda ")
             self.x.escrever_estado("GIRAR_ESQUERDA")
 
-        self.corrigir()
-        print("Corrigiu ")
-        self.g.mudar_referencia(self.angulo)
-        print("Referencia do Giro Resetada ")
+       # self.corrigir()
+       # print("Corrigiu ")
+       # self.g.mudar_referencia(self.angulo)
+       # print("Referencia do Giro Resetada ")
 
 class Alinhamento_visao(Alinhamento):
     def __init__(self):
