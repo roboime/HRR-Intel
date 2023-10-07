@@ -1,0 +1,61 @@
+Algoritmo HUMANOIDE_CORRIDA
+    OBTER_BORDAS_DA_PISTA()
+
+    DECISAO_ALINHAMENTO()
+        OBTER_BORDAS_DA_PISTA()
+        RETA_TOPO_DA_PISTA = RETA_HORIZONTAL(Y_TOPO_DA_PISTA)
+
+        if RETA_DIREITA == not VAZIO and RETA_ESQUERDA == VAZIO then
+            (x, y) = INTERSECCAO(RETA_DIREITA, RETA_TOPO_DA_PISTA)
+            variacao_x = x - X_MEIO_DA_PISTA
+
+            if variacao_x > 0 and variacao_x >= LARGURA_MINIMA then
+                return ANDAR
+            else then
+                return GIRAR_ESQUERDA
+
+        else if RETA_ESQUERDA == not VAZIO and RETA_DIREITA == VAZIO then
+            (x, y) = INTERSECCAO(RETA_ESQUERDA, RETA_TOPO_DA_PISTA)
+            variacao_x = X_MEIO_DA_PISTA - x
+
+            if variacao_x > 0 and variacao_x >= LARGURA_MINIMA then
+                return ANDAR
+            else then
+                return GIRAR_ESQUERDA
+
+        else if RETA_ESQUERDA == VAZIO and RETA_DIREITA == VAZIO then
+            return ANDAR
+
+        else if RETA_ESQUERDA == not VAZIO and RETA_DIREITA == not VAZIO then
+            (x_esquerda, y_esquerda) = INTERSECCAO(RETA_ESQUERDA, RETA_TOPO_DA_PISTA)
+            (x_direita, y_direita) = INTERSECCAO(RETA_DIREITA, RETA_TOPO_DA_PISTA)
+            largura_da_pista = abs(x_direita - x_esquerda)
+            variacao_x = (x_direita + x_esquerda)/2 - X_MEIO_DA_PISTA
+
+            if largura_da_pista * FRACAO_LARGURA_DA_PISTA >= abs(delta_x) then
+                return ANDAR
+            else if delta_x > 0 then
+                return GIRAR_DIREITA
+            else then
+                return GIRAR_ESQUERDA
+            
+    MAIN()
+        while true do
+            UPDATE_STATE ( ANDAR )
+            sleep ( TEMPO_MINIMO_DE_CAMINHADA )
+            if delta_t >= INTERVALO_ENTRE_ALINHAMENTOS then
+                UPDATE_STATE( PARAR )
+                sleep ( TEMPO_DE_PARADA )
+                UPDATE_STATE( DECISAO_ALINHAMENTO() )
+
+                while STATE = GIRAR_DIREITA or STATE = GIRAR_ESQUERDA do
+                    sleep ( TEMPO_DA_PASSADA ( state ) )
+                    UPDATE_STATE( PARAR )
+                    sleep ( TEMPO_DE_PARADA )
+                    UPDATE_STATE( DECISAO_ALINHAMENTO() )
+                
+                delta_t <- 0
+            else
+                delta_t <- TEMPO_ATUAL ()
+
+Fim Algoritmo HUMANOIDE_CORRIDA
