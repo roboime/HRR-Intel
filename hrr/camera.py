@@ -7,7 +7,7 @@ try:
     import picamera
 except:
     print('picamera not imported due to ImportError')
-from . import constantes as c
+import constantes as c
 
 #sys.path.append('./hrr/data/images/fotos/')
 
