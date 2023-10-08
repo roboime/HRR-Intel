@@ -39,7 +39,7 @@ class SerialMyrio(Serialport):
     def __init__(self):
         Serialport.__init__(self)
         # Configuracoes da Rasp
-        # self.channel = 13 #porta utilizada
+        self.channel = 13 #porta utilizada
         # GPIO.setmode(GPIO.BCM)
         # GPIO.setup(self.channel, GPIO.OUT)
 
