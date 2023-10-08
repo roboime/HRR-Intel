@@ -9,9 +9,6 @@ from camera import RaspCamera
 
 path = "./tests/imagens/input_imgs/"
 
-IMAGES = [Classe_imagem(cv2.imread(join(path, f))) for f in listdir(join(path))]
-
-font                   = cv2.FONT_HERSHEY_SIMPLEX
 
 
 """ Classe relacionada a imagem obtida pela camera. Ao ser chamada, inverte a imagem e salva constantes relacionadas a imagem, como altura, largura e centro.
@@ -48,6 +45,10 @@ class Classe_imagem():
         mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel, iterations=1)
         mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel, iterations=1)
         return mask
+
+IMAGES = [Classe_imagem(cv2.imread(join(path, f))) for f in listdir(join(path))]
+
+font = cv2.FONT_HERSHEY_SIMPLEX
 
 '''tira o coeficiente angular ( delta y / delta x) a partir de uma lista de coordenadas x1 y1 x2 y2. utilizada em funcoes 
 dessa biblioteca: '''
