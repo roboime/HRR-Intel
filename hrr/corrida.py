@@ -8,21 +8,13 @@ from visao import Visao
 from sensor_distancia import SensorDistancia
 
 class CriarRobo:
-    def __init__(self, robo = Robo(estado = Estado, imu = Imu6050, visao = Visao, alinhamento = Alinhamento_imu,
-        desvio= DesvioObstaculo, sensor_distancia= SensorDistancia)):
+    def __init__(self, robo: Robo = Robo()):
         """Inicializa com instancias das classes Estado, Visao, Imu e Alinhamento"""
         self.robo = robo
-        self.robo.estado = robo.estado
-        self.robo.imu = robo.imu
-        self.robo.visao = robo.visao
-        self.robo.alinhamento = robo.alinhamento
-        self.robo.desvio = robo.desvio
-        self.robo.sensor_distancia = robo.sensor_distancia
 
     def main(self):
         try:
-            r = Robo()
-            r.corrida()
+            self.robo.corrida()
         except KeyboardInterrupt:
             print(" CTRL+C detectado. O loop foi interrompido.")
             y = SerialMyrio()

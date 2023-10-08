@@ -128,3 +128,11 @@ GYRO_ZOUT_H  = 0x47
 DEVICE_ADDRESS = 0x68
 C = 20.0
 B = 0.00025
+
+
+## CONSTANTES PARA ALINHAMENTO COM VISÃO
+
+bottomLeftCornerOfText = (10,30)
+fontScale              = 1
+fontColor              = (255,255,255)
+lineType               = 2
