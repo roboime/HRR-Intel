@@ -1,14 +1,13 @@
 """Modulo responsavel pelo alinhamento do robo"""
 from time import sleep
 import constantes as c
-from robo import Robo
 from visao import decisao_desvio
 
 class Alinhamento():
     """Classe dedicada a verificar e corrigir o alinhamento do robo com a direcao da pista"""
-    def __init__(self, robo: Robo):
+    def __init__(self, robo):
         """Inicializa com uma instancia da classe Robo"""
-        self.robo: Robo = robo
+        self.robo = robo
         self.tradutor = {
             c.ANDAR: '0',
             c.GIRAR_ESQUERDA: '1', 
@@ -36,7 +35,7 @@ class Alinhamento():
         self.corrigir()
 
 class Alinhamento_imu(Alinhamento):
-    def __init__(self, robo: Robo):
+    def __init__(self, robo):
         Alinhamento.__init__(self, robo)
         self.angulo = 0.0
     def verificar_alinhamento(self):
