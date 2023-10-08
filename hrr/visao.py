@@ -46,7 +46,7 @@ class Classe_imagem():
         mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel, iterations=1)
         return mask
 
-IMAGES = [Classe_imagem(cv2.imread(join(path, f))) for f in listdir(join(path))]
+# IMAGES = [Classe_imagem(cv2.imread(join(path, f))) for f in listdir(join(path))]
 
 font = cv2.FONT_HERSHEY_SIMPLEX
 
