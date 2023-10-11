@@ -2,6 +2,7 @@ from time import sleep, time
 import os
 import numpy as np
 import cv2
+from estado import Estado
 import sys
 try:
     import picamera
@@ -28,49 +29,30 @@ class Teste(__Camera):
 
 class RaspCamera(__Camera):
     def __init__(self):
-        # print("Entra no _init_ da Classe_camera")
-        cam = picamera.PiCamera(resolution=(
-            c.WIDTH, c.HEIGHT), framerate=c.FRAMERATE, contrast=c.CONTRAST)
-        self.cam = cam
-        sleep(c.WARMUP_TIME)
+        self.camera = picamera.PiCamera()
+        self.intervalo_foto = 0.25
+        self.indice_atual = 0
+        self.path_pasta = os.path.dirname(os.path.abspath(__file__))
+        self.path_atual = self.path_pasta + "1.jpg"
 
-    def capture(self):
-        return self.capture_opencv()
-
-    def capture_opencv(self):
-        image = np.empty((c.HEIGHT * c.WIDTH * 3,), dtype=np.uint8)
-        self.cam.capture(image, 'bgr')
-        image = image.reshape((c.HEIGHT, c.WIDTH, 3))
-        return image
-
-    def capture_sequence(self, frames):
-#        cam.start_preview()
-        # Give the camera some warm-up time
- #       time.sleep(2)
-        start = time()
-        self.cam.capture_sequence([
-            '../data/images/sequence/image%02d.jpg' % i
-            for i in range(frames)
-            ], use_video_port=True)
-        finish = time()
-        print('Captured %d frames at %.2ffps' % (
-        frames,
-        frames / (finish - start)))
-
-    def take_photo(self):
+    def Take_photo(self):
+        self.camera.start_preview()
+        self.camera.contrast = self.CONTRAST
+        time.sleep(self.intervalo_foto)
         try:
-            self.path_atual = "./tests/fotos_main/imagem_main" + \
-                str(self.indice_atual) + ".jpg"
-            # print(" foto tirada em " + self.path_atual)
-            self.cam.capture(self.path_atual)
+            self.path_atual = "./tests/fotos_main/imagem_main" + str(self.indice_atual) + ".jpg"
+            print(" foto tirada em " + self.path_atual)
+            self.camera.capture(self.path_atual)
+            self.camera.stop_preview()
             self.indice_atual = (self.indice_atual + 1) % 10
-            # print("Saindo do Take_photo()")
+            print("Saindo do Take_photo()")
             return self.path_atual
-        except KeyboardInterrupt: self.cam.stop_preview()
+        except KeyboardInterrupt: self.camera.stop_preview()
 
-    def parar_fotografar(self, estado):
-        atual = estado.Obter_estado_atual()
-        estado.Trocar_estado("PARAR")
+
+    def parar_fotografar(self, estado: Estado):
+        atual = estado.obter_estado_atual()
+        estado.trocar_estado("PARAR")
         img = self.Take_photo()
-        estado.Trocar_estado(atual)
+        estado.trocar_estado(atual)
         return img
