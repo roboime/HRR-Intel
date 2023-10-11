@@ -1,4 +1,7 @@
+#! ARQUIVO SERA REFATORADO!!!!!!!!!!!!
+
 import numpy as np
+from enum import Enum, auto
 
 """Modulo de constantes usadas em estado.py"""
 TEMPO_ANDAR = 1.06

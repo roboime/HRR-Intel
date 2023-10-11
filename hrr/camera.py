@@ -22,30 +22,16 @@ class __Camera():
 
 class RaspCamera(__Camera):
     def __init__(self):
-        self.camera = picamera.PiCamera()
-        self.intervalo_foto = 0.25
-        self.indice_atual = 0
-        self.path_pasta = os.path.dirname(os.path.abspath(__file__))
-        self.path_atual = self.path_pasta + "1.jpg"
+        '''
+        aaaa
+        '''
 
     def take_photo(self):
-        self.camera.start_preview()
-        self.camera.contrast = self.CONTRAST
-        time.sleep(self.intervalo_foto)
-        try:
-            self.path_atual = "./tests/fotos_main/imagem_main" + str(self.indice_atual) + ".jpg"
-            print(" foto tirada em " + self.path_atual)
-            self.camera.capture(self.path_atual)
-            self.camera.stop_preview()
-            self.indice_atual = (self.indice_atual + 1) % 10
-            print("Saindo do Take_photo()")
-            return self.path_atual
-        except KeyboardInterrupt: self.camera.stop_preview()
-
+        '''
+        Tira uma foto e salva em uma pasta
+        '''
 
     def parar_fotografar(self, estado: Estado):
-        atual = estado.obter_estado_atual()
-        estado.trocar_estado("PARAR")
-        img = self.take_photo()
-        estado.trocar_estado(atual)
-        return img
+        '''
+        Para de fotografar e salva as fotos em uma pasta
+        '''
