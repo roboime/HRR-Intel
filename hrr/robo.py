@@ -14,14 +14,12 @@ import funcoes
 class Robo:
     """Classe base do robo de corrida"""
     def __init__(self, estado: Estado = Estado(),
-                  visao: Classe_imagem = Classe_imagem(), 
                   desvio: DesvioObstaculo = DesvioObstaculo(), 
                   sensor_distancia: SensorDistancia= SensorDistancia(),
                   camera: RaspCamera = RaspCamera(),
                   discovery: SerialMyrio = SerialMyrio()):
         """Inicializa com instancias das classes Estado, Visao, Imu e Alinhamento"""
         self.estado: Estado = estado
-        self.visao: Classe_imagem = visao
         self.desvio: DesvioObstaculo = desvio
         self.sensor_distancia: SensorDistancia = sensor_distancia
         self.camera: RaspCamera = camera
@@ -41,14 +39,14 @@ class Robo:
                 print("hora de alinhar")
                 self.estado.trocar_estado("PARAR") ##tirar esse tempo ja que as pausas devem estar embutidas no tirar foto e na troca de estados
                 sleep(c.tempo_para_parar)
-                self.estado.trocar_estado(checar_alinhamento_pista_v2(self.visao))  # Frente, GIRAR_ESQUERDA ou GIRAR_DIREITA
+                self.estado.trocar_estado(checar_alinhamento_pista_v2(self.camera.take_photo()))  # Frente, GIRAR_ESQUERDA ou GIRAR_DIREITA
                 numero_de_giradas = 1
                 while self.estado.obter_estado_atual() == "GIRAR_DIREITA" or self.estado.obter_estado_atual() == "GIRAR_ESQUERDA":
                     print("desalinhado com a pista, iniciando a ",numero_de_giradas, "a girada")
                     sleep(self.tempo_do_passo[self.estado.obter_estado_atual()])
                     self.estado.trocar_estado("PARAR")
                     sleep(c.tempo_do_passo["PARAR"])
-                    self.estado.trocar_estado(checar_alinhamento_pista_v2(self.visao))
+                    self.estado.trocar_estado(checar_alinhamento_pista_v2(self.camera.take_photo()))
                     numero_de_giradas+=1
                 print("direcao corrigida")
                 numero_de_giradas = 1
