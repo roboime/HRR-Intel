@@ -14,13 +14,13 @@ import funcoes
 class Robo:
     """Classe base do robo de corrida"""
     def __init__(self, estado: Estado = Estado(),
-                  desvio: DesvioObstaculo = DesvioObstaculo(), 
                   sensor_distancia: SensorDistancia= SensorDistancia(),
                   camera: RaspCamera = RaspCamera(),
                   discovery: SerialMyrio = SerialMyrio()):
         """Inicializa com instancias das classes Estado, Visao, Imu e Alinhamento"""
+         
         self.estado: Estado = estado
-        self.desvio: DesvioObstaculo = desvio
+        self.desvio: DesvioObstaculo = DesvioObstaculo(self)
         self.sensor_distancia: SensorDistancia = sensor_distancia
         self.camera: RaspCamera = camera
         self.discovery: SerialMyrio = discovery
