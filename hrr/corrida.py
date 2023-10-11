@@ -1,11 +1,5 @@
 from robo import Robo
-from alinhamento import Alinhamento_imu
-from desvio import DesvioObstaculo
-from estado import Estado
 from serial_com import SerialMyrio
-from imu6050 import Imu6050 
-from visao import Visao
-from sensor_distancia import SensorDistancia
 
 class CriarRobo:
     def __init__(self, robo: Robo = Robo()):

@@ -3,7 +3,6 @@ from time import sleep
 from desvio import DesvioObstaculo
 from estado import Estado
 from serial_com import SerialMyrio
-from imu6050 import Imu6050 
 from visao import Classe_imagem, checar_alinhamento_pista_v2
 from sensor_distancia import SensorDistancia
 from camera import RaspCamera

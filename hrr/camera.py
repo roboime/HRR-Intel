@@ -35,7 +35,7 @@ class RaspCamera(__Camera):
         self.path_pasta = os.path.dirname(os.path.abspath(__file__))
         self.path_atual = self.path_pasta + "1.jpg"
 
-    def Take_photo(self):
+    def take_photo(self):
         self.camera.start_preview()
         self.camera.contrast = self.CONTRAST
         time.sleep(self.intervalo_foto)
@@ -53,6 +53,6 @@ class RaspCamera(__Camera):
     def parar_fotografar(self, estado: Estado):
         atual = estado.obter_estado_atual()
         estado.trocar_estado("PARAR")
-        img = self.Take_photo()
+        img = self.take_photo()
         estado.trocar_estado(atual)
         return img

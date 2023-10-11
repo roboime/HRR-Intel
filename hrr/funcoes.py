@@ -204,9 +204,9 @@ def quando_parar_de_andar_visaocomp(velocidade):
 
 
 '''Decide para onde virar quando encontra um obstaculo. Recebe somente a camera. Usado apenas no loop de obstaculo.'''
-def decisao_desvio(camera):
+def decisao_desvio(camera: RaspCamera):
     print("Entrando decisao desvio")
-    path = camera.Take_photo()
+    path = camera.take_photo()
     print("Tirou foto")
     objeto_imagem = Classe_imagem(path)
     print("Fez o objeto_imagem")
@@ -323,7 +323,7 @@ casos_dic = ["NAO_HA_RETA", "HA_DUAS_RETAS", "SO_ESQUERDA", "SO_DIREITA"]
 '''Recebe o sensor camera, uma tolerancia em relacao ao centro da imagem, e uma tolerancia em relacao ao quanto eh possivel
 andar sem encontrar uma borda lateral para retornar uma direcao de giro ou entao andar em frente a partir das bordas.
 Usada em todos os loops'''
-def checar_alinhamento_pista_v1(camera, tolerancia_central, tolerancia_para_frente):
+def checar_alinhamento_pista_v1(camera: RaspCamera, tolerancia_central, tolerancia_para_frente):
     path = camera.take_photo()
     objeto_imagem = Classe_imagem(path)
     #reta_esquerda, reta_direita, caso = bordas_laterais_v2(objeto_imagem)
@@ -394,8 +394,8 @@ def checar_alinhamento_pista_v1(camera, tolerancia_central, tolerancia_para_fren
     HA_DUAS_RETAS - Neste caso, calcula-se a interseccao das duas bordas com o topo da pista. Se o meio da imagem estiver entre os 2 pontos
     e numa folga relativa a largura do robo, entao o robo esta na direcao certa. Senao, retornara para girar.
 '''
-def checar_alinhamento_pista_v2(camera):
-    path = camera.Take_photo()
+def checar_alinhamento_pista_v2(camera: RaspCamera):
+    path = camera.take_photo()
     objeto_imagem = Classe_imagem(path)
     left, right, caso = bordas_laterais_v2(objeto_imagem)
     reta_esquerda, reta_direita, caso = bordas_laterais_v2(objeto_imagem)
