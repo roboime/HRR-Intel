@@ -19,6 +19,22 @@ class Estado:
             "SUBIR" : c.TEMPO_SUBIR,
             "DESCER" : c.TEMPO_DESCER
         }
+        self.string_enum = {
+            "ANDAR" : c.ANDAR,
+            "GIRAR_ESQUERDA" : c.GIRAR_ESQUERDA,
+            "GIRAR_DIREITA" : c.GIRAR_DIREITA,
+            "PARAR" : c.PARAR,
+            "SUBIR"  :  c.SUBIR,
+            "DESCER" : c.DESCER
+        }
+        self.enum_string = {
+            c.ANDAR: "ANDAR"  ,
+            c.GIRAR_ESQUERDA: "GIRAR_ESQUERDA" ,
+            c.GIRAR_DIREITA: "GIRAR_DIREITA" ,
+            c.PARAR: "PARAR",
+            c.SUBIR: "SUBIR",
+            c.DESCER:"DESCER" 
+        }
         self.atual = "PARAR"
         x = SerialMyrio()
         self.porta_serial = x.obter_porta()
@@ -50,7 +66,7 @@ class Estado:
                 self.atual = "PARAR"
                 SerialMyrio.escrever_estado("PARAR")
             self.atual = next_state
-            SerialMyrio.escrever_estado(next_state)
+            SerialMyrio.escrever_estado(self.enum_string[next_state])
             print(self)
         else:
             print("Mantive o estado : " + self.atual + "\n")
