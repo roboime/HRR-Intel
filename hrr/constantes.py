@@ -136,3 +136,12 @@ bottomLeftCornerOfText = (10,30)
 fontScale              = 1
 fontColor              = (255,255,255)
 lineType               = 2
+
+
+## CONSTANTES PARA A CAMERA
+
+WIDTH = 1280
+HEIGHT = 720
+FRAMERATE = 30
+WARMUP_TIME = 2
+CONTRAST = 70
