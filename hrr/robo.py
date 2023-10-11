@@ -75,7 +75,7 @@ class Robo:
                 print ("obstaculo detectado ", self.sensor_distancia.atual)
                 self.estado.trocar_estado("PARAR")
                 print(self.estado.atual)
-                self.estado.trocar_estado(funcoes.decisao_desvio(self.camera))
+                self.estado.trocar_estado(funcoes.decisao_desvio(self.camera)) # int
                 print(self.estado.atual)
                 EstadoDesvio = self.estado.atual
                 
@@ -129,8 +129,8 @@ class Robo:
                     print(self.estado)
                     self.estado.trocar_estado("ANDAR")
                     print(self.estado)
-                    estado.trocar_estado(funcoes.quando_parar_de_andar_visaocomp(c.velocidade))
-                    print(estado)
+                    self.estado.trocar_estado(funcoes.quando_parar_de_andar_visaocomp(c.velocidade))
+                    print(self.estado)
                     print("obstaculo ultrapassado, iniciando compensasao de angulo")
                     if(direcao_girada == "GIRAR_ESQUERDA"):
                         self.estado.trocar_estado("GIRAR_DIREITA")

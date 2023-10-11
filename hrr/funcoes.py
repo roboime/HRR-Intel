@@ -1,9 +1,8 @@
-#import pickle
 import time
 import numpy as np
 import cv2
+from sensor_distancia import SensorDistancia
 from visao import *
-#from classes import Classe_camera
 from constantes import *
 
 
@@ -11,7 +10,7 @@ global ANG_GIRADO
 global DIST_MIN_OBST_ATUAL
 
 
-def quando_parar_de_girar_quantizado(sensor_distancia, lista_tempo_de_giro, 
+def quando_parar_de_girar_quantizado(sensor_distancia: SensorDistancia, lista_tempo_de_giro, 
     lista_ang_por_passo, largura_robo, sentido):
     
     global DIST_MIN_OBST_ATUAL
@@ -63,7 +62,7 @@ def quando_parar_de_girar_quantizado(sensor_distancia, lista_tempo_de_giro,
  #   print("ANG GIRADO: ", ANG_GIRADO)
     return PARAR
 
-def quando_parar_de_realinhar_quantizado(lista_tempo_de_giro, lista_ang_por_passo, sentido_de_giro):
+def quando_parar_de_realinhar_quantizado(lista_tempo_de_giro: SensorDistancia, lista_ang_por_passo, sentido_de_giro):
     global ANG_GIRADO
     
     ang_por_passo = lista_ang_por_passo[sentido_de_giro]
@@ -105,7 +104,7 @@ def quando_parar_de_andar_visaocomp_quantizado(lista_tempo_de_passo, lista_cm_po
 '''Gira o robo ate haver uma variacao brusca de distancia, quando eh suposto nao haver mais obstaculo na direcao, acrescido
 de uma margem de segurnca dependente da altura do robo. Usada em Loop Obstaculo'''
 
-def quando_parar_de_girar(sensor_distancia, vel_ang, largura_robo, sentido):
+def quando_parar_de_girar(sensor_distancia: SensorDistancia, vel_ang, largura_robo, sentido):
     global DIST_MIN_OBST_ATUAL
     global ANG_GIRADO
     

@@ -2,12 +2,13 @@
 from time import sleep
 import constantes as c
 from visao import decisao_desvio
+from robo import Robo
 
 class Alinhamento():
     """Classe dedicada a verificar e corrigir o alinhamento do robo com a direcao da pista"""
     def __init__(self, robo):
         """Inicializa com uma instancia da classe Robo"""
-        self.robo = robo
+        self.robo: Robo = robo
         self.tradutor = {
             c.ANDAR: '0',
             c.GIRAR_ESQUERDA: '1', 
@@ -43,4 +44,4 @@ class Alinhamento_imu(Alinhamento):
         self.angulo = self.angulo + (self.robo.imu.calcular_w_yaw() * 1/2610 + c.B)
         print ("AnGz=%.2f" %self.angulo)
         delta = self.angulo - self.robo.imu.get_referencia()
-        self.robo.discovery.escrever_estado(self.tradutor[decisao_desvio(self.robo.camera)])
+        self.robo.discovery.escrever_estado(decisao_desvio(self.robo.camera))
