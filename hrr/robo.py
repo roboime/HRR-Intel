@@ -34,8 +34,6 @@ class Robo:
         while True:
             sleep(20)
             self.alinhamento.verificar_alinhamento()
-          #  if self.desvio is not None:
-           #     d = DesvioObstaculo()
-            #    d.verificar_desvio()
+          
 
 

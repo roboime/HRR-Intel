@@ -43,13 +43,4 @@ class Alinhamento_imu(Alinhamento):
         self.angulo = self.angulo + (self.robo.imu.calcular_w_yaw() * 1/2610 + c.B)
         print ("AnGz=%.2f" %self.angulo)
         delta = self.angulo - self.robo.imu.get_referencia()
-        # if abs(delta) < c.ANGULO_YAW_LIMITE:
-        #    self.robo.discovery.escrever_estado("ANDAR") 
-        #    print("Andar Frente ")
-        # else: 
         self.robo.discovery.escrever_estado(self.tradutor[decisao_desvio(self.robo.camera)])
-
-       # self.corrigir()
-       # print("Corrigiu ")
-       # self.robo.imu.mudar_referencia(self.angulo)
-       # print("Referencia do Giro Resetada ")
