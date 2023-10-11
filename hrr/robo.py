@@ -14,7 +14,6 @@ import funcoes
 class Robo:
     """Classe base do robo de corrida"""
     def __init__(self, estado: Estado = Estado(),
-                  imu: Imu6050 = Imu6050(), 
                   visao: Classe_imagem = Classe_imagem(), 
                   desvio: DesvioObstaculo = DesvioObstaculo(), 
                   sensor_distancia: SensorDistancia= SensorDistancia(),
@@ -22,7 +21,6 @@ class Robo:
                   discovery: SerialMyrio = SerialMyrio()):
         """Inicializa com instancias das classes Estado, Visao, Imu e Alinhamento"""
         self.estado: Estado = estado
-        self.imu: Imu6050 = imu
         self.visao: Classe_imagem = visao
         self.desvio: DesvioObstaculo = desvio
         self.sensor_distancia: SensorDistancia = sensor_distancia
