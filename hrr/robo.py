@@ -32,6 +32,7 @@ class Robo:
         self.discovery.escrever_estado("ANDAR")
         print("Mandou Andar \n")
         while True:
+            sleep(20)
             self.alinhamento.verificar_alinhamento()
           #  if self.desvio is not None:
            #     d = DesvioObstaculo()
