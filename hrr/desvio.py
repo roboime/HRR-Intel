@@ -1,9 +1,11 @@
 """Modulo responsavel pelo desvio de obstaculo do robo"""
+from abc import ABC, abstractmethod
 
-class __Desvio():
+
+class Desvio(ABC):
     def verificar_desvio():
         pass
-class DesvioObstaculo(__Desvio):
+class DesvioObstaculo(Desvio):
     """Classe que instancia Robo e implementa as funcoes de desvio de obstaculo"""
     def __init__(self, robo):
         self.robo = robo
@@ -21,7 +23,7 @@ class DesvioObstaculo(__Desvio):
     def verificar_desvio(self):
         """implementar"""
 
-class DesvioDegrau(__Desvio):
+class DesvioDegrau(Desvio):
     def __init__(self, robo):
         self.robo = robo
     def __descida(self):

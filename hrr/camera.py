@@ -1,18 +1,16 @@
 from time import sleep, time
-import os
-import numpy as np
-import cv2
 from estado import Estado
-import sys
 try:
     import picamera
 except:
     print('picamera not imported due to ImportError')
-import constantes as c
+import constantes_old as c
 
-#sys.path.append('./hrr/data/images/fotos/')
+from abc import ABC, abstractmethod
 
-class __Camera():
+
+
+class Camera(ABC):
     CONTRAST = 70
     WIDTH, HEIGHT = 1280, 720
     FRAMERATE = 30
@@ -20,7 +18,7 @@ class __Camera():
     def capture():
         pass
 
-class RaspCamera(__Camera):
+class RaspCamera(Camera):
     def __init__(self):
         '''
         aaaa

@@ -5,19 +5,20 @@ except ImportError:
     print('GPIO not imported due to ImportError')
 import serial
 
+from abc import ABC, abstractmethod
+
 PATH = './hrr/data/serial_teste/serial_teste.txt'
 
-class Serialport():
+class Serialport(ABC):
     """Classe base para implementacao de classes para a comunicacao serial"""
-    def __init__(self):
-        self.states = {
-            "ANDAR" : "0",
-            "GIRAR_ESQUERDA" : "1",
-            "GIRAR_DIREITA" : "2",
-            "PARAR" : "3",
-            "SUBIR"  :  "6",
-            "DESCER" : "7"
-        }
+    states = {
+        "ANDAR" : "0",
+        "GIRAR_ESQUERDA" : "1",
+        "GIRAR_DIREITA" : "2",
+        "PARAR" : "3",
+        "SUBIR"  :  "6",
+        "DESCER" : "7"
+    }
     
 
 class SerialTeste(Serialport):
@@ -25,7 +26,6 @@ class SerialTeste(Serialport):
     por meio do arquivo de saida no path indicado"""
     def __init__(self):
         """Herda o __init__ da Serialport e define o local do arquivo destino"""
-        Serialport.__init__(self)
         self.output_path = PATH
     def escrever_estado(self, state):
         """Metodo que envia o estado atual para o arquivo destino,
@@ -37,7 +37,6 @@ class SerialTeste(Serialport):
 class SerialMyrio(Serialport):
     """Classe herdada da classe SeriaBase e define a porta serial que faz coneccao com a MyRIO"""
     def __init__(self):
-        Serialport.__init__(self)
         # Configuracoes da Rasp
         self.channel = 13 #porta utilizada
         # GPIO.setmode(GPIO.BCM)
