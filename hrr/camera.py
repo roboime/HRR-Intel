@@ -20,16 +20,16 @@ class Camera(ABC):
 
 class RaspCamera(Camera):
     def __init__(self):
-        '''
+        """
         aaaa
-        '''
+        """
 
     def take_photo(self):
-        '''
+        """
         Tira uma foto e salva em uma pasta
-        '''
+        """
 
     def parar_fotografar(self, estado: Estado):
-        '''
+        """
         Para de fotografar e salva as fotos em uma pasta
-        '''
+        """
