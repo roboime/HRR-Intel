@@ -1,13 +1,31 @@
 from abc import ABC, abstractmethod
 
 class Alinhamento(ABC):
-    pass
+    @abstractmethod
+    def __init__(self, robo) -> None:
+        pass
+    
+    @abstractmethod
+    def alinhar(self):
+        pass 
 
 class AlinhamentoIMU(Alinhamento):
-    pass
+    def __init__(self, robo) -> None:
+        self.robo = robo
+
+    def alinhar(self):
+        pass
 
 class AlinhamentoCamera(Alinhamento):
-    pass
+    def __init__(self, robo) -> None:
+        self.robo = robo
+
+    def alinhar(self):
+        pass
 
 class AlinhamentoCameraIMU(Alinhamento):
-    pass
+    def __init__(self, robo) -> None:
+        self.robo = robo
+
+    def alinhar(self):
+        pass

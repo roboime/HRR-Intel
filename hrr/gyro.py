@@ -1,8 +1,16 @@
-from abc import ABC, abstractclassmethod
+from abc import ABC, abstractmethod
 
 
 class Gyro(ABC):
-    pass
+    
+    @abstractmethod
+    def get_angulo_yaw(self):
+        pass
+
 
 class IMU(Gyro):
-    pass
+    def __init__(self) -> None:
+        pass
+
+    def get_angulo_yaw(self):
+        pass

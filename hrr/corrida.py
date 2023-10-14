@@ -5,7 +5,7 @@ def main(self):
     print(factory)
     robo = factory.make_robo()
     try:
-        self.robo.corrida()
+        robo.corrida()
     except KeyboardInterrupt:
         print(" CTRL+C detectado. O loop foi interrompido.")
         serial = factory.serial()
