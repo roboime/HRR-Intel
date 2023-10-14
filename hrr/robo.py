@@ -7,6 +7,7 @@ from sensor_distancia import *
 from camera import *
 from alinhamento import *
 from gyro import *
+from exceptions import *
 from time import sleep, time
 import constantes_old as c
 
@@ -16,8 +17,7 @@ class Robo:
                   discovery: Serial,
                   camera: Camera,
                   sensor_distancia: SensorDistancia,
-                  gyro: Gyro,
-                  alinhamento: Alinhamento):
+                  gyro: Gyro):
         """Inicializa com instancias das classes Estado, Visao, Imu e Alinhamento"""
          
         self.estado: Estado = estado
@@ -25,15 +25,33 @@ class Robo:
         self.camera: Camera = camera
         self.sensor_distancia: SensorDistancia = sensor_distancia
         self.gyro: Gyro = gyro
-        self.alinhamento: Alinhamento = alinhamento
         self.desvio: Desvio = Desvio(self)
 
+    def add_alinhamento(self, alinhamento: Alinhamento):
+        self.alinhamento = alinhamento
+        
     def corrida(self):
         """Metodo base da corrida do robo"""
 
 class FactoryRobo:
     def __init__(self) -> None:
-        pass
+        try:
+            self.serial = SerialMyrio()
+        except MyrioNotFoundException:
+            pass
+        try:
+            self.gyro = IMU()
+        except IMUNotFoundException:
+            pass
+        try:
+            self.camera = RaspCamera()
+        except CameraNotFoundException:
+            pass
+        try:
+            self.sensor_distancia = SensorDistancia()
+        except SensorDistanciaNotFoundException:
+            pass
+        
 
     def __str__(self) -> str:
         return " "
