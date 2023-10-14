@@ -36,25 +36,47 @@ class Robo:
 class FactoryRobo:
     def __init__(self) -> None:
         try:
-            self.serial = SerialMyrio()
+            SerialMyrio()
+            self.serial = SerialMyrio
         except MyrioNotFoundException:
-            pass
+            self.serial = None
         try:
-            self.gyro = IMU()
+            IMU()
+            self.gyro = IMU
         except IMUNotFoundException:
-            pass
+            self.gyro = None
         try:
-            self.camera = RaspCamera()
+            RaspCamera()
+            self.camera = RaspCamera
         except CameraNotFoundException:
-            pass
+            self.camera = None
         try:
-            self.sensor_distancia = SensorDistancia()
+            SensorDistancia()
+            self.sensor_distancia = SensorDistancia
         except SensorDistanciaNotFoundException:
-            pass
+            self.sensor_distancia = None
         
+        if self.gyro and self.camera:
+            self.alinhamento = AlinhamentoCameraIMU
+        elif self.gyro:
+            self.alinhamento = AlinhamentoIMU
+        else:
+            self.alinhamento = AlinhamentoCamera
+        
+        self.estado = Estado
 
     def __str__(self) -> str:
-        return " "
+        return f'''Specs do robo:
+        Serial: {self.serial}
+        Camera: {self.camera}
+        Sensor de distancia: {self.sensor_distancia}
+        IMU: {self.gyro}
+        Alinhamento: {self.alinhamento}
+        Estado: {self.estado}
+        '''
     
     def make_robo(self) -> Robo:    
-        pass
+        robo = Robo(self.estado, self.serial, self.camera, self.sensor_distancia, self.gyro)
+        alinhamento = self.alinhamento(robo)
+        robo.add_alinhamento(alinhamento)
+        return robo
