@@ -1,22 +1,18 @@
-from robo import Robo
-from serial_com import SerialMyrio
+from robo import FactoryRobo
 
-class CriarRobo:
-    def __init__(self, robo: Robo):
-        """Inicializa com instancias das classes Estado, Visao, Imu e Alinhamento"""
-        self.robo = robo
-
-    def main(self):
-        try:
-            self.robo.corrida()
-        except KeyboardInterrupt:
-            print(" CTRL+C detectado. O loop foi interrompido.")
-            y = SerialMyrio()
-            while(1):
-                y.parar()
+def main(self):
+    factory = FactoryRobo()
+    print(factory)
+    robo = factory.make_robo()
+    try:
+        self.robo.corrida()
+    except KeyboardInterrupt:
+        print(" CTRL+C detectado. O loop foi interrompido.")
+        serial = factory.serial()
+        while(1):
+            serial.parar()
         
-
-x = CriarRobo()
-x.main()
+if __name__ == "__main__":
+    main()
         
 

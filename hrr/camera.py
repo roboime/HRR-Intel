@@ -15,7 +15,13 @@ class Camera(ABC):
     WIDTH, HEIGHT = 1280, 720
     FRAMERATE = 30
     WARMUP_TIME = 2
-    def capture():
+
+    @abstractmethod
+    def take_photo():
+        pass
+
+    @abstractmethod
+    def stop():
         pass
 
 class RaspCamera(Camera):
@@ -29,7 +35,7 @@ class RaspCamera(Camera):
         Tira uma foto e salva em uma pasta
         """
 
-    def parar_fotografar(self, estado: Estado):
+    def stop(self, estado: Estado):
         """
         Para de fotografar e salva as fotos em uma pasta
         """

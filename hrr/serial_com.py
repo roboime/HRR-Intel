@@ -62,3 +62,6 @@ class SerialMyrio(Serialport):
     def parar(self):
         self.serial_output.write("3")
         print("PARAR \n")
+
+class Serial(ABC):
+    pass
