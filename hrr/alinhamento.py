@@ -1,9 +1,8 @@
 from abc import ABC, abstractmethod
 
 class Alinhamento(ABC):
-    @abstractmethod
     def __init__(self, robo) -> None:
-        pass
+        self.robo = robo
     
     @abstractmethod
     def alinhar(self):
@@ -11,21 +10,21 @@ class Alinhamento(ABC):
 
 class AlinhamentoIMU(Alinhamento):
     def __init__(self, robo) -> None:
-        self.robo = robo
+        super().__init__(robo)
 
     def alinhar(self):
         pass
 
 class AlinhamentoCamera(Alinhamento):
     def __init__(self, robo) -> None:
-        self.robo = robo
+        super().__init__(robo)
 
     def alinhar(self):
         pass
 
 class AlinhamentoCameraIMU(Alinhamento):
     def __init__(self, robo) -> None:
-        self.robo = robo
+        super().__init__(robo)
 
     def alinhar(self):
         pass

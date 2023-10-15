@@ -4,6 +4,15 @@ import numpy as np
 from enum import Enum, auto
 
 """Modulo de constantes usadas em estado.py"""
+
+class Tempo(Enum):
+    ANDAR = 1.06
+    GIRAR_ESQUERDA = 1.76
+    GIRAR_DIREITA = 1.72
+    PARAR = 0.75
+    SUBIR = 0
+    DESCER = 0.2
+
 TEMPO_ANDAR = 1.06
 TEMPO_GIRAR_ESQUERDA = 1.76
 TEMPO_GIRAR_DIREITA = 1.72

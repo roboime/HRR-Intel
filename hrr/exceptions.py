@@ -13,3 +13,7 @@ class CameraNotFoundException(Exception):
 class SensorDistanciaNotFoundException(Exception):
     """Raised when a distance sensor is not found"""
     pass
+
+class RobotConfigException(Exception):
+    """Raised when the robot configuration is invalid"""
+    pass

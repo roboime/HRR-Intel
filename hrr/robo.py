@@ -21,7 +21,7 @@ class Robo:
         """Inicializa com instancias das classes Estado, Visao, Imu e Alinhamento"""
          
         self.estado: Estado = estado
-        self.discovery: SerialMyrio = discovery
+        self.discovery: Serial = discovery
         self.camera: Camera = camera
         self.sensor_distancia: SensorDistancia = sensor_distancia
         self.gyro: Gyro = gyro
@@ -32,9 +32,15 @@ class Robo:
         
     def corrida(self):
         """Metodo base da corrida do robo"""
+        # while True:
+        #     self.estado = self.estado.atualizar_estado(self)
+        #     self.estado.enviar_estado(self.discovery)
+        #     self.estado = self.estado.trocar_estado(self)
+        #     self.estado.enviar_estado(self.discovery)
+        #     sleep(0.1)
 
 class FactoryRobo:
-    def __init__(self) -> None:
+    def __init__(self, *, alinhar_com_gyro: bool=True, alinhar_com_camera: bool=True) -> None:
         try:
             SerialMyrio()
             self.serial = SerialMyrio
@@ -56,17 +62,18 @@ class FactoryRobo:
         except SensorDistanciaNotFoundException:
             self.sensor_distancia = None
         
-        if self.gyro and self.camera:
+        if self.gyro and self.camera and alinhar_com_camera and alinhar_com_gyro:
             self.alinhamento = AlinhamentoCameraIMU
-        elif self.gyro:
+        elif self.gyro and alinhar_com_gyro and not alinhar_com_camera:
             self.alinhamento = AlinhamentoIMU
-        else:
+        elif self.camera and alinhar_com_camera and not alinhar_com_gyro:
             self.alinhamento = AlinhamentoCamera
-        
+        else:
+            raise RobotConfigException('Configuração inválida')
         self.estado = Estado
 
     def __str__(self) -> str:
-        return f'''Specs do robo:
+        return f'''Default specs do robo:
         Serial: {self.serial}
         Camera: {self.camera}
         Sensor de distancia: {self.sensor_distancia}
@@ -75,8 +82,12 @@ class FactoryRobo:
         Estado: {self.estado}
         '''
     
-    def make_robo(self) -> Robo:    
-        robo = Robo(self.estado, self.serial, self.camera, self.sensor_distancia, self.gyro)
+    def make_robo(self, **kwargs) -> Robo:
+        robo: Robo | None = None
+        if kwargs is None:
+            robo = Robo(self.estado(), self.serial(), self.camera(), self.sensor_distancia(), self.gyro())
+        else:
+            robo = Robo(kwargs['estado'](), kwargs['serial'](), kwargs['camera'](), kwargs['sensor_distancia'](), kwargs['gyro']())
         alinhamento = self.alinhamento(robo)
         robo.add_alinhamento(alinhamento)
         return robo

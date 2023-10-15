@@ -5,6 +5,7 @@ def main(self):
     print(factory)
     robo = factory.make_robo()
     try:
+        input("Pressione ENTER para iniciar a corrida ")
         robo.corrida()
     except KeyboardInterrupt:
         print(" CTRL+C detectado. O loop foi interrompido.")

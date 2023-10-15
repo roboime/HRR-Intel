@@ -19,12 +19,13 @@ class Camera(ABC):
     WARMUP_TIME = 2
 
     @abstractmethod
-    def take_photo(self):
+    def tirar_foto(self, name: str | None):
         pass
 
     @abstractmethod
-    def stop(self):
+    def parar(self):
         pass
+
 
 class RaspCamera(Camera):
     def __init__(self):
@@ -33,7 +34,7 @@ class RaspCamera(Camera):
         """
         self.counter = 0
 
-    def take_photo(self, name: str | None):
+    def tirar_foto(self, name: str | None):
         """
         Tira uma foto e salva no diretório "images"
         """
@@ -45,7 +46,7 @@ class RaspCamera(Camera):
         path = os.path.join(directory, name)
 
 
-    def stop(self, estado: Estado):
+    def parar(self, estado: Estado):
         """
         Para de fotografar e salva as fotos em uma pasta
         """
