@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 import smbus
-import constantes_old as c
+import hrr.constantes as c
 
 
 bus = smbus.SMBus(1) 	

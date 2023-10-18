@@ -9,7 +9,7 @@ from alinhamento import *
 from gyro import *
 from exceptions import *
 from time import sleep, time
-import constantes_old as c
+import hrr.constantes as c
 
 class Robo:
     """Classe base do robo de corrida"""

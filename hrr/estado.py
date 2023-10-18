@@ -1,6 +1,6 @@
 """Modulo responsavel pela a maquina de estados do robo."""
 from time import sleep
-import constantes_old as c
+import hrr.constantes as c
 # from serial_com import SerialMyrio
 
 
