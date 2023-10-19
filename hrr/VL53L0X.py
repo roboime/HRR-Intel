@@ -36,7 +36,7 @@ i2cbus = smbus.SMBus(1)
 
 # i2c bus read callback
 def i2c_read(address, reg, data_p, length):
-    ret_val = 0;
+    ret_val = 0
     result = []
  
     try:

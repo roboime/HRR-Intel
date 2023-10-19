@@ -5,11 +5,18 @@ class Imagem:
     def __init__(self, path: str) -> None:
         pass
     
-    def bordas_laterais(self):
-        pass
+    def mask(self, ranges_file_path): pass
 
+    def ponto_medio_borda_inferior(objeto_imagem): pass
+
+    def bordas_laterais(self): pass
+
+    def checar_proximidade(valor_comparar, imagem_path): pass
+
+    def checar_alinhamento_pista_v2(objeto_imagem): pass
     
-    pass
+    def decisao_desvio(camera: RaspCamera): pass
+
 
 
 # import numpy as np
@@ -209,72 +216,6 @@ class Imagem:
 # foram encontrada, duas retas, zero retas ou uma reta ( e qual eh ela). Versao do fernandes que utiliza uma mascara branca
 # e uma area branca nao tao grande para tentar pegar a parte mais externa das bordas pretas, alem de filtrar as muito
 # deitadas ou muito verticais. Usada na alinhamento_pista e na decisao_desvio'''
-# def bordas_laterais_v1(objeto_imagem):
-#     img = objeto_imagem.img
-#     largura, altura = objeto_imagem.largura, objeto_imagem.altura
-#     preto = np.zeros((largura, altura, 3), np.uint8)
-#     mask = objeto_imagem.mask("ranges_preto.txt")
-
-#     _, th = cv2.threshold(mask, 0, 255, cv2.THRESH_BINARY) 
-#     contours, _ = cv2.findContours(th, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)[-2:]
-#     for contour in contours:
-#         area = cv2.contourArea(contour)
-#         if 1000000 > area > 50:
-#             approx = cv2.approxPolyDP(contour, 0.001*cv2.arcLength(contour, True), True)
-#             cv2.drawContours(preto, [approx], 0, (255, 255, 255), 2) 
-            
-
-#     gray=cv2.cvtColor(preto,cv2.COLOR_BGR2GRAY)
-
-#     edges = cv2.Canny(gray, 50, 150, apertureSize=3)
-
-#     lines = cv2.HoughLinesP(edges, 1, np.pi/180, 100, minLineLength=50, maxLineGap=100)
-#     coordleft = []
-#     coordright =[]
-#     if lines is not None:
-#         for line in lines:
-#             x1,y1,x2,y2= line[0]
-#             if ( y1>altura/4 or y2>altura/4) and np.tan(math.radians(2))<abs(((y2-y1)/(x2-x1))) and abs(((y2-y1)/(x2-x1)))*np.tan(math.radians(88)):
-#                 if ((y2-y1)/(x2-x1)) > 0:
-#                     coordright.append([x1,y1,x2,y2])
-#                     cv2.line(img, (x1,y1), (x2,y2), (255,255,255), 2)
-#                 else:
-#                     coordleft.append([x1,y1,x2,y2])
-#                     cv2.line(img, (x1,y1), (x2,y2), (0,255,0), 2)
-#     else: return [],[],NAO_HA_RETA
-#     ha_reta_na_direita = False
-
-#     if(len(coordright) != 0):
-#         ha_reta_na_direita = True
-#         coordright=np.array(coordright)
-#         mediaright = np.mean(coordright,axis=0)
-#         lista_media_direita = mediaright.tolist()
-#         mediaright=mediaright.astype(np.int64)
-#         [x1,y1,x2,y2]=mediaright
-#         cv2.line(img, (x1,y1), (x2,y2), (0,0,255), 2)
-        
-#     ha_reta_na_esquerda = False
-
-#     if(len(coordleft) != 0):
-#         ha_reta_na_esquerda = True
-#         coordleft=np.array(coordleft)
-#         medialeft = np.mean(coordleft,axis=0)
-#         lista_media_esquerda = medialeft.tolist()
-#         medialeft=medialeft.astype(np.int64)
-#         [x1,y1,x2,y2]=medialeft
-#         cv2.line(img, (x1,y1), (x2,y2), (0,0,255), 2)
-#         #text= 'y_direita = '+str((y2-y1)/(x2-x1))+' *x + ' +str(y1-(((y2-y1)*x1)/(x2-x1)))
-#         #img = cv2.putText(img, text, (int(((x1+x2)/2))-450,int(((y1+y2)/2))), cv2.FONT_HERSHEY_COMPLEX, 1, (255,255,255), 1, cv2.LINE_AA)
-
-#     cv2.imwrite("./tests/bordas_v2.jpg", img)
-#     if ha_reta_na_direita == False and ha_reta_na_esquerda == False:
-#         return [],[],NAO_HA_RETA
-#     if ha_reta_na_direita == True and ha_reta_na_esquerda == True:
-#         return lista_media_esquerda, lista_media_direita, HA_DUAS_RETAS
-#     if ha_reta_na_direita == False and ha_reta_na_esquerda == True:
-#        return lista_media_esquerda, [], SO_ESQUERDA
-#     return [], lista_media_direita,SO_DIREITA
-
 
 # """ adaptacao da bordas_laterais_v1 que adiciona 3 restricoes para encontrar as retas. A primeira eh a RANGE_INCLINACAO, que seleciona um coeficiente angular minimo
 #  e maximo para considerar como borda. A segunda eh o topo_da_pista, que seleciona apenas as retas que estao abaixo do topo da pista para evitar ruidos. A terceira

@@ -29,9 +29,6 @@ class Camera(ABC):
 
 class RaspCamera(Camera):
     def __init__(self, dir: str="images"):
-        """
-        aaaa
-        """
         self.counter = 0
         self.path = os.path.join(os.getcwd(), dir)
         cam = picamera.PiCamera(resolution=(
@@ -71,13 +68,6 @@ class RaspCamera(Camera):
 # import sys
 
 # #sys.path.append('./hrr/data/images/fotos/')
-
-# class Teste(__Camera):
-#     def __init__(self):
-#         pass
-#     def capture(self):
-#         print('captured')
-#         return cv2.imread('./hrr/data/images/fotos/imagem_teste_checar_alinhamento_3.jpg')
 
 # class RaspCamera(__Camera):
 #     def __init__(self):

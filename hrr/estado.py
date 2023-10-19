@@ -1,6 +1,6 @@
 """Modulo responsavel pela a maquina de estados do robo."""
 from time import sleep
-import hrr.constantes as c
+import constantes as c
 # from serial_com import SerialMyrio
 
 
@@ -18,9 +18,9 @@ class Estado:
         """Retorna o estado atual do robo."""
         return self.__atual
 
-    def __str__(self):
+    def __str__(self) -> str:
         """String associada ao objeto de "Estado". Sera mostrada ao printar um objeto desse tipo"""
-        print("Estado atual: "+ self.atual + "\n")
+        return "Estado atual: "+ self.atual
 
     def trocar_estado(self, next_state):
         """Troca o estado atual do robo e o envia para a porta serial."""

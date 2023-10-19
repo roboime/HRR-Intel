@@ -37,15 +37,28 @@
         
 class DesvioDegrau:
     def __init__(self, robo) -> None:
-        pass
-    pass
+        self.__robo = robo
+
+    @property
+    def robo(self):
+        return self.__robo
+
 
 class DesvioObstaculo:
     def __init__(self, robo) -> None:
-        pass
-    pass
+        self.__robo = robo
+
+    @property
+    def robo(self):
+        return self.__robo
+
 
 class Desvio(DesvioObstaculo, DesvioDegrau):
     def __init__(self, robo) -> None:
         DesvioObstaculo.__init__(self, robo)
         DesvioDegrau.__init__(self, robo)
+
+if __name__ == '__main__':
+    from robo import Robo
+    robo = Robo()
+    desvio = Desvio(robo)
