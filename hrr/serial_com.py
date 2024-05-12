@@ -22,7 +22,7 @@ class Serialport(ABC):
     
 
 class SerialTeste(Serialport):
-    """Classe herdada da classe SeriaBase e define uma porta serial ficticia
+    """Classe herdada da classe SeriaBase e define uma porta serial fictícia
     por meio do arquivo de saida no path indicado"""
     def __init__(self):
         """Herda o __init__ da Serialport e define o local do arquivo destino"""

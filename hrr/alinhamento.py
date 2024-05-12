@@ -8,23 +8,14 @@ class Alinhamento(ABC):
     def alinhar(self):
         pass 
 
-class AlinhamentoIMU(Alinhamento):
-    def __init__(self, robo) -> None:
-        super().__init__(robo)
-
+class AlinhamentoIMU(Alinhamento):c
     def alinhar(self):
         pass
 
 class AlinhamentoCamera(Alinhamento):
-    def __init__(self, robo) -> None:
-        super().__init__(robo)
-
     def alinhar(self):
         pass
 
 class AlinhamentoCameraIMU(Alinhamento):
-    def __init__(self, robo) -> None:
-        super().__init__(robo)
-
     def alinhar(self):
         pass

@@ -1,5 +1,6 @@
 """Modulo base do robo de corrida"""
 from time import sleep
+from typing import Self
 from desvio import Desvio
 from estado import *
 from serial_com import *
@@ -13,6 +14,11 @@ import hrr.constantes as c
 
 class Robo:
     """Classe base do robo de corrida"""
+    
+    _hardware_states = []
+    
+    __slots__ = ['estado', 'discovery', 'camera', 'sensor_distancia', 'gyro', 'desvio', '_compiled', 'alinhamento', '_hardware_states']
+
     def __init__(self, estado: Estado,
                   discovery: Serial,
                   camera: Camera,
@@ -26,12 +32,26 @@ class Robo:
         self.sensor_distancia: SensorDistancia = sensor_distancia
         self.gyro: Gyro = gyro
         self.desvio: Desvio = Desvio(self)
+        self._compiled = False
 
-    def add_alinhamento(self, alinhamento: Alinhamento):
+    def compile(self, alinhamento: Alinhamento) -> Self:
+        '''
+            Método responsável por observar se o objeto robô possui o estado de hardware apropriado para o funcionamento. 
+            Os possíveis estados são:
+
+
+            Além disso, o método também é responsável por compilar o alinhamento do robô.
+            Para mais detalhes, ler code report.
+        '''
+        #! ...
+        self._compiled = True
         self.alinhamento = alinhamento
-        
-    def corrida(self):
+        return self
+
+    def corrida(self) -> None:
         """Metodo base da corrida do robo"""
+        if not self._compiled:
+            raise RobotConfigException('Robo não compilado')
         # while True:
         #     self.estado = self.estado.atualizar_estado(self)
         #     self.estado.enviar_estado(self.discovery)
@@ -40,6 +60,12 @@ class Robo:
         #     sleep(0.1)
 
 class FactoryRobo:
+    '''
+    
+    '''
+
+    __slots__ = ['serial', 'camera', 'sensor_distancia', 'gyro', 'alinhamento', 'estado']
+    
     def __init__(self, *, alinhar_com_gyro: bool=True, alinhar_com_camera: bool=True) -> None:
         try:
             SerialMyrio()
@@ -89,5 +115,6 @@ class FactoryRobo:
         else:
             robo = Robo(kwargs['estado'](), kwargs['serial'](), kwargs['camera'](), kwargs['sensor_distancia'](), kwargs['gyro']())
         alinhamento = self.alinhamento(robo)
-        robo.add_alinhamento(alinhamento)
-        return robo
+        return robo.compile(alinhamento)
+    
+    __call__ = make_robo

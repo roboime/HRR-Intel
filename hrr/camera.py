@@ -2,10 +2,6 @@ from time import sleep, time
 import os
 import cv2 as cv
 from estado import Estado
-try:
-    import picamera
-except:
-    print('picamera not imported due to ImportError')
 import hrr.constantes as c
 
 from abc import ABC, abstractmethod
@@ -29,11 +25,11 @@ class Camera(ABC):
 
 class RaspCamera(Camera):
     def __init__(self, dir: str="images"):
+        import picamera
         self.counter = 0
         self.path = os.path.join(os.getcwd(), dir)
-        cam = picamera.PiCamera(resolution=(
+        self.cam = picamera.PiCamera(resolution=(
             c.WIDTH, c.HEIGHT), framerate=c.FRAMERATE, contrast=c.CONTRAST)
-        self.cam = cam
         sleep(c.WARMUP_TIME)
 
     def tirar_foto(self, name: str | None=None):

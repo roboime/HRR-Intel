@@ -1,19 +1,19 @@
-class MyrioNotFoundException(Exception):
+class BaseHRRException(Exception):
+    """Base exception for HRR"""
+    def __init__(self, message='Erro encontrado'):
+        super().__init__(message)
+
+class MyrioNotFoundException(BaseHRRException):
     """Raised when a myRIO is not found"""
-    pass
 
-class IMUNotFoundException(Exception):
+class IMUNotFoundException(BaseHRRException):
     """Raised when an IMU is not found"""
-    pass
 
-class CameraNotFoundException(Exception):
+class CameraNotFoundException(BaseHRRException):
     """Raised when a camera is not found"""
-    pass
 
-class SensorDistanciaNotFoundException(Exception):
+class SensorDistanciaNotFoundException(BaseHRRException):
     """Raised when a distance sensor is not found"""
-    pass
 
-class RobotConfigException(Exception):
+class RobotConfigException(BaseHRRException):
     """Raised when the robot configuration is invalid"""
-    pass
