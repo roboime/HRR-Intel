@@ -15,9 +15,7 @@ import hrr.constantes as c
 class Robo:
     """Classe base do robo de corrida"""
     
-    _hardware_states = []
-    
-    __slots__ = ['estado', 'discovery', 'camera', 'sensor_distancia', 'gyro', 'desvio', '_compiled', 'alinhamento', '_hardware_states']
+    __slots__ = ['estado', 'discovery', 'camera', 'sensor_distancia', 'gyro', 'desvio', '_compiled', 'alinhamento']
 
     def __init__(self, estado: Estado,
                   discovery: Serial,

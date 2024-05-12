@@ -5,7 +5,16 @@ import constantes as c
 
 
 class Estado:
-    """Classe responsavel pela a maquina de estados do robo."""
+    '''
+    Classe que representa os estados do robô, que são:
+    - Parado
+    - Andando
+    - Desviando
+    - Alinhando
+    - Finalizado 
+
+    O estado atual do robô é armazenado em na propriedade "atual", e é enviada por comunicação serial à placa.
+    '''
     def __init__(self):
         """
         Inicia variaveis de tempo de intervalo para cada estado.

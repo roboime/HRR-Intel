@@ -9,6 +9,9 @@ from hrr.constantes import WIDTH, HEIGHT, FRAMERATE, WARMUP_TIME, CONTRAST
 
 
 class Camera(ABC):
+    '''
+    Classe abstrata que envolve operações a nível hardware da câmera como a captura de imagens.
+    '''
     CONTRAST = CONTRAST
     WIDTH, HEIGHT = WIDTH, HEIGHT
     FRAMERATE = FRAMERATE
@@ -24,6 +27,9 @@ class Camera(ABC):
 
 
 class RaspCamera(Camera):
+    '''
+    Implementação da classe Camera que utiliza a câmera do Raspberry Pi para capturar imagens.
+    '''
     def __init__(self, dir: str="images"):
         import picamera
         self.counter = 0

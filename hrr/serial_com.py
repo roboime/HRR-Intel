@@ -39,8 +39,8 @@ class SerialMyrio(Serialport):
     def __init__(self):
         # Configuracoes da Rasp
         self.channel = 13 #porta utilizada
-        # GPIO.setmode(GPIO.BCM)
-        # GPIO.setup(self.channel, GPIO.OUT)
+        GPIO.setmode(GPIO.BCM)
+        GPIO.setup(self.channel, GPIO.OUT)
 
         ## Lembrar de colocar dtoverlay=uart5 no /boot/config.txt 
 

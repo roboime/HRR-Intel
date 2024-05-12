@@ -36,6 +36,9 @@
 
         
 class DesvioDegrau:
+    '''
+    Classe que implementa as funcionalidades de desvio de degrau em nível lógico.
+    '''
     def __init__(self, robo) -> None:
         self.__robo = robo
 
@@ -45,6 +48,9 @@ class DesvioDegrau:
 
 
 class DesvioObstaculo:
+    '''
+    Classe que implementa as funcionalidades de desvio de obstáculo em nível lógico.
+    '''
     def __init__(self, robo) -> None:
         self.__robo = robo
 
@@ -54,6 +60,9 @@ class DesvioObstaculo:
 
 
 class Desvio(DesvioObstaculo, DesvioDegrau):
+    '''
+    Herdando de DesvioObstaculo e DesvioDegrau, a classe Desvio implementa as funcionalidades de desvio de obstáculo e degrau em nível lógico.
+    '''
     def __init__(self, robo) -> None:
         DesvioObstaculo.__init__(self, robo)
         DesvioDegrau.__init__(self, robo)

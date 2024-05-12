@@ -2,6 +2,9 @@ import cv2 as cv
 from camera import RaspCamera
 
 class Imagem:
+    '''
+    Classe que envolve operações a nível lógico com as imagens obtidas pela câmera.
+    '''
     def __init__(self, path: str) -> None:
         pass
     

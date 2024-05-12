@@ -6,17 +6,23 @@ import hrr.constantes as c
 bus = smbus.SMBus(1) 	
 
 class Gyro(ABC):
+    '''
+    Classe abstrata que envolve operações a nível hardware do giroscópio como a leitura de dados.
+    '''
     
     @abstractmethod
     def get_angulo_yaw(self):
         pass
 
     @abstractmethod
-    def __read_raw_data(self, addr):
+    def _read_raw_data(self, addr):
         pass
 
 
 class IMU(Gyro):
+    '''
+    Herda de Gyro, implementa operações de hardware para giroscópio da série IMU.
+    '''
     def __init__(self) -> None:
         self.angulo_yaw_referencia = 0.0
         bus.write_byte_data(c.DEVICE_ADDRESS, c.SMPLRT_DIV, 7) 
@@ -28,7 +34,7 @@ class IMU(Gyro):
     def get_angulo_yaw(self):
         pass
 
-    def __read_raw_data(self, addr):
+    def _read_raw_data(self, addr):
         #Accelero and Gyro value are 16-bit
         high = bus.read_byte_data(c.DEVICE_ADDRESS, addr)
         low = bus.read_byte_data(c.DEVICE_ADDRESS, addr+1)
