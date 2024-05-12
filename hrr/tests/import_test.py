@@ -1,3 +1,3 @@
-import hrr.visao
+import hrr.imagem
 
-print(hrr.visao.visao.__doc__)
+print(hrr.imagem.visao.__doc__)

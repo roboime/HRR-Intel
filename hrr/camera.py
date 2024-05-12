@@ -1,7 +1,7 @@
 from time import sleep, time
 import os
 import cv2 as cv
-from estado import Estado
+from hrr.estado import Estado
 import hrr.constantes as c
 
 from abc import ABC, abstractmethod

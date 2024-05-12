@@ -1,12 +1,14 @@
 """Modulo responsavel pela a maquina de estados do robo."""
 from time import sleep
 import constantes as c
+from enum import Enum, auto
+
 # from serial_com import SerialMyrio
 
 
-class Estado:
+class Estado(Enum):
     '''
-    Classe que representa os estados do robô, que são:
+    Classe Enum que representa os estados do robô, que são:
     - Parado
     - Andando
     - Desviando
@@ -15,21 +17,11 @@ class Estado:
 
     O estado atual do robô é armazenado em na propriedade "atual", e é enviada por comunicação serial à placa.
     '''
-    def __init__(self):
-        """
-        Inicia variaveis de tempo de intervalo para cada estado.
-        Instancia objeto da classe porta_Serial correspondente, que envia os estados do robo para a
-        placa por meio de comunicacao serial.
-        """
+    ANDAR = "ANDAR"
+    GIRAR_ESQUERDA = "GIRAR_ESQUERDA"
+    GIRAR_DIREITA = "GIRAR_DIREITA"
+    PARAR = "PARAR"
+    SUBIR = "SUBIR"
+    DESCER = "DESCER"
 
-    @property
-    def atual(self):
-        """Retorna o estado atual do robo."""
-        return self.__atual
-
-    def __str__(self) -> str:
-        """String associada ao objeto de "Estado". Sera mostrada ao printar um objeto desse tipo"""
-        return "Estado atual: "+ self.atual
-
-    def trocar_estado(self, next_state):
-        """Troca o estado atual do robo e o envia para a porta serial."""
+    

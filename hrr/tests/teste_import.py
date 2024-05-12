@@ -1,3 +1,3 @@
-from visao import Visao
+from hrr.imagem import Visao
 
 v = Visao()

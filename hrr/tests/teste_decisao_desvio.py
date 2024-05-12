@@ -2,7 +2,7 @@
 #sys.path.insert(1, '../')
 from os import listdir
 from os.path import  join
-from visao import *
+from hrr.imagem import *
 import copy
 
 path = "./tests/fotos_main/"

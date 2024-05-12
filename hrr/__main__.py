@@ -1,15 +1,13 @@
-from robo import FactoryRobo
+from hrr.robo import Robo
 
 def main(self):
-    factory = FactoryRobo()
-    print(factory)
-    robo = factory.make_robo()
+    robo = Robo().compile()
     try:
         input("Pressione ENTER para iniciar a corrida ")
         robo.corrida()
     except KeyboardInterrupt:
         print(" CTRL+C detectado. O loop foi interrompido.")
-        serial = factory.serial()
+        serial = robo.serial()
         while(1):
             serial.parar()
         

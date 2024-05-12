@@ -1,5 +1,7 @@
 import cv2 as cv
-from camera import RaspCamera
+from hrr.camera import RaspCamera
+from functools import lru_cache
+
 
 class Imagem:
     '''
@@ -18,7 +20,7 @@ class Imagem:
 
     def checar_alinhamento_pista_v2(objeto_imagem): pass
     
-    def decisao_desvio(camera: RaspCamera): pass
+    # def decisao_desvio(camera: RaspCamera): pass #! This is stupid. Should be a method of the class AlinhamentoCamera or Desvio 
 
 
 
