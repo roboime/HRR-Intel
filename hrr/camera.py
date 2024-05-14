@@ -19,11 +19,11 @@ class Camera(Hardware, ABC):
     WARMUP_TIME = WARMUP_TIME
 
     @abstractmethod
-    def tirar_foto(self, name: str | None):
+    def take_photo(self, name: str | None):
         pass
 
     @abstractmethod
-    def parar(self):
+    def stop(self):
         pass
 
 
@@ -31,7 +31,8 @@ class RaspCamera(Camera):
     '''
     Implementação da classe Camera que utiliza a câmera do Raspberry Pi para capturar imagens.
     '''
-    def __init__(self, dir: str="images"):
+
+    def __init__(self, dir: str = "images"):
         import picamera
         self.counter = 0
         self.path = os.path.join(os.getcwd(), dir)
@@ -39,33 +40,22 @@ class RaspCamera(Camera):
             c.WIDTH, c.HEIGHT), framerate=c.FRAMERATE, contrast=c.CONTRAST)
         sleep(c.WARMUP_TIME)
 
-    def tirar_foto(self, name: str | None=None):
+    def take_photo(self, name: str | None = None):
         """
         Tira uma foto e salva no diretório "images"
         """
         if name is None:
             name = "image" + str(self.counter) + ".jpg"
             self.counter += 1
-        
+
         path = os.path.join(self.path, name)
         try:
             self.cam.capture(path)
             return path
-        except KeyboardInterrupt: self.cam.stop_preview()
+        except KeyboardInterrupt:
+            self.cam.stop_preview()
 
-
-    def parar(self, estado: Estado):
-        """
-        Para de fotografar e salva as fotos em uma pasta
-        """
-        atual = estado.atual
-        estado.trocar_estado("PARAR")
-        img = self.tirar_foto()
-        estado.trocar_estado(atual)
-        return img
-
-
-    def retrieve_data(self):
+    def next_state(self):
         pass
 
 

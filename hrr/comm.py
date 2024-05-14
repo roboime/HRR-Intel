@@ -11,24 +11,27 @@ from hrr.estado import Estado
 
 PATH = './hrr/data/serial_teste/serial_teste.txt'
 
+
 class Serialport(ABC):
     """Classe base para implementacao de classes para a comunicacao serial"""
     states = {
-        "ANDAR" : "0",
-        "GIRAR_ESQUERDA" : "1",
-        "GIRAR_DIREITA" : "2",
-        "PARAR" : "3",
-        "SUBIR"  :  "6",
-        "DESCER" : "7"
+        "ANDAR": "0",
+        "GIRAR_ESQUERDA": "1",
+        "GIRAR_DIREITA": "2",
+        "PARAR": "3",
+        "SUBIR":  "6",
+        "DESCER": "7"
     }
-    
+
 
 class SerialTeste(Serialport):
     """Classe herdada da classe SeriaBase e define uma porta serial fictícia
     por meio do arquivo de saida no path indicado"""
+
     def __init__(self):
         """Herda o __init__ da Serialport e define o local do arquivo destino"""
         self.output_path = PATH
+
     def escrever_estado(self, state):
         """Metodo que envia o estado atual para o arquivo destino,
         simulando uma comunicacao serial"""
@@ -38,19 +41,20 @@ class SerialTeste(Serialport):
 
 class SerialMyrio(Serialport):
     """Classe herdada da classe SeriaBase e define a porta serial que faz coneccao com a MyRIO"""
+
     def __init__(self):
         # Configuracoes da Rasp
-        self.channel = 13 #porta utilizada
+        self.channel = 13  # porta utilizada
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.channel, GPIO.OUT)
 
-        ## Lembrar de colocar dtoverlay=uart5 no /boot/config.txt 
+        # Lembrar de colocar dtoverlay=uart5 no /boot/config.txt
 
         # Configuracoes da MyRio
-        porta = "/dev/ttyAMA1" # nao e a porta AMA0**
-        baudrate_myrio = 230400 # deve igualar a da myrio
+        porta = "/dev/ttyAMA1"  # nao e a porta AMA0**
+        baudrate_myrio = 230400  # deve igualar a da myrio
         # porta serial que faz comunicacao com a MyRio
-        self.serial_output = serial.Serial(porta,baudrate_myrio)
+        self.serial_output = serial.Serial(porta, baudrate_myrio)
         print("Port serial setada")
 
     def obter_porta(self):
@@ -65,19 +69,19 @@ class SerialMyrio(Serialport):
         self.serial_output.write("3")
         print("PARAR \n")
 
+
 class Serial(ABC):
-    
+
     @abstractmethod
-    def escrever_estado(self, state: Estado):
+    def write_state(self, state: Estado, debug=False):
         self.serial_output.write(state.value)
+        if debug:
+            print(state.value)
+
+    @abstractmethod
+    def stop(self):
         pass
 
     @abstractmethod
-    def parar(self):
+    def get_port(self):
         pass
-
-    @abstractmethod
-    def obter_porta(self):
-        pass
-
-    

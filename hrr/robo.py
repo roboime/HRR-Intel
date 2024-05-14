@@ -15,28 +15,30 @@ import hrr.constantes as c
 
 class Robo:
     """Classe base do robo de corrida"""
-    
-    __slots__ = ['state', 'comm', 'camera', 'distance_sensor', 'gyro', 'controller', '_compiled']
+
+    __slots__ = ['state', 'comm', 'camera', 'distance_sensor',
+                 'gyro', 'controller', '_compiled', '_debug_mode']
 
     @staticmethod
     def build_instance() -> Self:
         return Robo(SerialMyrio(), RaspCamera(), SensorDistancia(), IMU())
 
     def __init__(self,
-                  discovery: Serial,
-                  camera: Camera,
-                  sensor_distancia: SensorDistancia,
-                  gyro: Gyro):
+                 discovery: Serial,
+                 camera: Camera,
+                 sensor_distancia: SensorDistancia,
+                 gyro: Gyro):
         """Inicializa com instancias das classes Estado, Visao, Imu e Alinhamento"""
-         
+
         self.estado: Estado = Estado.PARADO
         self.discovery: Serial = discovery
         self.camera: Camera = camera
         self.sensor_distancia: SensorDistancia = sensor_distancia
         self.gyro: Gyro = gyro
         self._compiled = False
+        self._debug_mode = False
 
-    def compile(self, use_ml: bool=False) -> Self:
+    def compile(self, use_ml: bool = False) -> Self:
         '''
             Método responsável por observar se o objeto robô possui o estado de hardware apropriado para o funcionamento. 
             Os possíveis estados são:
@@ -45,7 +47,7 @@ class Robo:
             Além disso, o método também é responsável por compilar o alinhamento do robô.
             Para mais detalhes, ler code report.
         '''
-        
+
         self._compiled = True
         observers = {
             'camera': self.camera,
@@ -61,5 +63,5 @@ class Robo:
             raise RobotCompileException('Robô não compilado')
         while True:
             self.estado = self.controller.proximo_estado()
-            self.discovery.escrever_estado(self.estado)
+            self.discovery.write_state(self.estado, self._debug_mode)
             sleep(0.1)

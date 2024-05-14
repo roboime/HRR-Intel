@@ -5,13 +5,14 @@ from hrr.hardware import Hardware
 import hrr.constantes as c
 
 
-bus = smbus.SMBus(1) 	
+bus = smbus.SMBus(1)
+
 
 class Gyro(Hardware, ABC):
     '''
     Classe abstrata que envolve operações a nível hardware do giroscópio como a leitura de dados.
     '''
-    
+
     @abstractmethod
     def get_angulo_yaw(self):
         pass
@@ -25,9 +26,10 @@ class IMU(Gyro):
     '''
     Herda de Gyro, implementa operações de hardware para giroscópio da série IMU.
     '''
+
     def __init__(self) -> None:
         self.angulo_yaw_referencia = 0.0
-        bus.write_byte_data(c.DEVICE_ADDRESS, c.SMPLRT_DIV, 7) 
+        bus.write_byte_data(c.DEVICE_ADDRESS, c.SMPLRT_DIV, 7)
         bus.write_byte_data(c.DEVICE_ADDRESS, c.PWR_MGMT_1, 1)
         bus.write_byte_data(c.DEVICE_ADDRESS, c.CONFIG, 0)
         bus.write_byte_data(c.DEVICE_ADDRESS, c.GYRO_CONFIG, 24)
@@ -39,19 +41,19 @@ class IMU(Gyro):
         pass
 
     def _read_raw_data(self, addr):
-        #Accelero and Gyro value are 16-bit
+        # Accelero and Gyro value are 16-bit
         high = bus.read_byte_data(c.DEVICE_ADDRESS, addr)
         low = bus.read_byte_data(c.DEVICE_ADDRESS, addr+1)
-    
-        #concatenate higher and lower value
+
+        # concatenate higher and lower value
         value = ((high << 8) | low)
-        
-        #to get signed value from mpu6050
-        if(value > 32768):
-                value = value - 65536
+
+        # to get signed value from mpu6050
+        if (value > 32768):
+            value = value - 65536
         return value
-    
-    def retrieve_data(self):
+
+    def next_state(self):
         pass
 
     # def calcular_w_yaw(self):
