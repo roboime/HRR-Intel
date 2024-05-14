@@ -47,13 +47,12 @@ class Robo:
         '''
         
         self._compiled = True
-        hardware = {
+        observers = {
             'camera': self.camera,
             'sensor_distancia': self.sensor_distancia,
             'gyro': self.gyro,
-            'comm': self.discovery
         }
-        self.controller = Controller('ml' if use_ml else 'standard', hardware)
+        self.controller = Controller('ml' if use_ml else 'standard', observers)
         return self
 
     def corrida(self) -> None:

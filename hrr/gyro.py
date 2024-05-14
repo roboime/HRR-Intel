@@ -1,11 +1,13 @@
 from abc import ABC, abstractmethod
 import smbus
+from hrr.estado import Estado
+from hrr.hardware import Hardware
 import hrr.constantes as c
 
 
 bus = smbus.SMBus(1) 	
 
-class Gyro(ABC):
+class Gyro(Hardware, ABC):
     '''
     Classe abstrata que envolve operações a nível hardware do giroscópio como a leitura de dados.
     '''
@@ -30,6 +32,8 @@ class IMU(Gyro):
         bus.write_byte_data(c.DEVICE_ADDRESS, c.CONFIG, 0)
         bus.write_byte_data(c.DEVICE_ADDRESS, c.GYRO_CONFIG, 24)
         bus.write_byte_data(c.DEVICE_ADDRESS, c.INT_ENABLE, 1)
+        self._last_state = Estado.PARADO
+        self._update = False
 
     def get_angulo_yaw(self):
         pass
@@ -47,6 +51,8 @@ class IMU(Gyro):
                 value = value - 65536
         return value
     
+    def retrieve_data(self):
+        pass
 
     # def calcular_w_yaw(self):
     #     """Retorna o angulo yaw atual em graus em relacao ao zero padrao da calibracao"""

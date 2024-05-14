@@ -1,7 +1,9 @@
 import VL53L0X
 import constantes as c
+from hrr.hardware import Hardware
 
-class SensorDistancia():
+
+class SensorDistancia(Hardware):
     def __init__(self):
         ######################################### Configuracoes do sensor de distancia #########################################
         self.sensor_distancia = VL53L0X.VL53L0X()                                 # Criando o objeto associado ao sensor VL53L0X
@@ -20,4 +22,4 @@ class SensorDistancia():
         except KeyboardInterrupt:
             print("ctrl c detectado, saindo do get distance")
             
-    
+    def retrieve_data(self): pass

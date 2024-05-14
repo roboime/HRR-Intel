@@ -1,5 +1,4 @@
 import cv2 as cv
-from hrr.camera import RaspCamera
 from functools import lru_cache
 
 
@@ -7,9 +6,12 @@ class Imagem:
     '''
     Classe que envolve operações a nível lógico com as imagens obtidas pela câmera.
     '''
-    def __init__(self, path: str) -> None:
-        pass
-    
+    def __init__(self, path: str) -> None: pass
+
+    def resize(self, width: int, height: int) -> None: pass
+
+    def rotate(self, angle: int) -> None: pass
+
     def mask(self, ranges_file_path): pass
 
     def ponto_medio_borda_inferior(objeto_imagem): pass

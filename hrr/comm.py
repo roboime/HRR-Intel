@@ -64,4 +64,17 @@ class SerialMyrio(Serialport):
         print("PARAR \n")
 
 class Serial(ABC):
-    pass
+    
+    @abstractmethod
+    def escrever_estado(self, state):
+        pass
+
+    @abstractmethod
+    def parar(self):
+        pass
+
+    @abstractmethod
+    def obter_porta(self):
+        pass
+
+    

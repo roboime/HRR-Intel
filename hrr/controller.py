@@ -1,6 +1,8 @@
 import logging
 from colorama import Fore, Style
 from typing import Any, Literal
+import os
+import pathlib
 from hrr.estado import Estado
 from hrr.exceptions import ModelNotFoundException
 
@@ -20,7 +22,7 @@ class Controller:
     '''
 
 
-    __slots__ = ['_is_ml', '_hardware_components']
+    __slots__ = ['_is_ml', '_hardware_components', '_model']
 
     def __init__(self, type: Literal['standard', 'ml'], hardware_components: dict) -> None:
         self._is_ml = type == 'ml'
@@ -28,13 +30,25 @@ class Controller:
         if self._is_ml:
             try:
                 logging.info('Importando modelo de aprendizado de máquina')
-                pass
+                self._import_model('ai_model')
             except FileNotFoundError:
                 raise ModelNotFoundException()
 
 
     def __str__(self) -> str:
         return f'Controller type: {"ML" if self._is_ml else "Standard"}' 
+
+    def _import_model(self, file_prefix: str) -> None:
+        h5_path = pathlib.Path(__file__).parent / file_prefix + '.h5'
+        pkl_path = pathlib.Path(__file__).parent / file_prefix + '.pkl'
+        if h5_path.exists():
+            logging.info(f'Importando de {h5_path}')
+            ...
+        elif pkl_path.exists():
+            logging.info(f'Importando de {pkl_path}')
+            ...
+        else:
+            raise ModelNotFoundException()
 
     def _desvio_obstaculo(self) -> None:
         pass

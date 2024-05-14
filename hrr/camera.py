@@ -2,13 +2,14 @@ from time import sleep, time
 import os
 import cv2 as cv
 from hrr.estado import Estado
+from hrr.hardware import Hardware
 import hrr.constantes as c
 
 from abc import ABC, abstractmethod
 from hrr.constantes import WIDTH, HEIGHT, FRAMERATE, WARMUP_TIME, CONTRAST
 
 
-class Camera(ABC):
+class Camera(Hardware, ABC):
     '''
     Classe abstrata que envolve operações a nível hardware da câmera como a captura de imagens.
     '''
@@ -63,6 +64,9 @@ class RaspCamera(Camera):
         estado.trocar_estado(atual)
         return img
 
+
+    def retrieve_data(self):
+        pass
 
 
 # import numpy as np
