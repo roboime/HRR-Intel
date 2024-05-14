@@ -1,12 +1,10 @@
-import logging
-from colorama import Fore, Style
 from typing import Any, Literal
 import os
 import pathlib
 from hrr.estado import Estado
 from hrr.exceptions import ModelNotFoundException
+from hrr.constantes import *
 
-logging.basicConfig(level=logging.INFO, format=Fore.GREEN + '[%(levelname)s] %(message)s' + Style.RESET_ALL)
 
 # Implement Kalman Filter here, if useful
 
@@ -27,6 +25,7 @@ class Controller:
     def __init__(self, type: Literal['standard', 'ml'], hardware_components: dict) -> None:
         self._is_ml = type == 'ml'
         self._hardware_components = hardware_components
+        self._model = None
         if self._is_ml:
             try:
                 logging.info('Importando modelo de aprendizado de máquina')
@@ -50,20 +49,15 @@ class Controller:
         else:
             raise ModelNotFoundException()
 
-    def _desvio_obstaculo(self) -> None:
-        pass
+    def _desvio_obstaculo(self) -> Estado: pass
 
-    def _desvio_degrau(self) -> None:
-        pass
+    def _desvio_degrau(self) -> Estado: pass
 
-    def _alinhamento(self) -> None:
-        pass
+    def _alinhamento(self) -> Estado: pass
 
-    def _decisao_ml(self) -> Estado:
-        pass
+    def _decisao_ml(self) -> Estado: pass
 
-    def _decisao_standard(self) -> Estado:
-        pass
+    def _decisao_standard(self) -> Estado: pass
 
     def proximo_estado(self) -> Estado:
         if self._is_ml:

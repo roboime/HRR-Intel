@@ -1,7 +1,39 @@
+
 #! ARQUIVO SERA REFATORADO!!!!!!!!!!!!
 
 import numpy as np
 from enum import Enum, auto
+import logging
+from colorama import Fore, Style
+
+"""Customização do logger"""
+
+formatter = logging.Formatter('%(levelname)s %(message)s')
+
+console = logging.StreamHandler()
+console.setFormatter(formatter)
+
+logger = logging.getLogger()
+logger.addHandler(console)
+logger.setLevel(logging.INFO)
+
+def colorize(level):
+    if level == logging.INFO:
+        return Fore.GREEN
+    elif level == logging.WARNING:
+        return Fore.YELLOW
+    elif level == logging.ERROR:
+        return Fore.RED
+    else:
+        return ''
+
+class ColoredFormatter(logging.Formatter):
+    def format(self, record):
+        record.levelname = f"{colorize(record.levelno)}[{record.levelname}]{Style.RESET_ALL}"
+        record.msg = f"{colorize(record.levelno)}{record.msg}{Style.RESET_ALL}"
+        return super().format(record)
+
+console.setFormatter(ColoredFormatter('%(levelname)s %(message)s'))
 
 """Modulo de constantes usadas em estado.py"""
 

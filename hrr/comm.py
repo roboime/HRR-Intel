@@ -7,6 +7,8 @@ import serial
 
 from abc import ABC, abstractmethod
 
+from hrr.estado import Estado
+
 PATH = './hrr/data/serial_teste/serial_teste.txt'
 
 class Serialport(ABC):
@@ -66,7 +68,8 @@ class SerialMyrio(Serialport):
 class Serial(ABC):
     
     @abstractmethod
-    def escrever_estado(self, state):
+    def escrever_estado(self, state: Estado):
+        self.serial_output.write(state.value)
         pass
 
     @abstractmethod
